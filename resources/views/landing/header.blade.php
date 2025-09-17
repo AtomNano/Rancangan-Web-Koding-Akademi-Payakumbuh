@@ -9,7 +9,7 @@
             <a href="#fitur" class="text-gray-600 hover:text-indigo-600">Fitur</a>
             <a href="#kelas" class="text-gray-600 hover:text-indigo-600">Kelas</a>
             <a href="#alur" class="text-gray-600 hover:text-indigo-600">Alur Kerja</a>
-            <a href="#kontak" class="text-gray-600 hover:text-indigo-600">Kontak</a>
+            <a href="#kontak" class="text-gray-600 hover:text-indigo-600">info</a>
         </div>
         <a href="/login" class="hidden md:block bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
             Masuk
