@@ -9,6 +9,16 @@ class Materi extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'judul',
+        'deskripsi',
+        'file_path',
+        'file_type',
+        'kelas_id',
+        'status',
+        'uploaded_by',
+    ];
+
     public function kelas()
     {
         return $this->belongsTo(Kelas::class);
@@ -17,5 +27,20 @@ class Materi extends Model
     public function presensi()
     {
         return $this->hasMany(Presensi::class);
+    }
+
+    public function uploadedBy()
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
+    }
+
+    public function isApproved()
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isPending()
+    {
+        return $this->status === 'pending';
     }
 }

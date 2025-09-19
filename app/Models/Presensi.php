@@ -9,6 +9,13 @@ class Presensi extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'materi_id',
+        'status_kehadiran',
+        'tanggal_akses',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -17,5 +24,10 @@ class Presensi extends Model
     public function materi()
     {
         return $this->belongsTo(Materi::class);
+    }
+
+    public function isPresent()
+    {
+        return $this->status_kehadiran === 'hadir';
     }
 }

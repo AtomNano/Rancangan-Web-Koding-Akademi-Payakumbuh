@@ -9,6 +9,12 @@ class Enrollment extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'kelas_id',
+        'status',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -17,5 +23,10 @@ class Enrollment extends Model
     public function kelas()
     {
         return $this->belongsTo(Kelas::class);
+    }
+
+    public function isActive()
+    {
+        return $this->status === 'active';
     }
 }

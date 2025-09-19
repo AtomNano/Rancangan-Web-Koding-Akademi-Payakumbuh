@@ -1,20 +1,22 @@
 @extends('layouts.landing-layout')
 
-@section('title', 'Login & Registrasi - Materi Online')
+ @section('title', 'Login & Registrasi - Materi Online')
 
-@section('styles')
+ @section('body-class', 'login-page')
+
+ @section('styles')
     <style>
-        .container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
-                        0 10px 10px rgba(0,0,0,0.22);
-            position: relative;
-            overflow: hidden;
-            width: 768px;
-            max-width: 100%;
-            min-height: 520px;
+        /* Memberikan background gradien yang lembut pada seluruh halaman */
+        .login-page {
+            background: linear-gradient(to right, #f2f2f2, #e6e6e6);
         }
+
+        .login-page nav {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        
 
         .form-container {
             position: absolute;
@@ -67,7 +69,7 @@
             height: 100%;
             overflow: hidden;
             transition: transform 0.6s ease-in-out;
-            z-index: 100;
+            z-index: 40;
         }
 
         .container.right-panel-active .overlay-container{
@@ -76,7 +78,6 @@
 
         .overlay {
             background: #6D28D9;
-            background: -webkit-linear-gradient(to right, #8B5CF6, #6D28D9);
             background: linear-gradient(to right, #8B5CF6, #6D28D9);
             background-repeat: no-repeat;
             background-size: cover;
@@ -131,30 +132,40 @@
             border-color: #FFFFFF;
         }
     </style>
-@endsection
-
-@section('content')
-    <div class="flex justify-center items-center py-20">
-        <div class="container" id="container">
+ @endsection @section('content')
+    <div class="flex justify-center items-center min-h-screen px-4 sm:px-6 lg:px-8 py-12">
+        {{--
+            [PERBAIKAN KUNCI]
+            Mengecek apakah ada error validasi yang spesifik untuk form registrasi.
+            Jika ada (misalnya error pada field 'name' atau 'password_confirmation'),
+            maka class 'right-panel-active' akan ditambahkan saat halaman dimuat ulang,
+            sehingga pengguna tetap berada di panel registrasi.
+        --}}
+        <div class="container relative w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden {{ $errors->has('name') || $errors->has('password_confirmation') ? 'right-panel-active' : '' }}" id="container" style="min-height: 640px;">
             <!-- Form Registrasi -->
             <div class="form-container sign-up-container">
                 <form method="POST" action="{{ route('register') }}" class="bg-white flex items-center justify-center flex-col px-12 h-full text-center">
                     @csrf
                     <h1 class="font-bold text-3xl mb-4">Buat Akun Baru</h1>
                     <div class="w-full mb-3">
-                        <input type="text" name="name" placeholder="Nama Lengkap" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" required autofocus />
-                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                        <label for="name" class="sr-only">Nama Lengkap</label>
+                        <input type="text" id="name" name="name" placeholder="Nama Lengkap" value="{{ old('name') }}" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required autofocus autocomplete="name" />
+                        <x-input-error :messages="$errors->get('name')" class="mt-2 text-left" />
                     </div>
                     <div class="w-full mb-3">
-                        <input type="email" name="email" placeholder="Email" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" required />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <label for="email-register" class="sr-only">Email</label>
+                        <input type="email" id="email-register" name="email" placeholder="Email" value="{{ old('email') }}" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required autocomplete="email" />
+                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-left" />
                     </div>
                     <div class="w-full mb-3">
-                        <input type="password" name="password" placeholder="Password" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" required />
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                        <label for="password-register" class="sr-only">Password</label>
+                        <input type="password" id="password-register" name="password" placeholder="Password" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required autocomplete="new-password" />
+                        <x-input-error :messages="$errors->get('password')" class="mt-2 text-left" />
                     </div>
                     <div class="w-full mb-4">
-                        <input type="password" name="password_confirmation" placeholder="Ulangi Password" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" required />
+                        <label for="password_confirmation" class="sr-only">Ulangi Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Ulangi Password" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required autocomplete="new-password" />
+                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-left" />
                     </div>
                     <button type="submit" class="rounded-full bg-indigo-600 text-white text-sm font-bold py-3 px-12 uppercase tracking-wider transform transition-transform duration-75 hover:scale-105">Register</button>
                 </form>
@@ -166,19 +177,23 @@
                     @csrf
                     <h1 class="font-bold text-3xl mb-4">Login ke Akun Anda</h1>
                     <div class="w-full mb-3">
-                        <input type="email" name="email" placeholder="Email" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" required autofocus />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <label for="email-login" class="sr-only">Email</label>
+                        <input type="email" id="email-login" name="email" placeholder="Email" value="{{ old('email') }}" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required autofocus autocomplete="email" />
+                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-left" />
                     </div>
                     <div class="w-full mb-4">
-                        <input type="password" name="password" placeholder="Password" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" required />
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                        <label for="password-login" class="sr-only">Password</label>
+                        <input type="password" id="password-login" name="password" placeholder="Password" class="bg-gray-100 border border-gray-200 w-full p-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required autocomplete="current-password" />
+                        <x-input-error :messages="$errors->get('password')" class="mt-2 text-left" />
                     </div>
-                    <div class="flex justify-between w-full text-sm mb-4">
+                    <div class="flex justify-between items-center w-full text-sm mb-4">
                         <label for="remember_me" class="inline-flex items-center">
                             <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
                             <span class="ml-2 text-gray-600">Ingat saya</span>
                         </label>
-                        <a href="{{ route('password.request') }}" class="text-gray-500 hover:text-indigo-600">Lupa password?</a>
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('password.request') }}" class="text-gray-500 hover:text-indigo-600">Lupa password?</a>
+                        @endif
                     </div>
                     <button type="submit" class="rounded-full bg-indigo-600 text-white text-sm font-bold py-3 px-12 uppercase tracking-wider transform transition-transform duration-75 hover:scale-105">Login</button>
                 </form>
@@ -203,20 +218,24 @@
             </div>
         </div>
     </div>
-@endsection
-
-@section('scripts')
+ @endsection @section('scripts')
     <script>
-        const signUpButton = document.getElementById('signUp');
-        const signInButton = document.getElementById('signIn');
-        const container = document.getElementById('container');
+        document.addEventListener('DOMContentLoaded', function () {
+            const signUpButton = document.getElementById('signUp');
+            const signInButton = document.getElementById('signIn');
+            const container = document.getElementById('container');
 
-        signUpButton.addEventListener('click', () => {
-            container.classList.add("right-panel-active");
-        });
+            if(signUpButton) {
+                signUpButton.addEventListener('click', () => {
+                    container.classList.add("right-panel-active");
+                });
+            }
 
-        signInButton.addEventListener('click', () => {
-            container.classList.remove("right-panel-active");
+            if(signInButton) {
+                signInButton.addEventListener('click', () => {
+                    container.classList.remove("right-panel-active");
+                });
+            }
         });
     </script>
-@endsection
+ @endsection

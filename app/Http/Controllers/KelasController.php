@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -11,7 +13,8 @@ class KelasController extends Controller
      */
     public function index()
     {
-        //
+        $kelas = Kelas::withCount('students')->paginate(10);
+        return view('admin.kelas.index', compact('kelas'));
     }
 
     /**
@@ -19,7 +22,7 @@ class KelasController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.kelas.create');
     }
 
     /**
@@ -27,38 +30,102 @@ class KelasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nama_kelas' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'bidang' => 'required|in:coding,desain,robotik',
+        ]);
+
+        Kelas::create([
+            'nama_kelas' => $validated['nama_kelas'],
+            'deskripsi' => $validated['deskripsi'],
+            'bidang' => $validated['bidang'],
+            'status' => 'active',
+        ]);
+
+        return redirect()->route('admin.kelas.index')
+            ->with('success', 'Kelas berhasil dibuat.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Kelas $kelas)
     {
-        //
+        $students = $kelas->students()->paginate(10);
+        $materi = $kelas->materi()->with('uploadedBy')->paginate(10);
+        
+        return view('admin.kelas.show', compact('kelas', 'students', 'materi'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Kelas $kelas)
     {
-        //
+        return view('admin.kelas.edit', compact('kelas'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Kelas $kelas)
     {
-        //
+        $validated = $request->validate([
+            'nama_kelas' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'bidang' => 'required|in:coding,desain,robotik',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $kelas->update($validated);
+
+        return redirect()->route('admin.kelas.index')
+            ->with('success', 'Kelas berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Kelas $kelas)
     {
-        //
+        $kelas->delete();
+
+        return redirect()->route('admin.kelas.index')
+            ->with('success', 'Kelas berhasil dihapus.');
+    }
+
+    /**
+     * Show enrollment form for a class
+     */
+    public function enrollForm(Kelas $kelas)
+    {
+        $availableStudents = User::where('role', 'siswa')
+            ->whereDoesntHave('enrollments', function($query) use ($kelas) {
+                $query->where('kelas_id', $kelas->id);
+            })
+            ->get();
+
+        return view('admin.kelas.enroll', compact('kelas', 'availableStudents'));
+    }
+
+    /**
+     * Enroll students to a class
+     */
+    public function enroll(Request $request, Kelas $kelas)
+    {
+        $validated = $request->validate([
+            'student_ids' => 'required|array|exists:users,id',
+        ]);
+
+        foreach ($validated['student_ids'] as $studentId) {
+            $kelas->enrollments()->create([
+                'user_id' => $studentId,
+                'status' => 'active',
+            ]);
+        }
+
+        return redirect()->route('admin.kelas.show', $kelas)
+            ->with('success', 'Siswa berhasil didaftarkan ke kelas.');
     }
 }

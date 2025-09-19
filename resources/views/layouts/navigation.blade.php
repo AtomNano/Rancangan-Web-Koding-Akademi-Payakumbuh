@@ -15,6 +15,26 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    
+                    @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.users.index', ['role' => 'guru'])" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Manajemen User') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.kelas.*')">
+                            {{ __('Manajemen Kelas') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.materi.index')" :active="request()->routeIs('admin.materi.*')">
+                            {{ __('Verifikasi Materi') }}
+                        </x-nav-link>
+                    @elseif(Auth::user()->isGuru())
+                        <x-nav-link :href="route('guru.materi.index')" :active="request()->routeIs('guru.materi.*')">
+                            {{ __('Manajemen Materi') }}
+                        </x-nav-link>
+                    @elseif(Auth::user()->isSiswa())
+                        <x-nav-link :href="route('siswa.progress')" :active="request()->routeIs('siswa.progress')">
+                            {{ __('Kemajuan Belajar') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +90,26 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            
+            @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.users.index', ['role' => 'guru'])" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Manajemen User') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.kelas.*')">
+                    {{ __('Manajemen Kelas') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.materi.index')" :active="request()->routeIs('admin.materi.*')">
+                    {{ __('Verifikasi Materi') }}
+                </x-responsive-nav-link>
+            @elseif(Auth::user()->isGuru())
+                <x-responsive-nav-link :href="route('guru.materi.index')" :active="request()->routeIs('guru.materi.*')">
+                    {{ __('Manajemen Materi') }}
+                </x-responsive-nav-link>
+            @elseif(Auth::user()->isSiswa())
+                <x-responsive-nav-link :href="route('siswa.progress')" :active="request()->routeIs('siswa.progress')">
+                    {{ __('Kemajuan Belajar') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

@@ -1,10 +1,10 @@
 <!-- Header / Navigasi -->
 <header class="bg-white shadow-sm sticky top-0 z-50">
     <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
+        <a href="{{ url('/') }}" class="flex items-center space-x-2">
              <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">M</div>
              <span class="text-xl font-bold text-gray-800">Materi Online</span>
-        </div>
+        </a>
         <div class="hidden md:flex items-center space-x-8">
             <a href="#fitur" class="text-gray-600 hover:text-indigo-600">Fitur</a>
             <a href="#kelas" class="text-gray-600 hover:text-indigo-600">Kelas</a>

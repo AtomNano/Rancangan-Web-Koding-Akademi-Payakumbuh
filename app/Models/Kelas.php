@@ -9,6 +9,13 @@ class Kelas extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nama_kelas',
+        'deskripsi',
+        'bidang',
+        'status',
+    ];
+
     public function materi()
     {
         return $this->hasMany(Materi::class);
@@ -17,5 +24,12 @@ class Kelas extends Model
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(User::class, 'enrollments', 'kelas_id', 'user_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
     }
 }

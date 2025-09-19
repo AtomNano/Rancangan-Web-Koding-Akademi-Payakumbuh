@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -54,5 +55,27 @@ class User extends Authenticatable
     public function presensi()
     {
         return $this->hasMany(Presensi::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isGuru()
+    {
+        return $this->role === 'guru';
+    }
+
+    public function isSiswa()
+    {
+        return $this->role === 'siswa';
+    }
+
+    public function enrolledClasses()
+    {
+        return $this->belongsToMany(Kelas::class, 'enrollments', 'user_id', 'kelas_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
     }
 }
