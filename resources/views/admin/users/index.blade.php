@@ -6,6 +6,16 @@
         <p class="text-sm text-gray-500">Kelola semua pengguna dalam platform</p>
     </x-slot>
 
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Berhasil!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.15a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.029a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.15 2.758 3.15a1.2 1.2 0 0 1 0 1.697z"/></svg>
+            </span>
+        </div>
+    @endif
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
@@ -107,17 +117,19 @@
                     @forelse ($users as $user)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10">
-                                        <div class="w-10 h-10 bg-indigo-200 rounded-full flex items-center justify-center">
-                                            <span class="text-indigo-700 font-bold">{{ substr($user->name, 0, 2) }}</span>
+                                <a href="{{ route('admin.users.show', $user->id) }}" class="hover:opacity-80">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="w-10 h-10 bg-indigo-200 rounded-full flex items-center justify-center">
+                                                <span class="text-indigo-700 font-bold">{{ substr($user->name, 0, 2) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                            <div class="text-sm text-gray-500">{{ $user->email }}</div>
                                         </div>
                                     </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $user->email }}</div>
-                                    </div>
-                                </div>
+                                </a>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
@@ -135,11 +147,8 @@
                                 {{ $user->enrolledClasses->first()->nama_kelas ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $is_active = !$user->isSiswa() || $user->enrollments()->where('status', 'active')->exists();
-                                @endphp
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $user->is_active ? 'Aktif' : 'Tidak Aktif' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

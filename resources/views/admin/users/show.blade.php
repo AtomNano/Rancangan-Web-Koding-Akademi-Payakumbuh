@@ -1,105 +1,145 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detail ' . ucfirst($user->role)) }}
+            {{ __('Detail Siswa: ') . $user->name }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">
-                            Informasi {{ ucfirst($user->role) }}
-                        </h3>
-                        <div class="flex space-x-2">
-                            <a href="{{ route('admin.users.edit', $user) }}" 
-                               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <div class="p-6 md:p-8">
+                    <!-- Header -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-gray-200">
+                        <div class="flex items-center mb-4 md:mb-0">
+                            <div class="w-20 h-20 bg-indigo-200 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <span class="text-indigo-700 font-bold text-3xl">{{ substr($user->name, 0, 2) }}</span>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900">{{ $user->name }}</h3>
+                                <p class="text-sm text-gray-500">{{ $user->email }}</p>
+                                <div class="mt-2">
+                                    <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full {{ $user->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        Status: {{ $user->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 flex-shrink-0">
+                            <a href="{{ route('admin.users.edit', $user->id) }}" 
+                               class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                <svg class="mr-2 -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
                                 Edit
                             </a>
-                            <a href="{{ route('admin.users.index', ['role' => $user->role]) }}" 
-                               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            <a href="{{ url()->previous() ?? route('admin.users.index') }}" 
+                               class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                                 Kembali
                             </a>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Informasi Dasar</h4>
-                            <dl class="mt-2 space-y-2">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Nama Lengkap</dt>
-                                    <dd class="text-sm text-gray-900">{{ $user->name }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                    <dd class="text-sm text-gray-900">{{ $user->email }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Role</dt>
-                                    <dd class="text-sm text-gray-900">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            {{ $user->role === 'admin' ? 'bg-red-100 text-red-800' : 
-                                               ($user->role === 'guru' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') }}">
-                                            {{ ucfirst($user->role) }}
-                                        </span>
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Dibuat</dt>
-                                    <dd class="text-sm text-gray-900">{{ $user->created_at->format('d M Y H:i') }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Terakhir Diperbarui</dt>
-                                    <dd class="text-sm text-gray-900">{{ $user->updated_at->format('d M Y H:i') }}</dd>
-                                </div>
-                            </dl>
+                    <!-- Main Details Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Left Column: Personal & Academic -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <!-- Data Diri -->
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Data Diri</h4>
+                                <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">No. Telepon</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ $user->no_telepon ?? '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">Tanggal Lahir</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ $user->tanggal_lahir ? $user->tanggal_lahir->format('d F Y') : '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">Jenis Kelamin</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ ucfirst($user->jenis_kelamin) ?? '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg md:col-span-2">
+                                        <dt class="text-sm font-medium text-gray-500">Alamat</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ $user->alamat ?? '-' }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <!-- Informasi Akademik -->
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Informasi Akademik</h4>
+                                <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">Tanggal Pendaftaran</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ $user->tanggal_pendaftaran ? $user->tanggal_pendaftaran->format('d F Y') : '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">Sekolah/Institusi</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ $user->sekolah ?? '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">Durasi Program</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ $user->durasi ?? '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">Hari Belajar</dt>
+                                        <dd class="text-sm text-gray-900 mt-1">{{ is_array($user->hari_belajar) ? implode(', ', $user->hari_belajar) : '-' }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
                         </div>
 
-                        @if($user->role === 'siswa' && $enrolledClasses->count() > 0)
+                        <!-- Right Column: Payment & Classes -->
+                        <div class="space-y-8">
+                            <!-- Informasi Pembayaran -->
                             <div>
-                                <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Kelas yang Diikuti</h4>
-                                <div class="mt-2 space-y-2">
-                                    @foreach($enrolledClasses as $kelas)
-                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Informasi Pembayaran</h4>
+                                <dl class="space-y-4">
+                                    <div class="p-3 bg-blue-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-blue-700">Metode Pembayaran</dt>
+                                        <dd class="text-sm text-blue-900 mt-1">{{ ucfirst($user->metode_pembayaran) ?? '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-blue-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-blue-700">Biaya Pendaftaran</dt>
+                                        <dd class="text-sm text-blue-900 mt-1">Rp {{ number_format($user->biaya_pendaftaran, 0, ',', '.') ?? '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-blue-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-blue-700">Biaya Angsuran</dt>
+                                        <dd class="text-sm text-blue-900 mt-1">Rp {{ number_format($user->biaya_angsuran, 0, ',', '.') ?? '-' }}</dd>
+                                    </div>
+                                    <div class="p-3 bg-blue-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-blue-700">Status Promo</dt>
+                                        <dd class="text-sm text-blue-900 mt-1">{{ $user->status_promo ?? '-' }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <!-- Kelas yang Diikuti -->
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Kelas yang Diikuti</h4>
+                                <div class="space-y-2">
+                                    @forelse($user->enrolledClasses as $kelas)
+                                        <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                                             <div>
                                                 <h5 class="text-sm font-medium text-gray-900">{{ $kelas->nama_kelas }}</h5>
-                                                <p class="text-sm text-gray-500">{{ ucfirst($kelas->bidang) }}</p>
+                                                <p class="text-xs text-gray-500">{{ ucfirst($kelas->bidang) }}</p>
                                             </div>
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                {{ $kelas->pivot->status }}
+                                            @php
+                                                $status = $kelas->pivot->status;
+                                            @endphp
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                {{ ucfirst($status) }}
                                             </span>
                                         </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-
-                    @if($user->role === 'siswa' && $enrolledClasses->count() === 0)
-                        <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.726-1.36 3.491 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <div class="ml-3">
-                                    <h3 class="text-sm font-medium text-yellow-800">
-                                        Belum Terdaftar di Kelas
-                                    </h3>
-                                    <div class="mt-2 text-sm text-yellow-700">
-                                        <p>Siswa ini belum terdaftar di kelas manapun. Silakan edit profil untuk mendaftarkan ke kelas.</p>
-                                    </div>
+                                    @empty
+                                        <p class="text-sm text-gray-500">Siswa ini belum terdaftar di kelas manapun.</p>
+                                    @endforelse
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </x-app-layout>
-

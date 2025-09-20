@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -16,6 +17,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $role = $request->get('role');
+        $status = $request->get('status');
 
         $query = User::query();
 
@@ -23,15 +25,31 @@ class UserController extends Controller
             $query->where('role', $role);
         }
 
-        $users = $query->latest()->paginate(10);
+        // Handle status filtering for students, which requires accessor-based logic
+        if ($status && $role === 'siswa') {
+            $all_siswa = $query->latest()->get();
+            $filtered_siswa = $all_siswa->filter(function ($user) use ($status) {
+                return ($status === 'active') ? $user->is_active : !$user->is_active;
+            });
+
+            $page = $request->get('page', 1);
+            $perPage = 10; // Or your desired number of items per page
+            $users = new LengthAwarePaginator(
+                $filtered_siswa->forPage($page, $perPage),
+                $filtered_siswa->count(),
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $users = $query->latest()->paginate(10);
+        }
 
         $stats = [
             'total' => User::count(),
             'guru' => User::where('role', 'guru')->count(),
             'siswa' => User::where('role', 'siswa')->count(),
-            'inactive' => User::whereDoesntHave('enrollments', function($q) {
-                $q->where('status', 'active');
-            })->where('role', 'siswa')->count(),
+            'inactive' => User::where('role', 'siswa')->get()->filter(fn($u) => !$u->is_active)->count(),
         ];
         
         return view('admin.users.index', compact('users', 'role', 'stats'));
@@ -53,6 +71,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        // Sanitize currency fields before validation
+        $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya'];
+        foreach ($payment_fields as $field) {
+            if ($request->has($field)) {
+                $cleaned_value = preg_replace('/[^\d]/', '', $request->input($field));
+                $request->merge([
+                    $field => $cleaned_value === '' ? null : $cleaned_value
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -147,11 +176,23 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // Sanitize currency fields before validation
+        $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya'];
+        foreach ($payment_fields as $field) {
+            if ($request->has($field)) {
+                $cleaned_value = preg_replace('/[^\d]/', '', $request->input($field));
+                $request->merge([
+                    $field => $cleaned_value === '' ? null : $cleaned_value
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
+            'enrollment_status' => 'required|in:active,inactive',
             // Student-specific fields
             'tanggal_pendaftaran' => 'nullable|date',
             'sekolah' => 'nullable|string|max:255',
@@ -168,7 +209,6 @@ class UserController extends Controller
             'alamat' => 'nullable|string',
             'tanggal_lahir' => 'nullable|date',
             'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
-            'enrollment_status' => 'required|in:active,inactive', // New validation
         ]);
 
         $userData = [
@@ -203,22 +243,40 @@ class UserController extends Controller
             $user->update(['password' => Hash::make($validated['password'])]);
         }
 
-        // Update enrollment for siswa
         if ($user->role === 'siswa') {
-            // Delete all existing enrollments first
-            $user->enrollments()->delete();
-
-            // If bidang_ajar is selected, create new enrollments
+            // 1. Get the submitted class IDs from the form's nama_kelas values
+            $selectedKelasIds = [];
             if (!empty($validated['bidang_ajar'])) {
-                foreach ($validated['bidang_ajar'] as $bidangAjarItem) {
-                    $kelas = Kelas::where('nama_kelas', $bidangAjarItem)->first();
-                    if ($kelas) {
-                        $user->enrollments()->create([
-                            'kelas_id' => $kelas->id,
-                            'status' => $validated['enrollment_status'],
-                        ]);
-                    }
-                }
+                $selectedKelasIds = Kelas::whereIn('nama_kelas', $validated['bidang_ajar'])->pluck('id')->toArray();
+            }
+
+            // 2. Get the user's current class IDs directly from the enrollments table
+            $currentKelasIds = \App\Models\Enrollment::where('user_id', $user->id)->pluck('kelas_id')->toArray();
+
+            // 3. Determine which enrollments to delete, add, or update
+            $idsToDelete = array_diff($currentKelasIds, $selectedKelasIds);
+            $idsToAdd = array_diff($selectedKelasIds, $currentKelasIds);
+            $idsToUpdate = array_intersect($currentKelasIds, $selectedKelasIds);
+
+            // 4. Perform deletion for classes the user is no longer enrolled in
+            if (!empty($idsToDelete)) {
+                \App\Models\Enrollment::where('user_id', $user->id)->whereIn('kelas_id', $idsToDelete)->delete();
+            }
+
+            // 5. Perform addition for new classes
+            foreach ($idsToAdd as $kelasId) {
+                \App\Models\Enrollment::create([
+                    'user_id' => $user->id,
+                    'kelas_id' => $kelasId,
+                    'status' => $validated['enrollment_status'],
+                ]);
+            }
+
+            // 6. Perform an update for classes the user remains enrolled in
+            if (!empty($idsToUpdate)) {
+                \App\Models\Enrollment::where('user_id', $user->id)
+                    ->whereIn('kelas_id', $idsToUpdate)
+                    ->update(['status' => $validated['enrollment_status']]);
             }
         }
 
@@ -237,4 +295,6 @@ class UserController extends Controller
         return redirect()->route('admin.users.index', ['role' => $role])
             ->with('success', 'User berhasil dihapus.');
     }
+
+
 }

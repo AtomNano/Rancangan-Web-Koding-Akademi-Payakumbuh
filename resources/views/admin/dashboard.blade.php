@@ -47,6 +47,32 @@
                 </div>
             </div>
         </a>
+        <a href="{{ route('admin.users.index', ['role' => 'siswa', 'status' => 'active']) }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Siswa Aktif</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['siswa_aktif'] }}</p>
+                </div>
+                <div class="bg-teal-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </div>
+        </a>
+        <a href="{{ route('admin.users.index', ['role' => 'siswa', 'status' => 'inactive']) }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Siswa Tidak Aktif</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['siswa_tidak_aktif'] }}</p>
+                </div>
+                <div class="bg-red-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+        </a>
         <a href="{{ route('admin.materi.index') }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="flex justify-between items-center">
                 <div>
@@ -157,3 +183,4 @@
     </div>
 
 </x-app-layout>
+

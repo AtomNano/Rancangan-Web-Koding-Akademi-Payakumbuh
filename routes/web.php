@@ -51,10 +51,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', function () {
+            // Student status calculation
+            $all_siswa = \App\Models\User::where('role', 'siswa')->get();
+            [$siswa_aktif, $siswa_tidak_aktif] = $all_siswa->partition(fn ($user) => $user->is_active);
+
             $stats = [
                 'total_pengguna' => \App\Models\User::count(),
                 'total_guru' => \App\Models\User::where('role', 'guru')->count(),
-                'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
+                'total_siswa' => $all_siswa->count(),
+                'siswa_aktif' => $siswa_aktif->count(),
+                'siswa_tidak_aktif' => $siswa_tidak_aktif->count(),
                 'total_kelas' => \App\Models\Kelas::count(),
                 'pending_materi' => \App\Models\Materi::where('status', 'pending')->count(),
                 'materi_aktif' => \App\Models\Materi::where('status', 'approved')->count(),
@@ -65,6 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('dashboard');
         
         Route::resource('users', UserController::class);
+        
         Route::resource('kelas', KelasController::class);
         
         // Additional class routes

@@ -66,12 +66,13 @@
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="tanggal_pendaftaran" :value="__('Tanggal Pendaftaran')" />
-                                    <x-text-input id="tanggal_pendaftaran" class="block mt-1 w-full bg-gray-200" type="date" name="tanggal_pendaftaran" :value="old('tanggal_pendaftaran', date('Y-m-d'))" readonly />
+                                    <x-text-input id="tanggal_pendaftaran" class="block mt-1 w-full" type="date" name="tanggal_pendaftaran" :value="old('tanggal_pendaftaran', date('Y-m-d'))" />
                                 </div>
                                 <div>
                                     <x-input-label for="sekolah" :value="__('Sekolah/Institusi')" />
                                     <x-text-input id="sekolah" class="block mt-1 w-full" type="text" name="sekolah" :value="old('sekolah')" />
                                 </div>
+
                                 <div class="md:col-span-2">
                                     <x-input-label :value="__('Bidang Ajar (Kelas)')" />
                                     <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -82,15 +83,25 @@
                                         </label>
                                         @endforeach
                                     </div>
+                                    <p class="mt-2 text-sm text-gray-500">Pilih satu atau lebih kelas untuk siswa.</p>
                                 </div>
+
                                 <div>
                                     <x-input-label for="durasi" :value="__('Durasi Program')" />
-                                    <select id="durasi" name="durasi" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                        <option value="">Pilih Durasi</option>
-                                        <option value="3 Bulan" {{ old('durasi') == '3 Bulan' ? 'selected' : '' }}>3 Bulan</option>
-                                        <option value="6 Bulan" {{ old('durasi') == '6 Bulan' ? 'selected' : '' }}>6 Bulan</option>
-                                        <option value="12 Bulan" {{ old('durasi') == '12 Bulan' ? 'selected' : '' }}>12 Bulan</option>
-                                    </select>
+                                    <div class="mt-2 flex space-x-4">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="durasi" value="3 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi') == '3 Bulan' ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm text-gray-600">3 Bulan</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="durasi" value="6 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi') == '6 Bulan' ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm text-gray-600">6 Bulan</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="durasi" value="12 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi') == '12 Bulan' ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm text-gray-600">12 Bulan</span>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label :value="__('Hari Belajar')" />
@@ -102,13 +113,21 @@
                                         </label>
                                         @endforeach
                                     </div>
+                                    <p class="mt-2 text-sm text-gray-500">Pilih hari yang dijadwalkan untuk belajar.</p>
                                 </div>
                                 <div>
                                     <x-input-label for="enrollment_status" :value="__('Status Pendaftaran')" />
-                                    <select id="enrollment_status" name="enrollment_status" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                        <option value="active" {{ old('enrollment_status') == 'active' ? 'selected' : '' }}>Aktif</option>
-                                        <option value="inactive" {{ old('enrollment_status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
-                                    </select>
+                                    <div class="mt-2 flex space-x-4">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="enrollment_status" value="active" class="text-indigo-600 focus:ring-indigo-500" {{ old('enrollment_status', 'active') == 'active' ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm text-gray-600">Aktif</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="enrollment_status" value="inactive" class="text-indigo-600 focus:ring-indigo-500" {{ old('enrollment_status') == 'inactive' ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm text-gray-600">Tidak Aktif</span>
+                                        </label>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-500">Status akan otomatis menjadi tidak aktif jika durasi program telah berakhir.</p>
                                 </div>
                             </div>
                         </div>
@@ -121,8 +140,8 @@
                                     <x-input-label for="metode_pembayaran" :value="__('Metode Pembayaran')" />
                                     <select id="metode_pembayaran" name="metode_pembayaran" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                         <option value="">Pilih Metode</option>
-                                        <option value="Transfer" {{ old('metode_pembayaran') == 'Transfer' ? 'selected' : '' }}>Transfer</option>
-                                        <option value="Cash" {{ old('metode_pembayaran') == 'Cash' ? 'selected' : '' }}>Cash</option>
+                                        <option value="transfer" {{ old('metode_pembayaran') == 'transfer' ? 'selected' : '' }}>Transfer</option>
+                                        <option value="cash" {{ old('metode_pembayaran') == 'cash' ? 'selected' : '' }}>Cash</option>
                                     </select>
                                 </div>
                                 <div>
@@ -173,6 +192,13 @@
                                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
                             </div>
                             <div class="mt-4">
+                                <x-input-label for="status" :value="__('Status')" />
+                                <select id="status" name="status" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="active" selected>Aktif</option>
+                                    <option value="inactive">Tidak Aktif</option>
+                                </select>
+                            </div>
+                            <div class="mt-4">
                                 <x-input-label for="password" :value="__('Password')" />
                                 <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
                             </div>
@@ -204,16 +230,41 @@
             const biayaAngsuran = document.getElementById('biaya_angsuran');
             const totalBiaya = document.getElementById('total_biaya');
 
-            function calculateTotal() {
-                const pendaftaran = parseFloat(biayaPendaftaran.value) || 0;
-                const angsuran = parseFloat(biayaAngsuran.value) || 0;
-                totalBiaya.value = pendaftaran + angsuran;
+            function formatRupiah(angka, prefix) {
+                var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
             }
 
-            biayaPendaftaran.addEventListener('input', calculateTotal);
-            biayaAngsuran.addEventListener('input', calculateTotal);
+            function calculateTotal() {
+                const pendaftaran = parseFloat(biayaPendaftaran.value.replace(/[^,\d]/g, '')) || 0;
+                const angsuran = parseFloat(biayaAngsuran.value.replace(/[^,\d]/g, '')) || 0;
+                totalBiaya.value = pendaftaran + angsuran;
+                totalBiaya.value = formatRupiah(totalBiaya.value.toString(), 'Rp. ');
+            }
 
-            // Initial calculation on page load
+            biayaPendaftaran.addEventListener('input', function(e) {
+                e.target.value = formatRupiah(this.value, 'Rp. ');
+                calculateTotal();
+            });
+            biayaAngsuran.addEventListener('input', function(e) {
+                e.target.value = formatRupiah(this.value, 'Rp. ');
+                calculateTotal();
+            });
+
+            // Initial formatting and calculation on page load
+            biayaPendaftaran.value = formatRupiah(biayaPendaftaran.value, 'Rp. ');
+            biayaAngsuran.value = formatRupiah(biayaAngsuran.value, 'Rp. ');
             calculateTotal();
         });
     </script>

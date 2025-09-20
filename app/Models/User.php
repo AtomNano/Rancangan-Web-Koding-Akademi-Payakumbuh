@@ -98,4 +98,46 @@ class User extends Authenticatable
                     ->withPivot('status')
                     ->withTimestamps();
     }
+
+    /**
+     * Get the user's active status, considering their role and enrollment duration.
+     *
+     * @return bool
+     */
+    public function getIsActiveAttribute()
+    {
+        // Admins and teachers are always considered active.
+        if (!$this->isSiswa()) {
+            return true;
+        }
+
+        // Check if the student has any enrollment record with 'active' status.
+        // This is the manual override by the admin.
+        $hasActiveEnrollment = $this->enrollments()->where('status', 'active')->exists();
+
+        if (!$hasActiveEnrollment) {
+            return false;
+        }
+
+        // Now, check if the active period has expired.
+        $registrationDate = $this->tanggal_pendaftaran;
+        $duration = $this->durasi; // e.g., "3 Bulan", "6 Bulan", "12 Bulan"
+
+        if (!$registrationDate || !$duration) {
+            // If essential data is missing, they cannot be active.
+            return false;
+        }
+
+        // Parse the duration string to get the number of months.
+        $months = (int) filter_var($duration, FILTER_SANITIZE_NUMBER_INT);
+        if ($months <= 0) {
+            return false;
+        }
+
+        // Calculate the expiration date.
+        $expirationDate = \Carbon\Carbon::parse($registrationDate)->addMonths($months);
+
+        // The user is active if today is before or on the expiration date.
+        return \Carbon\Carbon::now()->lte($expirationDate);
+    }
 }
