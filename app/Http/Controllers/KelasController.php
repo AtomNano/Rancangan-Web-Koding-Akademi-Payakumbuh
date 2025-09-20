@@ -22,7 +22,8 @@ class KelasController extends Controller
      */
     public function create()
     {
-        return view('admin.kelas.create');
+        $gurus = User::where('role', 'guru')->get();
+        return view('admin.kelas.create', compact('gurus'));
     }
 
     /**
@@ -34,12 +35,14 @@ class KelasController extends Controller
             'nama_kelas' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'bidang' => 'required|in:coding,desain,robotik',
+            'guru_id' => 'required|exists:users,id',
         ]);
 
         Kelas::create([
             'nama_kelas' => $validated['nama_kelas'],
             'deskripsi' => $validated['deskripsi'],
             'bidang' => $validated['bidang'],
+            'guru_id' => $validated['guru_id'],
             'status' => 'active',
         ]);
 
@@ -63,7 +66,8 @@ class KelasController extends Controller
      */
     public function edit(Kelas $kelas)
     {
-        return view('admin.kelas.edit', compact('kelas'));
+        $gurus = User::where('role', 'guru')->get();
+        return view('admin.kelas.edit', compact('kelas', 'gurus'));
     }
 
     /**

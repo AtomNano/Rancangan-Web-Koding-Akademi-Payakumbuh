@@ -17,9 +17,10 @@ class MateriController extends Controller
         $user = auth()->user();
         
         if ($user->isAdmin()) {
-            $materi = Materi::with(['kelas', 'uploadedBy'])->paginate(10);
+            $materi = Materi::with(['kelas', 'uploadedBy'])->latest()->paginate(10);
+            return view('admin.materi.index', compact('materi'));
         } else {
-            $materi = Materi::where('uploaded_by', $user->id)->with('kelas')->paginate(10);
+            $materi = Materi::where('uploaded_by', $user->id)->with('kelas')->latest()->paginate(10);
         }
         
         return view('guru.materi.index', compact('materi'));

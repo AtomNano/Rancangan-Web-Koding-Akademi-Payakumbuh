@@ -64,12 +64,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', function () {
             $stats = [
+                'total_pengguna' => \App\Models\User::count(),
                 'total_guru' => \App\Models\User::where('role', 'guru')->count(),
                 'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
                 'total_kelas' => \App\Models\Kelas::count(),
                 'pending_materi' => \App\Models\Materi::where('status', 'pending')->count(),
+                'materi_aktif' => \App\Models\Materi::where('status', 'approved')->count(),
             ];
-            return view('admin.dashboard', compact('stats'));
+            $pending_verifications = \App\Models\Materi::where('status', 'pending')->with(['uploadedBy', 'kelas'])->latest()->take(5)->get();
+
+            return view('admin.dashboard', compact('stats', 'pending_verifications'));
         })->name('dashboard');
         
         Route::resource('users', UserController::class);

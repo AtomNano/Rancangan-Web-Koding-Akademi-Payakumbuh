@@ -1,64 +1,94 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
+            {{ __('Informasi Profil') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __('Berikut adalah data profil Anda. Data ini tidak dapat diubah melalui halaman ini.') }}
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
+    <div class="mt-6 space-y-6">
+        @if(auth()->user()->isSiswa())
+            @php
+                $activeEnrollment = $user->enrollments()->where('status', 'active')->first();
+            @endphp
+            
+            <!-- Membership Status -->
+            <div class="flex items-center">
+                <h4 class="text-sm font-medium text-gray-700 mr-4">Status Keanggotaan:</h4>
+                @if($activeEnrollment)
+                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        Aktif
+                    </span>
+                @else
+                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                        Tidak Aktif
+                    </span>
+                @endif
+            </div>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('patch')
+            <hr/>
 
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
-        </div>
-
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
-
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+            <!-- Student Data Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
                 <div>
-                    <p class="text-sm mt-2 text-gray-800">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
+                    <h4 class="text-sm font-medium text-gray-500">Nama Lengkap</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->name }}</p>
                 </div>
-            @endif
-        </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-500">Email</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->email }}</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-500">No. Telepon</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->no_telepon ?? '-' }}</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-500">Tanggal Lahir</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->tanggal_lahir ? $user->tanggal_lahir->format('d F Y') : '-' }}</p>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="text-sm font-medium text-gray-500">Alamat</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->alamat ?? '-' }}</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-500">Asal Sekolah</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->sekolah ?? '-' }}</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-500">Bidang Ajar</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->bidang_ajar ?? '-' }}</p>
+                </div>
+                 <div>
+                    <h4 class="text-sm font-medium text-gray-500">Tanggal Pendaftaran</h4>
+                    <p class="mt-1 text-sm text-gray-900">{{ $user->tanggal_pendaftaran ? $user->tanggal_pendaftaran->format('d F Y') : '-' }}</p>
+                </div>
+            </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+        @else
+            <!-- Default view for non-student users -->
+            <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+                @csrf
+                @method('patch')
+        
+                <div>
+                    <x-input-label for="name" :value="__('Name')" />
+                    <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                </div>
+        
+                <div>
+                    <x-input-label for="email" :value="__('Email')" />
+                    <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+                    <x-input-error class="mt-2" :messages="$errors->get('email')" />
+                </div>
 
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
+                <div class="flex items-center gap-4">
+                    <x-primary-button>{{ __('Save') }}</x-primary-button>
+                </div>
+            </form>
+        @endif
+    </div>
 </section>

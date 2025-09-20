@@ -15,62 +15,36 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="h-screen flex bg-gray-100">
+            <!-- Sidebar -->
             @auth
-                <!-- Sidebar Layout for Authenticated Users -->
-                <div class="flex">
-                    <!-- Sidebar -->
-                    <div class="hidden lg:flex lg:flex-shrink-0">
-                        <div class="flex flex-col w-64">
-                            <x-sidebar :user="auth()->user()" />
-                        </div>
-                    </div>
+                <x-sidebar :user="auth()->user()" />
+            @endauth
 
-                    <!-- Main Content Area -->
-                    <div class="flex-1 flex flex-col min-w-0">
-                        <!-- Top Navigation Bar (Mobile) -->
-                        <div class="lg:hidden">
-                            @include('layouts.navigation')
-                        </div>
-
-                        <!-- Page Heading -->
-                        @isset($header)
-                            <header class="bg-white shadow">
-                                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                                    {{ $header }}
-                                </div>
-                            </header>
-                        @endisset
-
-                        <!-- Page Content -->
-                        <main class="flex-1">
-                            {{ $slot }}
-                        </main>
-                    </div>
-                </div>
-
-                <!-- Mobile Sidebar -->
-                <div class="lg:hidden">
-                    <x-sidebar :user="auth()->user()" />
-                </div>
-            @else
-                <!-- Guest Layout -->
-                @include('layouts.navigation')
+            <!-- Main Content -->
+            <div class="flex-1 flex flex-col overflow-hidden">
+                
+                @auth
+                    <!-- Top Bar -->
+                    @include('layouts.navigation')
+                @endauth
 
                 <!-- Page Heading -->
                 @isset($header)
-                    <header class="bg-white shadow">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <header class="bg-white shadow-sm border-b border-gray-200">
+                        <div class="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
                             {{ $header }}
                         </div>
                     </header>
                 @endisset
 
                 <!-- Page Content -->
-                <main>
-                    {{ $slot }}
+                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+                    <div class="container mx-auto px-6 py-8">
+                        {{ $slot }}
+                    </div>
                 </main>
-            @endauth
+            </div>
         </div>
     </body>
 </html>
