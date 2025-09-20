@@ -6,9 +6,36 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MateriController;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Quick login routes for development
+Route::get('/login-admin', function () {
+    if (app()->environment('local')) {
+        Auth::login(User::where('email', 'admin@example.com')->firstOrFail());
+        return redirect('/dashboard');
+    }
+    return redirect('/login');
+});
+
+Route::get('/login-guru', function () {
+    if (app()->environment('local')) {
+        Auth::login(User::where('email', 'guru@example.com')->firstOrFail());
+        return redirect('/dashboard');
+    }
+    return redirect('/login');
+});
+
+Route::get('/login-siswa', function () {
+    if (app()->environment('local')) {
+        Auth::login(User::where('email', 'siswa@example.com')->firstOrFail());
+        return redirect('/dashboard');
+    }
+    return redirect('/login');
 });
 
 // Role-based dashboard routing

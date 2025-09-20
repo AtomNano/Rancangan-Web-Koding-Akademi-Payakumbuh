@@ -141,7 +141,7 @@
             maka class 'right-panel-active' akan ditambahkan saat halaman dimuat ulang,
             sehingga pengguna tetap berada di panel registrasi.
         --}}
-        <div class="container relative w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden {{ $errors->has('name') || $errors->has('password_confirmation') ? 'right-panel-active' : '' }}" id="container" style="min-height: 640px;">
+        <div class="container relative w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden {{ $errors->has('name') || $errors->has('password_confirmation') ? 'right-panel-active' : '' }}" id="container" style="min-height: 340px;">
             <!-- Form Registrasi -->
             <div class="form-container sign-up-container">
                 <form method="POST" action="{{ route('register') }}" class="bg-white flex items-center justify-center flex-col px-12 h-full text-center">

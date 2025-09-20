@@ -22,6 +22,20 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'tanggal_pendaftaran',
+        'sekolah',
+        'bidang_ajar',
+        'hari_belajar',
+        'durasi',
+        'metode_pembayaran',
+        'biaya_pendaftaran',
+        'biaya_angsuran',
+        'total_biaya',
+        'status_promo',
+        'no_telepon',
+        'alamat',
+        'tanggal_lahir',
+        'jenis_kelamin',
     ];
 
     /**
@@ -44,6 +58,12 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'tanggal_pendaftaran' => 'date',
+            'tanggal_lahir' => 'date',
+            'hari_belajar' => 'array',
+            'biaya_pendaftaran' => 'decimal:2',
+            'biaya_angsuran' => 'decimal:2',
+            'total_biaya' => 'decimal:2',
         ];
     }
 

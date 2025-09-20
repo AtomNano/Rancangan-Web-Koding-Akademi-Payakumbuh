@@ -16,21 +16,61 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+            @auth
+                <!-- Sidebar Layout for Authenticated Users -->
+                <div class="flex">
+                    <!-- Sidebar -->
+                    <div class="hidden lg:flex lg:flex-shrink-0">
+                        <div class="flex flex-col w-64">
+                            <x-sidebar :user="auth()->user()" />
+                        </div>
                     </div>
-                </header>
-            @endisset
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                    <!-- Main Content Area -->
+                    <div class="flex-1 flex flex-col min-w-0">
+                        <!-- Top Navigation Bar (Mobile) -->
+                        <div class="lg:hidden">
+                            @include('layouts.navigation')
+                        </div>
+
+                        <!-- Page Heading -->
+                        @isset($header)
+                            <header class="bg-white shadow">
+                                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                                    {{ $header }}
+                                </div>
+                            </header>
+                        @endisset
+
+                        <!-- Page Content -->
+                        <main class="flex-1">
+                            {{ $slot }}
+                        </main>
+                    </div>
+                </div>
+
+                <!-- Mobile Sidebar -->
+                <div class="lg:hidden">
+                    <x-sidebar :user="auth()->user()" />
+                </div>
+            @else
+                <!-- Guest Layout -->
+                @include('layouts.navigation')
+
+                <!-- Page Heading -->
+                @isset($header)
+                    <header class="bg-white shadow">
+                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endisset
+
+                <!-- Page Content -->
+                <main>
+                    {{ $slot }}
+                </main>
+            @endauth
         </div>
     </body>
 </html>
