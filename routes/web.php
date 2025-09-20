@@ -39,19 +39,7 @@ Route::get('/login-siswa', function () {
 });
 
 // Role-based dashboard routing
-Route::get('/dashboard', function () {
-    $user = auth()->user();
-    
-    if ($user->isAdmin()) {
-        return redirect()->route('admin.dashboard');
-    } elseif ($user->isGuru()) {
-        return redirect()->route('guru.dashboard');
-    } elseif ($user->isSiswa()) {
-        return redirect()->route('siswa.dashboard');
-    }
-    
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
