@@ -20,7 +20,8 @@ class MateriController extends Controller
             $materi = Materi::with(['kelas', 'uploadedBy'])->latest()->paginate(10);
             return view('admin.materi.index', compact('materi'));
         } else {
-            $materi = Materi::where('uploaded_by', $user->id)->with('kelas')->latest()->paginate(10);
+            $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray();
+            $materi = Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->with('kelas')->latest()->paginate(10);
         }
         
         return view('guru.materi.index', compact('materi'));
@@ -31,7 +32,9 @@ class MateriController extends Controller
      */
     public function create()
     {
-        $kelas = Kelas::where('status', 'active')->get();
+        $user = auth()->user();
+        $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray();
+        $kelas = Kelas::where('status', 'active')->whereIn('id', $assignedKelasIds)->get();
         return view('guru.materi.create', compact('kelas'));
     }
 
@@ -47,6 +50,14 @@ class MateriController extends Controller
             'kelas_id' => 'required|exists:kelas,id',
             'file_type' => 'required|in:pdf,video,document,link',
         ]);
+
+        $user = auth()->user();
+        $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray();
+
+        // Authorization check: Ensure the selected kelas_id is assigned to the guru
+        if (!in_array($validated['kelas_id'], $assignedKelasIds)) {
+            abort(403, 'Anda tidak diizinkan mengunggah materi ke kelas ini.');
+        }
 
         $file = $request->file('file');
         $fileName = time() . '_' . $file->getClientOriginalName();
@@ -80,7 +91,13 @@ class MateriController extends Controller
      */
     public function edit(Materi $materi)
     {
-        $kelas = Kelas::where('status', 'active')->get();
+        $user = auth()->user();
+        $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray();
+
+        // Authorization check: Ensure the guru is assigned to this material's class
+        abort_if(!in_array($materi->kelas_id, $assignedKelasIds), 403, 'Anda tidak diizinkan mengedit materi di kelas ini.');
+
+        $kelas = Kelas::where('status', 'active')->whereIn('id', $assignedKelasIds)->get();
         return view('guru.materi.edit', compact('materi', 'kelas'));
     }
 
@@ -89,6 +106,12 @@ class MateriController extends Controller
      */
     public function update(Request $request, Materi $materi)
     {
+        $user = auth()->user();
+        $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray();
+
+        // Authorization check: Ensure the guru is assigned to this material's class
+        abort_if(!in_array($materi->kelas_id, $assignedKelasIds), 403, 'Anda tidak diizinkan memperbarui materi di kelas ini.');
+
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
@@ -96,6 +119,11 @@ class MateriController extends Controller
             'kelas_id' => 'required|exists:kelas,id',
             'file_type' => 'required|in:pdf,video,document,link',
         ]);
+
+        // Authorization check: Ensure the selected new kelas_id is assigned to the guru
+        if (!in_array($validated['kelas_id'], $assignedKelasIds)) {
+            abort(403, 'Anda tidak diizinkan memindahkan materi ke kelas ini.');
+        }
 
         $materi->update([
             'judul' => $validated['judul'],
@@ -126,6 +154,12 @@ class MateriController extends Controller
      */
     public function destroy(Materi $materi)
     {
+        $user = auth()->user();
+        $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray();
+
+        // Authorization check: Ensure the guru is assigned to this material's class
+        abort_if(!in_array($materi->kelas_id, $assignedKelasIds), 403, 'Anda tidak diizinkan menghapus materi di kelas ini.');
+
         Storage::disk('public')->delete($materi->file_path);
         $materi->delete();
 

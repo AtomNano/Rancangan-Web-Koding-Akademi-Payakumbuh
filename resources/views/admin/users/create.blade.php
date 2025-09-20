@@ -180,9 +180,42 @@
                             </div>
                         </div>
 
+                    @elseif ($role === 'guru')
+                        <!-- Form for Guru -->
+                        <div class="p-6 space-y-6">
+                            <div>
+                                <x-input-label for="name" :value="__('Nama Lengkap')" />
+                                <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus />
+                            </div>
+                            <div>
+                                <x-input-label for="email" :value="__('Email')" />
+                                <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <x-input-label :value="__('Kelas yang Diajar')" />
+                                <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    @foreach ($kelas as $item)
+                                    <label class="flex items-center">
+                                        <input type="checkbox" name="bidang_ajar[]" value="{{ $item->nama_kelas }}" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" {{ is_array(old('bidang_ajar')) && in_array($item->nama_kelas, old('bidang_ajar')) ? 'checked' : '' }}>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $item->nama_kelas }}</span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div>
+                                <x-input-label for="password" :value="__('Password')" />
+                                <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
+                            </div>
+                            <div>
+                                <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" />
+                                <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required />
+                            </div>
+                        </div>
                     @else
-                        <!-- Fallback for non-siswa roles -->
-                        <div class="p-6">
+                        <!-- Form for Admin -->
+                        <div class="p-6 space-y-6">
                             <div>
                                 <x-input-label for="name" :value="__('Nama')" />
                                 <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus />
@@ -190,13 +223,6 @@
                             <div class="mt-4">
                                 <x-input-label for="email" :value="__('Email')" />
                                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
-                            </div>
-                            <div class="mt-4">
-                                <x-input-label for="status" :value="__('Status')" />
-                                <select id="status" name="status" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="active" selected>Aktif</option>
-                                    <option value="inactive">Tidak Aktif</option>
-                                </select>
                             </div>
                             <div class="mt-4">
                                 <x-input-label for="password" :value="__('Password')" />

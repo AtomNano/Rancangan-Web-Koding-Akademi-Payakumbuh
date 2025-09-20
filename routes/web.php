@@ -92,9 +92,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('guru')->prefix('guru')->name('guru.')->group(function () {
         Route::get('/dashboard', function () {
             $user = auth()->user();
-            $materi_count = \App\Models\Materi::where('uploaded_by', $user->id)->count();
-            $pending_count = \App\Models\Materi::where('uploaded_by', $user->id)->where('status', 'pending')->count();
-            $approved_count = \App\Models\Materi::where('uploaded_by', $user->id)->where('status', 'approved')->count();
+            $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray(); // Get IDs of assigned classes
+
+            $materi_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->count();
+            $pending_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
+            $approved_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
             
             $stats = [
                 'total_materi' => $materi_count,

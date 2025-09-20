@@ -71,78 +71,64 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // Sanitize currency fields before validation
-        $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya'];
-        foreach ($payment_fields as $field) {
-            if ($request->has($field)) {
-                $cleaned_value = preg_replace('/[^\d]/', '', $request->input($field));
-                $request->merge([
-                    $field => $cleaned_value === '' ? null : $cleaned_value
-                ]);
-            }
-        }
-
-        $validated = $request->validate([
+        $baseValidated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
-            // Student-specific fields
-            'tanggal_pendaftaran' => 'nullable|date',
-            'sekolah' => 'nullable|string|max:255',
-            'bidang_ajar' => 'nullable|array', // Changed to array
-            'bidang_ajar.*' => 'exists:kelas,nama_kelas', // Validate each item in the array by nama_kelas
-            'hari_belajar' => 'nullable|array',
-            'durasi' => 'nullable|string|max:255',
-            'metode_pembayaran' => 'nullable|in:transfer,cash',
-            'biaya_pendaftaran' => 'nullable|numeric|min:0',
-            'biaya_angsuran' => 'nullable|numeric|min:0',
-            'total_biaya' => 'nullable|numeric|min:0',
-            'status_promo' => 'nullable|string|max:255',
-            'no_telepon' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
-            'tanggal_lahir' => 'nullable|date',
-            'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
-            'enrollment_status' => 'required|in:active,inactive', // New validation
         ]);
 
-        $userData = [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
-        ];
+        $userData = $baseValidated;
+        $userData['password'] = Hash::make($baseValidated['password']);
 
-        // Add student-specific fields if role is siswa
-        if ($validated['role'] === 'siswa') {
-            $userData = array_merge($userData, [
-                'tanggal_pendaftaran' => $validated['tanggal_pendaftaran'] ?? now()->toDateString(),
-                'sekolah' => $validated['sekolah'] ?? null,
-                'bidang_ajar' => json_encode($validated['bidang_ajar'] ?? []), // Store as JSON
-                'hari_belajar' => $validated['hari_belajar'] ?? null,
-                'durasi' => $validated['durasi'] ?? null,
-                'metode_pembayaran' => $validated['metode_pembayaran'] ?? null,
-                'biaya_pendaftaran' => $validated['biaya_pendaftaran'] ?? null,
-                'biaya_angsuran' => $validated['biaya_angsuran'] ?? null,
-                'total_biaya' => $validated['total_biaya'] ?? null,
-                'status_promo' => $validated['status_promo'] ?? null,
-                'no_telepon' => $validated['no_telepon'] ?? null,
-                'alamat' => $validated['alamat'] ?? null,
-                'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-                'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
+        if ($request->role === 'siswa') {
+            $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya'];
+            foreach ($payment_fields as $field) {
+                if ($request->has($field)) {
+                    $cleaned_value = preg_replace('/[^\d]/', '', $request->input($field));
+                    $request->merge([$field => $cleaned_value === '' ? null : $cleaned_value]);
+                }
+            }
+
+            $studentValidated = $request->validate([
+                'tanggal_pendaftaran' => 'nullable|date',
+                'sekolah' => 'nullable|string|max:255',
+                'bidang_ajar' => 'nullable|array',
+                'bidang_ajar.*' => 'exists:kelas,nama_kelas',
+                'hari_belajar' => 'nullable|array',
+                'durasi' => 'nullable|string|max:255',
+                'metode_pembayaran' => 'nullable|in:transfer,cash',
+                'biaya_pendaftaran' => 'nullable|numeric|min:0',
+                'biaya_angsuran' => 'nullable|numeric|min:0',
+                'total_biaya' => 'nullable|numeric|min:0',
+                'status_promo' => 'nullable|string|max:255',
+                'no_telepon' => 'nullable|string|max:20',
+                'alamat' => 'nullable|string',
+                'tanggal_lahir' => 'nullable|date',
+                'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
+                'enrollment_status' => 'required|in:active,inactive',
             ]);
+            $studentValidated['bidang_ajar'] = json_encode($studentValidated['bidang_ajar'] ?? []);
+            $userData = array_merge($userData, $studentValidated);
+
+        } elseif ($request->role === 'guru') {
+            $guruValidated = $request->validate([
+                'bidang_ajar' => 'nullable|array',
+                'bidang_ajar.*' => 'exists:kelas,nama_kelas',
+            ]);
+            $userData['bidang_ajar'] = json_encode($guruValidated['bidang_ajar'] ?? []);
         }
 
         $user = User::create($userData);
 
-        // If user is siswa and bidang_ajar is selected, create enrollments
-        if ($user->role === 'siswa' && !empty($validated['bidang_ajar'])) {
-            foreach ($validated['bidang_ajar'] as $bidangAjarItem) { // Iterate through class names
-                $kelas = Kelas::where('nama_kelas', $bidangAjarItem)->first(); // Find class by name
+        if (($request->role === 'siswa' || $request->role === 'guru') && !empty($request->bidang_ajar)) {
+            $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
+            foreach ($request->bidang_ajar as $bidangAjarItem) {
+                $kelas = Kelas::where('nama_kelas', $bidangAjarItem)->first();
                 if ($kelas) {
                     $user->enrollments()->create([
-                        'kelas_id' => $kelas->id, // Use class ID
-                        'status' => $validated['enrollment_status'], // Use dynamic status
+                        'kelas_id' => $kelas->id,
+                        'status' => $status,
                     ]);
                 }
             }
@@ -187,96 +173,81 @@ class UserController extends Controller
             }
         }
 
-        $validated = $request->validate([
+        $baseValidated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
-            'enrollment_status' => 'required|in:active,inactive',
-            // Student-specific fields
-            'tanggal_pendaftaran' => 'nullable|date',
-            'sekolah' => 'nullable|string|max:255',
-            'bidang_ajar' => 'nullable|array', // Changed to array
-            'bidang_ajar.*' => 'exists:kelas,nama_kelas', // Validate each item in the array by nama_kelas
-            'hari_belajar' => 'nullable|array',
-            'durasi' => 'nullable|string|max:255',
-            'metode_pembayaran' => 'nullable|in:transfer,cash',
-            'biaya_pendaftaran' => 'nullable|numeric|min:0',
-            'biaya_angsuran' => 'nullable|numeric|min:0',
-            'total_biaya' => 'nullable|numeric|min:0',
-            'status_promo' => 'nullable|string|max:255',
-            'no_telepon' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
-            'tanggal_lahir' => 'nullable|date',
-            'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
         ]);
 
-        $userData = [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role' => $validated['role'],
-        ];
+        $userData = $baseValidated;
 
-        // Add student-specific fields if role is siswa
-        if ($validated['role'] === 'siswa') {
-            $userData = array_merge($userData, [
-                'tanggal_pendaftaran' => $validated['tanggal_pendaftaran'] ?? $user->tanggal_pendaftaran,
-                'sekolah' => $validated['sekolah'] ?? $user->sekolah,
-                'bidang_ajar' => json_encode($validated['bidang_ajar'] ?? []), // Store as JSON
-                'hari_belajar' => $validated['hari_belajar'] ?? $user->hari_belajar,
-                'durasi' => $validated['durasi'] ?? $user->durasi,
-                'metode_pembayaran' => $validated['metode_pembayaran'] ?? $user->metode_pembayaran,
-                'biaya_pendaftaran' => $validated['biaya_pendaftaran'] ?? $user->biaya_pendaftaran,
-                'biaya_angsuran' => $validated['biaya_angsuran'] ?? $user->biaya_angsuran,
-                'total_biaya' => $validated['total_biaya'] ?? $user->total_biaya,
-                'status_promo' => $validated['status_promo'] ?? $user->status_promo,
-                'no_telepon' => $validated['no_telepon'] ?? $user->no_telepon,
-                'alamat' => $validated['alamat'] ?? $user->alamat,
-                'tanggal_lahir' => $validated['tanggal_lahir'] ?? $user->tanggal_lahir,
-                'jenis_kelamin' => $validated['jenis_kelamin'] ?? $user->jenis_kelamin,
+        if ($request->role === 'siswa') {
+            $studentValidated = $request->validate([
+                'tanggal_pendaftaran' => 'nullable|date',
+                'sekolah' => 'nullable|string|max:255',
+                'bidang_ajar' => 'nullable|array',
+                'bidang_ajar.*' => 'exists:kelas,nama_kelas',
+                'hari_belajar' => 'nullable|array',
+                'durasi' => 'nullable|string|max:255',
+                'metode_pembayaran' => 'nullable|in:transfer,cash',
+                'biaya_pendaftaran' => 'nullable|numeric|min:0',
+                'biaya_angsuran' => 'nullable|numeric|min:0',
+                'total_biaya' => 'nullable|numeric|min:0',
+                'status_promo' => 'nullable|string|max:255',
+                'no_telepon' => 'nullable|string|max:20',
+                'alamat' => 'nullable|string',
+                'tanggal_lahir' => 'nullable|date',
+                'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
+                'enrollment_status' => 'required|in:active,inactive',
             ]);
+            $studentValidated['bidang_ajar'] = json_encode($studentValidated['bidang_ajar'] ?? []);
+            $userData = array_merge($userData, $studentValidated);
+
+        } elseif ($request->role === 'guru') {
+            $guruValidated = $request->validate([
+                'bidang_ajar' => 'nullable|array',
+                'bidang_ajar.*' => 'exists:kelas,nama_kelas',
+            ]);
+            $userData['bidang_ajar'] = json_encode($guruValidated['bidang_ajar'] ?? []);
         }
 
         $user->update($userData);
 
-        if ($validated['password']) {
-            $user->update(['password' => Hash::make($validated['password'])]);
+        if ($baseValidated['password']) {
+            $user->update(['password' => Hash::make($baseValidated['password'])]);
         }
 
-        if ($user->role === 'siswa') {
-            // 1. Get the submitted class IDs from the form's nama_kelas values
+        if (($request->role === 'siswa' || $request->role === 'guru')) {
             $selectedKelasIds = [];
-            if (!empty($validated['bidang_ajar'])) {
-                $selectedKelasIds = Kelas::whereIn('nama_kelas', $validated['bidang_ajar'])->pluck('id')->toArray();
+            if (!empty($request->bidang_ajar)) {
+                $selectedKelasIds = Kelas::whereIn('nama_kelas', $request->bidang_ajar)->pluck('id')->toArray();
             }
 
-            // 2. Get the user's current class IDs directly from the enrollments table
             $currentKelasIds = \App\Models\Enrollment::where('user_id', $user->id)->pluck('kelas_id')->toArray();
 
-            // 3. Determine which enrollments to delete, add, or update
             $idsToDelete = array_diff($currentKelasIds, $selectedKelasIds);
             $idsToAdd = array_diff($selectedKelasIds, $currentKelasIds);
             $idsToUpdate = array_intersect($currentKelasIds, $selectedKelasIds);
 
-            // 4. Perform deletion for classes the user is no longer enrolled in
             if (!empty($idsToDelete)) {
                 \App\Models\Enrollment::where('user_id', $user->id)->whereIn('kelas_id', $idsToDelete)->delete();
             }
 
-            // 5. Perform addition for new classes
             foreach ($idsToAdd as $kelasId) {
+                $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
                 \App\Models\Enrollment::create([
                     'user_id' => $user->id,
                     'kelas_id' => $kelasId,
-                    'status' => $validated['enrollment_status'],
+                    'status' => $status,
                 ]);
             }
 
-            // 6. Perform an update for classes the user remains enrolled in
             if (!empty($idsToUpdate)) {
+                $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
                 \App\Models\Enrollment::where('user_id', $user->id)
                     ->whereIn('kelas_id', $idsToUpdate)
-                    ->update(['status' => $validated['enrollment_status']]);
+                    ->update(['status' => $status]);
             }
         }
 
@@ -284,9 +255,8 @@ class UserController extends Controller
             ->with('success', 'User berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
+
     public function destroy(User $user)
     {
         $role = $user->role;
