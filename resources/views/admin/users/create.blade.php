@@ -150,15 +150,15 @@
                                 </div>
                                 <div>
                                     <x-input-label for="biaya_pendaftaran" :value="__('Biaya Pendaftaran')" />
-                                    <x-text-input id="biaya_pendaftaran" class="block mt-1 w-full" type="number" name="biaya_pendaftaran" :value="old('biaya_pendaftaran', '150000')" />
+                                    <x-text-input id="biaya_pendaftaran" class="block mt-1 w-full" type="text" name="biaya_pendaftaran" :value="old('biaya_pendaftaran', '150000')" />
                                 </div>
                                 <div>
                                     <x-input-label for="biaya_angsuran" :value="__('Biaya Angsuran')" />
-                                    <x-text-input id="biaya_angsuran" class="block mt-1 w-full" type="number" name="biaya_angsuran" :value="old('biaya_angsuran', '1250000')" />
+                                    <x-text-input id="biaya_angsuran" class="block mt-1 w-full" type="text" name="biaya_angsuran" :value="old('biaya_angsuran', '1250000')" />
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label for="total_biaya" :value="__('Total Biaya')" />
-                                    <x-text-input id="total_biaya" class="block mt-1 w-full bg-gray-200" type="number" name="total_biaya" :value="old('total_biaya')" readonly />
+                                    <x-text-input id="total_biaya" class="block mt-1 w-full bg-gray-200" type="text" name="total_biaya" :value="old('total_biaya')" readonly />
                                 </div>
                             </div>
                         </div>
