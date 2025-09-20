@@ -35,7 +35,7 @@
                 </a>
                 <a href="{{ route('admin.kelas.index') }}" 
                    class="group flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.kelas.index') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                     <svg class="mr-3 h-6 w-6" xmlns="http://www.w3org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                     <svg class="mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
                     </svg>
                     Manajemen Kelas
@@ -47,8 +47,8 @@
                     </svg>
                     Verifikasi Materi
                 </a>
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-400 cursor-not-allowed">
+                <a href="{{ route('admin.backup.index') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.backup.index') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                     <svg class="mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7s0 4 8 4 8-4 8-4" />
                     </svg>

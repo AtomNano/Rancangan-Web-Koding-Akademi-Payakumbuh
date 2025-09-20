@@ -14,62 +14,74 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-sm text-gray-500">Total Pengguna</p>
-                <p class="text-3xl font-bold text-gray-800">{{ $stats['total_pengguna'] }}</p>
+        <a href="{{ route('admin.users.index') }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Total Pengguna</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['total_pengguna'] }}</p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m-4.5 3.903A2.5 2.5 0 017 15h10a2.5 2.5 0 012.5 2.5V21" /></svg>
+                </div>
             </div>
-            <div class="bg-blue-100 p-3 rounded-full">
-                <svg class="h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m-4.5 3.903A2.5 2.5 0 017 15h10a2.5 2.5 0 012.5 2.5V21" /></svg>
+        </a>
+        <a href="{{ route('admin.users.index', ['role' => 'guru']) }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Total Guru</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['total_guru'] }}</p>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                </div>
             </div>
-        </div>
-        <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-sm text-gray-500">Total Guru</p>
-                <p class="text-3xl font-bold text-gray-800">{{ $stats['total_guru'] }}</p>
+        </a>
+        <a href="{{ route('admin.users.index', ['role' => 'siswa']) }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Total Siswa</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['total_siswa'] }}</p>
+                </div>
+                <div class="bg-orange-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222 4 2.222V20" /></svg>
+                </div>
             </div>
-            <div class="bg-green-100 p-3 rounded-full">
-                <svg class="h-6 w-6 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+        </a>
+        <a href="{{ route('admin.materi.index') }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Pending Verifikasi</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['pending_materi'] }}</p>
+                    <p class="text-xs text-gray-400">Perlu ditinjau</p>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
             </div>
-        </div>
-        <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-sm text-gray-500">Total Siswa</p>
-                <p class="text-3xl font-bold text-gray-800">{{ $stats['total_siswa'] }}</p>
+        </a>
+        <a href="{{ route('admin.kelas.index') }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Total Kelas</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['total_kelas'] }}</p>
+                </div>
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
+                </div>
             </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-                <svg class="h-6 w-6 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222 4 2.222V20" /></svg>
+        </a>
+        <a href="{{ route('admin.materi.index') }}" class="block p-5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500">Materi Aktif</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $stats['materi_aktif'] }}</p>
+                    <p class="text-xs text-gray-400">Sudah diverifikasi</p>
+                </div>
+                <div class="bg-indigo-100 p-3 rounded-full">
+                    <svg class="h-6 w-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                </div>
             </div>
-        </div>
-        <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-sm text-gray-500">Pending Verifikasi</p>
-                <p class="text-3xl font-bold text-gray-800">{{ $stats['pending_materi'] }}</p>
-                <p class="text-xs text-gray-400">Perlu ditinjau</p>
-            </div>
-            <div class="bg-yellow-100 p-3 rounded-full">
-                <svg class="h-6 w-6 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
-        </div>
-        <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-sm text-gray-500">Total Kelas</p>
-                <p class="text-3xl font-bold text-gray-800">{{ $stats['total_kelas'] }}</p>
-            </div>
-            <div class="bg-purple-100 p-3 rounded-full">
-                <svg class="h-6 w-6 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
-            </div>
-        </div>
-        <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-sm text-gray-500">Materi Aktif</p>
-                <p class="text-3xl font-bold text-gray-800">{{ $stats['materi_aktif'] }}</p>
-                <p class="text-xs text-gray-400">Sudah diverifikasi</p>
-            </div>
-            <div class="bg-indigo-100 p-3 rounded-full">
-                <svg class="h-6 w-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
-            </div>
-        </div>
+        </a>
     </div>
 
     <!-- Main Content Grid -->

@@ -12,9 +12,15 @@ class Kelas extends Model
     protected $fillable = [
         'nama_kelas',
         'deskripsi',
+        'guru_id', // Added this
         'bidang',
         'status',
     ];
+
+    public function guru()
+    {
+        return $this->belongsTo(User::class, 'guru_id');
+    }
 
     public function materi()
     {

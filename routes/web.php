@@ -87,6 +87,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
         Route::post('materi/{materi}/approve', [MateriController::class, 'approve'])->name('materi.approve');
         Route::post('materi/{materi}/reject', [MateriController::class, 'reject'])->name('materi.reject');
+
+        // Backup Routes
+        Route::get('backup', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backup.index');
+        Route::get('backup/create', [\App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backup.create');
     });
 
     // Guru routes

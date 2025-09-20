@@ -15,10 +15,26 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $role = $request->get('role', 'guru');
-        $users = User::where('role', $role)->paginate(10);
+        $role = $request->get('role');
+
+        $query = User::query();
+
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        $users = $query->latest()->paginate(10);
+
+        $stats = [
+            'total' => User::count(),
+            'guru' => User::where('role', 'guru')->count(),
+            'siswa' => User::where('role', 'siswa')->count(),
+            'inactive' => User::whereDoesntHave('enrollments', function($q) {
+                $q->where('status', 'active');
+            })->where('role', 'siswa')->count(),
+        ];
         
-        return view('admin.users.index', compact('users', 'role'));
+        return view('admin.users.index', compact('users', 'role', 'stats'));
     }
 
     /**

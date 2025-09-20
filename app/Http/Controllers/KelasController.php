@@ -13,8 +13,16 @@ class KelasController extends Controller
      */
     public function index()
     {
-        $kelas = Kelas::withCount('students')->paginate(10);
-        return view('admin.kelas.index', compact('kelas'));
+        $kelasList = Kelas::with('guru', 'enrollments', 'materi')->latest()->get();
+
+        $stats = [
+            'total_kelas' => \App\Models\Kelas::count(),
+            'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
+            'total_guru' => \App\Models\User::where('role', 'guru')->count(),
+            'total_materi' => \App\Models\Materi::count(),
+        ];
+
+        return view('admin.kelas.index', ['kelasList' => $kelasList, 'stats' => $stats]);
     }
 
     /**
