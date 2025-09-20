@@ -153,6 +153,28 @@
                                     <dt class="text-sm font-medium text-gray-500">Bergabung Sejak</dt>
                                     <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $user->created_at->format('d F Y') }}</dd>
                                 </div>
+
+                                @if ($user->isGuru())
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <dt class="text-sm font-medium text-gray-500">No. Telepon</dt>
+                                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $user->no_telepon ?? '-' }}</dd>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Kelas yang Diajar</h4>
+                                        <div class="space-y-2">
+                                            @forelse($user->enrolledClasses as $kelas)
+                                                <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                                                    <div>
+                                                        <h5 class="text-sm font-medium text-gray-900">{{ $kelas->nama_kelas }}</h5>
+                                                        <p class="text-xs text-gray-500">{{ ucfirst($kelas->bidang) }}</p>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-sm text-gray-500">Guru ini belum mengajar kelas manapun.</p>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                @endif
                             </dl>
                         </div>
                     @endif

@@ -191,6 +191,10 @@
                                 <x-input-label for="email" :value="__('Email')" />
                                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
                             </div>
+                            <div>
+                                <x-input-label for="no_telepon" :value="__('No. Telepon')" />
+                                <x-text-input id="no_telepon" class="block mt-1 w-full" type="text" name="no_telepon" :value="old('no_telepon')" />
+                            </div>
 
                             <div class="md:col-span-2">
                                 <x-input-label :value="__('Kelas yang Diajar')" />

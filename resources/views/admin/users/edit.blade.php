@@ -193,7 +193,6 @@
                         </div>
 
                     @elseif ($user->role === 'guru')
-                        <!-- Form for Guru -->
                         <div class="p-6 space-y-6">
                             <div>
                                 <x-input-label for="name" :value="__('Nama Lengkap')" />
@@ -202,6 +201,10 @@
                             <div>
                                 <x-input-label for="email" :value="__('Email')" />
                                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $user->email)" required />
+                            </div>
+                            <div>
+                                <x-input-label for="no_telepon" :value="__('No. Telepon')" />
+                                <x-text-input id="no_telepon" class="block mt-1 w-full" type="text" name="no_telepon" :value="old('no_telepon', $user->no_telepon)" />
                             </div>
 
                             <div class="md:col-span-2">

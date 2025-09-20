@@ -115,11 +115,11 @@ class UserController extends Controller
             $guruValidated = $request->validate([
                 'bidang_ajar' => 'nullable|array',
                 'bidang_ajar.*' => 'exists:kelas,nama_kelas',
+                'no_telepon' => 'nullable|string|max:20',
             ]);
             $userData['bidang_ajar'] = json_encode($guruValidated['bidang_ajar'] ?? []);
+            $userData['no_telepon'] = $guruValidated['no_telepon'] ?? null;
         }
-
-        $user = User::create($userData);
 
         if (($request->role === 'siswa' || $request->role === 'guru') && !empty($request->bidang_ajar)) {
             $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
@@ -176,11 +176,18 @@ class UserController extends Controller
         $baseValidated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
         ]);
 
         $userData = $baseValidated;
+
+        // Handle password separately
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => 'string|min:8|confirmed',
+            ]);
+            $userData['password'] = Hash::make($request->password);
+        }
 
         if ($request->role === 'siswa') {
             $studentValidated = $request->validate([
@@ -208,15 +215,13 @@ class UserController extends Controller
             $guruValidated = $request->validate([
                 'bidang_ajar' => 'nullable|array',
                 'bidang_ajar.*' => 'exists:kelas,nama_kelas',
+                'no_telepon' => 'nullable|string|max:20',
             ]);
             $userData['bidang_ajar'] = json_encode($guruValidated['bidang_ajar'] ?? []);
+            $userData['no_telepon'] = $guruValidated['no_telepon'] ?? $user->no_telepon;
         }
 
         $user->update($userData);
-
-        if ($baseValidated['password']) {
-            $user->update(['password' => Hash::make($baseValidated['password'])]);
-        }
 
         if (($request->role === 'siswa' || $request->role === 'guru')) {
             $selectedKelasIds = [];

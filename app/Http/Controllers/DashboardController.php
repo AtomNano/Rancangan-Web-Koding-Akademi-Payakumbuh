@@ -17,10 +17,16 @@ class DashboardController extends Controller
         if ($user) {
             switch ($user->role) {
                 case 'admin':
+                    // Student status calculation
+                    $all_siswa = User::where('role', 'siswa')->get();
+                    [$siswa_aktif, $siswa_tidak_aktif] = $all_siswa->partition(fn ($user) => $user->is_active);
+
                     $stats = [
                         'total_pengguna' => User::count(),
                         'total_guru' => User::where('role', 'guru')->count(),
-                        'total_siswa' => User::where('role', 'siswa')->count(),
+                        'total_siswa' => $all_siswa->count(),
+                        'siswa_aktif' => $siswa_aktif->count(),
+                        'siswa_tidak_aktif' => $siswa_tidak_aktif->count(),
                         'total_kelas' => Kelas::count(),
                         'pending_materi' => Materi::where('status', 'pending')->count(),
                         'materi_aktif' => Materi::where('status', 'approved')->count(),
