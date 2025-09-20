@@ -58,11 +58,11 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
-            'kelas_ids' => 'array|exists:kelas,id',
             // Student-specific fields
             'tanggal_pendaftaran' => 'nullable|date',
             'sekolah' => 'nullable|string|max:255',
-            'bidang_ajar' => 'nullable|string|max:255',
+            'bidang_ajar' => 'nullable|array', // Changed to array
+            'bidang_ajar.*' => 'exists:kelas,nama_kelas', // Validate each item in the array by nama_kelas
             'hari_belajar' => 'nullable|array',
             'durasi' => 'nullable|string|max:255',
             'metode_pembayaran' => 'nullable|in:transfer,cash',
@@ -74,6 +74,7 @@ class UserController extends Controller
             'alamat' => 'nullable|string',
             'tanggal_lahir' => 'nullable|date',
             'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
+            'enrollment_status' => 'required|in:active,inactive', // New validation
         ]);
 
         $userData = [
@@ -88,7 +89,7 @@ class UserController extends Controller
             $userData = array_merge($userData, [
                 'tanggal_pendaftaran' => $validated['tanggal_pendaftaran'] ?? now()->toDateString(),
                 'sekolah' => $validated['sekolah'] ?? null,
-                'bidang_ajar' => $validated['bidang_ajar'] ?? null,
+                'bidang_ajar' => json_encode($validated['bidang_ajar'] ?? []), // Store as JSON
                 'hari_belajar' => $validated['hari_belajar'] ?? null,
                 'durasi' => $validated['durasi'] ?? null,
                 'metode_pembayaran' => $validated['metode_pembayaran'] ?? null,
@@ -105,20 +106,22 @@ class UserController extends Controller
 
         $user = User::create($userData);
 
-        // If user is siswa, enroll them in selected classes
-        if ($user->role === 'siswa' && isset($validated['kelas_ids'])) {
-            foreach ($validated['kelas_ids'] as $kelasId) {
-                $user->enrollments()->create([
-                    'kelas_id' => $kelasId,
-                    'status' => 'active',
-                ]);
+        // If user is siswa and bidang_ajar is selected, create enrollments
+        if ($user->role === 'siswa' && !empty($validated['bidang_ajar'])) {
+            foreach ($validated['bidang_ajar'] as $bidangAjarItem) { // Iterate through class names
+                $kelas = Kelas::where('nama_kelas', $bidangAjarItem)->first(); // Find class by name
+                if ($kelas) {
+                    $user->enrollments()->create([
+                        'kelas_id' => $kelas->id, // Use class ID
+                        'status' => $validated['enrollment_status'], // Use dynamic status
+                    ]);
+                }
             }
         }
 
         return redirect()->route('admin.users.index', ['role' => $user->role])
             ->with('success', 'User berhasil dibuat.');
     }
-
     /**
      * Display the specified resource.
      */
@@ -149,11 +152,11 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
-            'kelas_ids' => 'array|exists:kelas,id',
             // Student-specific fields
             'tanggal_pendaftaran' => 'nullable|date',
             'sekolah' => 'nullable|string|max:255',
-            'bidang_ajar' => 'nullable|string|max:255',
+            'bidang_ajar' => 'nullable|array', // Changed to array
+            'bidang_ajar.*' => 'exists:kelas,nama_kelas', // Validate each item in the array by nama_kelas
             'hari_belajar' => 'nullable|array',
             'durasi' => 'nullable|string|max:255',
             'metode_pembayaran' => 'nullable|in:transfer,cash',
@@ -165,6 +168,7 @@ class UserController extends Controller
             'alamat' => 'nullable|string',
             'tanggal_lahir' => 'nullable|date',
             'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
+            'enrollment_status' => 'required|in:active,inactive', // New validation
         ]);
 
         $userData = [
@@ -178,7 +182,7 @@ class UserController extends Controller
             $userData = array_merge($userData, [
                 'tanggal_pendaftaran' => $validated['tanggal_pendaftaran'] ?? $user->tanggal_pendaftaran,
                 'sekolah' => $validated['sekolah'] ?? $user->sekolah,
-                'bidang_ajar' => $validated['bidang_ajar'] ?? $user->bidang_ajar,
+                'bidang_ajar' => json_encode($validated['bidang_ajar'] ?? []), // Store as JSON
                 'hari_belajar' => $validated['hari_belajar'] ?? $user->hari_belajar,
                 'durasi' => $validated['durasi'] ?? $user->durasi,
                 'metode_pembayaran' => $validated['metode_pembayaran'] ?? $user->metode_pembayaran,
@@ -199,15 +203,21 @@ class UserController extends Controller
             $user->update(['password' => Hash::make($validated['password'])]);
         }
 
-        // Update class enrollments for siswa
+        // Update enrollment for siswa
         if ($user->role === 'siswa') {
+            // Delete all existing enrollments first
             $user->enrollments()->delete();
-            if (isset($validated['kelas_ids'])) {
-                foreach ($validated['kelas_ids'] as $kelasId) {
-                    $user->enrollments()->create([
-                        'kelas_id' => $kelasId,
-                        'status' => 'active',
-                    ]);
+
+            // If bidang_ajar is selected, create new enrollments
+            if (!empty($validated['bidang_ajar'])) {
+                foreach ($validated['bidang_ajar'] as $bidangAjarItem) {
+                    $kelas = Kelas::where('nama_kelas', $bidangAjarItem)->first();
+                    if ($kelas) {
+                        $user->enrollments()->create([
+                            'kelas_id' => $kelas->id,
+                            'status' => $validated['enrollment_status'],
+                        ]);
+                    }
                 }
             }
         }

@@ -72,13 +72,16 @@
                                     <x-input-label for="sekolah" :value="__('Sekolah/Institusi')" />
                                     <x-text-input id="sekolah" class="block mt-1 w-full" type="text" name="sekolah" :value="old('sekolah')" />
                                 </div>
-                                <div>
-                                    <x-input-label for="bidang_ajar" :value="__('Bidang Ajar')" />
-                                    <select id="bidang_ajar" name="bidang_ajar" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                        <option value="">Pilih Bidang</option>
-                                        <option value="Robotic" {{ old('bidang_ajar') == 'Robotic' ? 'selected' : '' }}>Robotic</option>
-                                        <option value="Coding" {{ old('bidang_ajar') == 'Coding' ? 'selected' : '' }}>Coding</option>
-                                    </select>
+                                <div class="md:col-span-2">
+                                    <x-input-label :value="__('Bidang Ajar (Kelas)')" />
+                                    <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        @foreach ($kelas as $item)
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="bidang_ajar[]" value="{{ $item->nama_kelas }}" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" {{ is_array(old('bidang_ajar')) && in_array($item->nama_kelas, old('bidang_ajar')) ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm text-gray-600">{{ $item->nama_kelas }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
                                 </div>
                                 <div>
                                     <x-input-label for="durasi" :value="__('Durasi Program')" />
@@ -99,6 +102,13 @@
                                         </label>
                                         @endforeach
                                     </div>
+                                </div>
+                                <div>
+                                    <x-input-label for="enrollment_status" :value="__('Status Pendaftaran')" />
+                                    <select id="enrollment_status" name="enrollment_status" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                        <option value="active" {{ old('enrollment_status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                                        <option value="inactive" {{ old('enrollment_status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -134,21 +144,7 @@
                             </div>
                         </div>
 
-                        <!-- Class Selection Section -->
-                        <div class="p-6 bg-green-50 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Pilihan Kelas</h3>
-                            <div class="mt-4">
-                                <x-input-label for="kelas_ids" :value="__('Daftarkan ke Kelas')" />
-                                <select name="kelas_ids[]" id="kelas_ids" multiple class="block mt-1 w-full h-40 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    @foreach ($kelas as $item)
-                                        <option value="{{ $item->id }}" {{ is_array(old('kelas_ids')) && in_array($item->id, old('kelas_ids')) ? 'selected' : '' }}>
-                                            {{ $item->nama_kelas }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <p class="text-sm text-gray-500 mt-1">Tahan Ctrl (atau Cmd di Mac) untuk memilih lebih dari satu.</p>
-                            </div>
-                        </div>
+
 
                         <!-- Login Information Section -->
                         <div class="p-6 bg-purple-50 border-b border-gray-200">
