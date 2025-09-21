@@ -79,14 +79,14 @@
                                     </div>
                                 </div>
                                 <div class="flex space-x-2">
-                                    <a href="{{ Storage::url($materi->file_path) }}" target="_blank"
-                                       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                        Lihat
-                                    </a>
-                                    <a href="{{ Storage::url($materi->file_path) }}" download
-                                       class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                        Download
-                                    </a>
+                                    @if ($materi->file_type === 'pdf')
+                                        <iframe src="{{ Storage::url($materi->file_path) }}" class="w-full h-96" frameborder="0"></iframe>
+                                    @else
+                                        <a href="{{ Storage::url($materi->file_path) }}" download
+                                           class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
+                                            Download
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
