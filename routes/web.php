@@ -14,28 +14,31 @@ Route::get('/', function () {
 });
 
 // Quick login routes for development
-Route::get('/login-admin', function () {
-    if (app()->environment('local')) {
-        Auth::login(User::where('email', 'admin@example.com')->firstOrFail());
-        return redirect('/dashboard');
-    }
-    return redirect('/login');
-});
+Route::middleware(['web'])->group(function () {
+    Route::get('/quick-login/{role}', function ($role) {
+        if (!app()->environment('local')) {
+            return redirect('/login');
+        }
 
-Route::get('/login-guru', function () {
-    if (app()->environment('local')) {
-        Auth::login(User::where('email', 'guru@example.com')->firstOrFail());
-        return redirect('/dashboard');
-    }
-    return redirect('/login');
-});
+        $email = match ($role) {
+            'admin' => 'admin@example.com',
+            'guru' => 'guru@example.com',
+            'siswa' => 'siswa@example.com',
+            default => null,
+        };
 
-Route::get('/login-siswa', function () {
-    if (app()->environment('local')) {
-        Auth::login(User::where('email', 'siswa@example.com')->firstOrFail());
-        return redirect('/dashboard');
-    }
-    return redirect('/login');
+        if (!$email) {
+            return redirect('/login');
+        }
+
+        try {
+            $user = \App\Models\User::where('email', $email)->firstOrFail();
+            \Illuminate\Support\Facades\Auth::login($user);
+            return redirect('/dashboard');
+        } catch (\Exception $e) {
+            return redirect('/login')->with('error', 'Demo account not found');
+        }
+    })->where('role', 'admin|guru|siswa');
 });
 
 // Role-based dashboard routing
