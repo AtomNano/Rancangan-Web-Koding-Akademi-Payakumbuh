@@ -13,6 +13,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/quick-login/admin', function () {
+    $admin = App\Models\User::where('role', 'admin')->first();
+    if ($admin) {
+        auth()->login($admin);
+        return redirect('/admin/dashboard');
+    }
+    return 'No admin user found.';
+});
+
 // Quick login routes for development
 Route::middleware(['web'])->group(function () {
     Route::get('/quick-login/{role}', function ($role) {
@@ -31,13 +40,7 @@ Route::middleware(['web'])->group(function () {
             return redirect('/login');
         }
 
-        try {
-            $user = \App\Models\User::where('email', $email)->firstOrFail();
-            \Illuminate\Support\Facades\Auth::login($user);
-            return redirect('/dashboard');
-        } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Demo account not found');
-        }
+
     })->where('role', 'admin|guru|siswa');
 });
 
@@ -75,14 +78,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         Route::resource('users', UserController::class);
         
-        Route::resource('kelas', KelasController::class);
+        Route::resource('kelas', KelasController::class)->parameters([
+            'kelas' => 'kelas',
+        ]);
         
         // Additional class routes
         Route::get('kelas/{kelas}/enroll', [KelasController::class, 'enrollForm'])->name('kelas.enroll');
         Route::post('kelas/{kelas}/enroll', [KelasController::class, 'enroll'])->name('kelas.enroll.store');
+        Route::delete('kelas/{kelas}/enroll/{user}', [KelasController::class, 'unenroll'])->name('kelas.unenroll');
         
         // Material verification routes
         Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
+        Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
         Route::post('materi/{materi}/approve', [MateriController::class, 'approve'])->name('materi.approve');
         Route::post('materi/{materi}/reject', [MateriController::class, 'reject'])->name('materi.reject');
 
