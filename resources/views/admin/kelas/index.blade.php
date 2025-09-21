@@ -79,7 +79,7 @@
                     <div class="border-t border-gray-200 pt-4">
                         <p class="text-xs text-gray-500 mb-2">Guru Pengajar</p>
                         <div class="flex items-center">
-                             <div class="w-8 h-8 bg-indigo-200 rounded-full flex items-center justify-center">
+                            <div class="w-8 h-8 bg-indigo-200 rounded-full flex items-center justify-center">
                                 <span class="text-indigo-700 font-bold text-xs">{{ substr($kelas->guru->name ?? 'N/A', 0, 2) }}</span>
                             </div>
                             <p class="ml-3 text-sm font-medium text-gray-800">{{ $kelas->guru->name ?? 'Belum ditugaskan' }}</p>

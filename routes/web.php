@@ -13,6 +13,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/quick-login/admin', function () {
+    $admin = App\Models\User::where('role', 'admin')->first();
+    if ($admin) {
+        auth()->login($admin);
+        return redirect('/admin/dashboard');
+    }
+    return 'No admin user found.';
+});
+
 // Quick login routes for development
 Route::middleware(['web'])->group(function () {
     Route::get('/quick-login/{role}', function ($role) {

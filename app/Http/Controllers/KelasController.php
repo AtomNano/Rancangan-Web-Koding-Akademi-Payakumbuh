@@ -108,6 +108,7 @@ class KelasController extends Controller
         $validated = $request->validate([
             'nama_kelas' => 'required|string|max:255',
             'deskripsi' => 'required|string',
+            'guru_id' => 'required|exists:users,id',
             'bidang' => 'required|in:coding,desain,robotik',
             'status' => 'required|in:active,inactive',
         ]);
