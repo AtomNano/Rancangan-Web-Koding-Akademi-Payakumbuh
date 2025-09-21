@@ -63,10 +63,32 @@ class KelasController extends Controller
      */
     public function show(Kelas $kelas)
     {
-        $students = $kelas->students()->paginate(10);
+        $kelas->load('guru'); // Load the teacher for the class
+        $students = $kelas->students()->with('presensi')->get(); // Load students with their presensis
+        $approvedMateri = $kelas->materi()->where('status', 'approved')->get();
+        $totalApprovedMateri = $approvedMateri->count();
+
+        $studentsProgress = [];
+        foreach ($students as $student) {
+            $completedMateriCount = $student->presensi ? $student->presensi->whereIn('materi_id', $approvedMateri->pluck('id'))->count() : 0;
+            $progress = $totalApprovedMateri > 0 ? round(($completedMateriCount / $totalApprovedMateri) * 100, 2) : 0;
+            $studentsProgress[] = [
+                'student' => $student,
+                'completed_materi_count' => $completedMateriCount,
+                'total_approved_materi' => $totalApprovedMateri,
+                'progress' => $progress,
+            ];
+        }
+
+        $classProgress = 0;
+        if (count($studentsProgress) > 0) {
+            $totalProgress = array_sum(array_column($studentsProgress, 'progress'));
+            $classProgress = round($totalProgress / count($studentsProgress), 2);
+        }
+
         $materi = $kelas->materi()->with('uploadedBy')->paginate(10);
         
-        return view('admin.kelas.show', compact('kelas', 'students', 'materi'));
+        return view('admin.kelas.show', compact('kelas', 'studentsProgress', 'materi', 'classProgress'));
     }
 
     /**
@@ -139,5 +161,16 @@ class KelasController extends Controller
 
         return redirect()->route('admin.kelas.show', $kelas)
             ->with('success', 'Siswa berhasil didaftarkan ke kelas.');
+    }
+
+    /**
+     * Unenroll a student from a class.
+     */
+    public function unenroll(Kelas $kelas, User $user)
+    {
+        $kelas->enrollments()->where('user_id', $user->id)->delete();
+
+        return redirect()->route('admin.kelas.show', $kelas)
+            ->with('success', 'Siswa berhasil dikeluarkan dari kelas.');
     }
 }
