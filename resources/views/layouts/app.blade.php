@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="h-screen flex bg-gray-100">
+        <div x-data="{ sidebarOpen: true }" class="h-screen flex bg-gray-100">
             <!-- Sidebar -->
             @auth
                 <x-sidebar :user="auth()->user()" />
