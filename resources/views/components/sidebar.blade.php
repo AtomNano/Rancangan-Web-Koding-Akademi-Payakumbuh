@@ -136,5 +136,4 @@
     </div>
 </div>
 
-<!-- Sidebar backdrop for mobile -->
-<div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" x-cloak></div>
+<!-- Removed the backdrop from here as it's now in app.blade.php -->

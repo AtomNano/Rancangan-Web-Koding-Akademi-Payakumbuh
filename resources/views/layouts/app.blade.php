@@ -15,10 +15,14 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div x-data="{ sidebarOpen: true }" class="h-screen flex bg-gray-100">
+        <div class="h-screen flex bg-gray-100">
             <!-- Sidebar -->
             @auth
-                <x-sidebar :user="auth()->user()" />
+                <div x-data="{ sidebarOpen: true }">
+                    <x-sidebar :user="auth()->user()" />
+                    <!-- Sidebar backdrop for mobile -->
+                    <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" x-cloak></div>
+                </div>
             @endauth
 
             <!-- Main Content -->
