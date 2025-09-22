@@ -80,7 +80,9 @@
                                 </div>
                                 <div class="flex space-x-2">
                                     @if ($materi->file_type === 'pdf')
-                                        <iframe src="{{ Storage::url($materi->file_path) }}" class="w-full h-96" frameborder="0"></iframe>
+                                        <div class="w-full">
+                                            <x-pdf-viewer :materi="$materi" />
+                                        </div>
                                     @else
                                         <a href="{{ Storage::url($materi->file_path) }}" download
                                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">

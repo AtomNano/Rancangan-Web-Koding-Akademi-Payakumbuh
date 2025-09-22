@@ -34,6 +34,16 @@ class Materi extends Model
         return $this->belongsTo(User::class, 'uploaded_by');
     }
 
+    public function progress()
+    {
+        return $this->hasMany(MateriProgress::class);
+    }
+
+    public function userProgress($userId)
+    {
+        return $this->progress()->where('user_id', $userId)->first();
+    }
+
     public function isApproved()
     {
         return $this->status === 'approved';

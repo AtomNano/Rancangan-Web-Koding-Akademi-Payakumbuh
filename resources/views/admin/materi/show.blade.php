@@ -74,13 +74,10 @@
 
                         <!-- Kolom Kanan: Preview Materi -->
                         <div class="w-full md:w-1/3 mt-8 md:mt-0">
-                            <div class="bg-gray-100 dark:bg-gray-900/50 rounded-lg p-4 h-full flex flex-col justify-center items-center">
+                            <div class="bg-gray-100 dark:bg-gray-900/50 rounded-lg p-4 h-full">
                                 @if ($materi->file_type === 'pdf')
-                                    <svg class="w-24 h-24 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    <h4 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Materi PDF</h4>
-                                    <a href="{{ Storage::url($materi->file_path) }}" target="_blank" class="mt-2 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
-                                        Buka di Tab Baru
-                                    </a>
+                                    <h4 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-4">Preview PDF</h4>
+                                    <x-pdf-viewer :materi="$materi" />
                                 @elseif ($materi->file_type === 'video')
                                     <svg class="w-24 h-24 text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                     <h4 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Materi Video</h4>

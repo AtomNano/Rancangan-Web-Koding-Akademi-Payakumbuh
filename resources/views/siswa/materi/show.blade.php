@@ -79,12 +79,19 @@
                     @if($materi->file_type === 'pdf')
                         <div class="mb-8">
                             <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Preview</h4>
-                            <div class="border border-gray-200 rounded-lg">
-                                <iframe src="{{ Storage::url($materi->file_path) }}" 
-                                        class="w-full h-96" 
-                                        frameborder="0">
-                                </iframe>
-                            </div>
+                            @php
+                                $userProgress = $materi->userProgress(auth()->id());
+                                $currentPage = $userProgress ? $userProgress->current_page : null;
+                                $totalPages = $userProgress ? $userProgress->total_pages : null;
+                                $progressPercentage = $userProgress ? $userProgress->progress_percentage : null;
+                                $isCompleted = $userProgress ? $userProgress->is_completed : false;
+                            @endphp
+                            <x-pdf-viewer 
+                                :materi="$materi" 
+                                :current-page="$currentPage"
+                                :total-pages="$totalPages"
+                                :progress-percentage="$progressPercentage"
+                                :is-completed="$isCompleted" />
                         </div>
                     @endif
 
