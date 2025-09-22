@@ -15,23 +15,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="h-screen flex bg-gray-100">
-            <!-- Sidebar -->
+        <div class="min-h-screen bg-gray-100">
             @auth
-                <div x-data="{ sidebarOpen: true }">
-                    <x-sidebar :user="auth()->user()" />
-                    <!-- Sidebar backdrop for mobile -->
-                    <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden" x-cloak></div>
-                </div>
+                <x-navbar :user="auth()->user()" />
             @endauth
 
             <!-- Main Content -->
             <div class="flex-1 flex flex-col overflow-hidden">
-                
-                @auth
-                    <!-- Top Bar -->
-                    @include('layouts.navigation')
-                @endauth
 
                 <!-- Page Heading -->
                 @isset($header)
