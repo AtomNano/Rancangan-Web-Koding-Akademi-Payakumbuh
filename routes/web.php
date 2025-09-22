@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MateriController;
+use App\Http\Controllers\MateriProgressController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -165,6 +166,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/materi/{materi}', [SiswaController::class, 'showMateri'])->name('materi.show');
         Route::post('/materi/{materi}/complete', [SiswaController::class, 'completeMateri'])->name('materi.complete');
         Route::get('/progress', [SiswaController::class, 'progress'])->name('progress');
+        
+        // PDF Progress routes
+        Route::post('/materi/{materi}/progress', [MateriProgressController::class, 'updateProgress'])->name('materi.progress.update');
+        Route::get('/materi/{materi}/progress', [MateriProgressController::class, 'getProgress'])->name('materi.progress.get');
+        Route::post('/materi/{materi}/mark-completed', [MateriProgressController::class, 'markCompleted'])->name('materi.mark-completed');
     });
 });
 

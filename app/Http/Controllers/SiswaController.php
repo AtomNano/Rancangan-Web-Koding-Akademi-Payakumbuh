@@ -35,7 +35,9 @@ class SiswaController extends Controller
 
         $materi = $kelas->materi()
             ->where('status', 'approved')
-            ->with('uploadedBy')
+            ->with(['uploadedBy', 'progress' => function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }])
             ->paginate(10);
 
         return view('siswa.kelas.show', compact('kelas', 'materi'));

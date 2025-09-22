@@ -36,11 +36,49 @@
                     @if($materi->count() > 0)
                         <div class="space-y-4">
                             @foreach($materi as $m)
+                                @php
+                                    $userProgress = $m->userProgress(auth()->id());
+                                    $progressPercentage = $userProgress ? $userProgress->progress_percentage : 0;
+                                    $isCompleted = $userProgress ? $userProgress->is_completed : false;
+                                    $currentPage = $userProgress ? $userProgress->current_page : null;
+                                    $totalPages = $userProgress ? $userProgress->total_pages : null;
+                                @endphp
                                 <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
                                     <div class="flex items-center justify-between">
                                         <div class="flex-1">
-                                            <h4 class="text-lg font-medium text-gray-900">{{ $m->judul }}</h4>
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="text-lg font-medium text-gray-900">{{ $m->judul }}</h4>
+                                                @if($isCompleted)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        ✓ Selesai
+                                                    </span>
+                                                @elseif($progressPercentage > 0)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ number_format($progressPercentage, 1) }}% Selesai
+                                                    </span>
+                                                @endif
+                                            </div>
                                             <p class="text-sm text-gray-600 mt-1">{{ Str::limit($m->deskripsi, 100) }}</p>
+                                            
+                                            <!-- Progress Bar for PDF files -->
+                                            @if($m->file_type === 'pdf' && $progressPercentage > 0)
+                                                <div class="mt-3">
+                                                    <div class="flex justify-between items-center mb-1">
+                                                        <span class="text-xs text-gray-500">Progres Membaca</span>
+                                                        <span class="text-xs text-gray-500">{{ number_format($progressPercentage, 1) }}%</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                        <div class="bg-blue-600 h-1.5 rounded-full transition-all duration-300" 
+                                                             style="width: {{ $progressPercentage }}%"></div>
+                                                    </div>
+                                                    @if($currentPage && $totalPages)
+                                                        <div class="text-xs text-gray-500 mt-1">
+                                                            Terakhir dibaca: Halaman {{ $currentPage }} dari {{ $totalPages }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                            
                                             <div class="flex items-center mt-2 space-x-4">
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                                     {{ ucfirst($m->file_type) }}
@@ -56,7 +94,7 @@
                                         <div class="flex items-center space-x-2">
                                             <a href="{{ route('siswa.materi.show', $m) }}" 
                                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                                Buka Materi
+                                                {{ $progressPercentage > 0 ? 'Lanjutkan' : 'Buka Materi' }}
                                             </a>
                                         </div>
                                     </div>

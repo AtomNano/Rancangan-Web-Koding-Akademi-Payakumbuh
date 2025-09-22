@@ -77,6 +77,11 @@ class User extends Authenticatable
         return $this->hasMany(Presensi::class);
     }
 
+    public function materiProgress()
+    {
+        return $this->hasMany(MateriProgress::class);
+    }
+
     public function isAdmin()
     {
         return $this->role === 'admin';
