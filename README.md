@@ -8,6 +8,8 @@ Platform ini memiliki tiga hak akses utama dengan fungsionalitas yang berbeda: d
 
 luthfi Punya teST 1234
 
+gabung ke main
+
 
 ### 1. Panel Admin
 - **Manajemen Pengguna:** Mendaftarkan, mengubah, dan menghapus data Guru dan Siswa.
