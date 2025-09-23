@@ -121,6 +121,8 @@ class UserController extends Controller
             $userData['no_telepon'] = $guruValidated['no_telepon'] ?? null;
         }
 
+        $user = User::create($userData);
+
         if (($request->role === 'siswa' || $request->role === 'guru') && !empty($request->bidang_ajar)) {
             $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
             foreach ($request->bidang_ajar as $bidangAjarItem) {
