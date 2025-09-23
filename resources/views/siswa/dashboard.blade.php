@@ -63,14 +63,47 @@
                         
                         <div class="space-y-4">
                             @foreach($enrolledClasses as $kelas)
+                                @php
+                                    $totalMateri = $kelas->materi()->where('status', 'approved')->count();
+                                    $completedMateri = 0;
+                                    $totalProgress = 0;
+                                    
+                                    if ($totalMateri > 0) {
+                                        // Hitung materi yang sudah selesai
+                                        $completedMateri = \App\Models\MateriProgress::where('user_id', auth()->id())
+                                            ->whereHas('materi', function($query) use ($kelas) {
+                                                $query->where('kelas_id', $kelas->id)->where('status', 'approved');
+                                            })
+                                            ->where('is_completed', true)
+                                            ->count();
+                                        
+                                        // Hitung rata-rata progres dari semua materi
+                                        $progressData = \App\Models\MateriProgress::where('user_id', auth()->id())
+                                            ->whereHas('materi', function($query) use ($kelas) {
+                                                $query->where('kelas_id', $kelas->id)->where('status', 'approved');
+                                            })
+                                            ->get();
+                                        
+                                        if ($progressData->count() > 0) {
+                                            $totalProgress = $progressData->avg('progress_percentage');
+                                        }
+                                    }
+                                    
+                                    $overallProgress = $totalMateri > 0 ? round(($completedMateri / $totalMateri) * 100, 1) : 0;
+                                @endphp
                                 <div>
                                     <div class="flex justify-between items-center mb-2">
                                         <span class="text-sm font-medium text-gray-700">{{ $kelas->nama_kelas }}</span>
-                                        <span class="text-sm text-gray-500">0%</span>
+                                        <span class="text-sm text-gray-500">{{ $overallProgress }}%</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ $overallProgress }}%"></div>
                                     </div>
+                                    @if($totalMateri > 0)
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            {{ $completedMateri }} dari {{ $totalMateri }} materi selesai
+                                        </div>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

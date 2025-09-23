@@ -41,7 +41,7 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                                         <div class="text-center">
                                             <div class="text-2xl font-bold text-blue-600">{{ $p['completed_materi'] }}</div>
                                             <div class="text-gray-500">Materi Selesai</div>
@@ -54,7 +54,19 @@
                                             <div class="text-2xl font-bold text-green-600">{{ $p['total_materi'] - $p['completed_materi'] }}</div>
                                             <div class="text-gray-500">Materi Tersisa</div>
                                         </div>
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-purple-600">{{ $p['materi_with_progress'] }}</div>
+                                            <div class="text-gray-500">Sedang Dibaca</div>
+                                        </div>
                                     </div>
+                                    
+                                    @if($p['materi_with_progress'] > 0)
+                                        <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                                            <div class="text-sm text-blue-800">
+                                                <strong>Rata-rata progres membaca:</strong> {{ $p['average_progress'] }}%
+                                            </div>
+                                        </div>
+                                    @endif
                                     
                                     <div class="mt-4">
                                         <a href="{{ route('siswa.kelas.show', $p['kelas']) }}" 
