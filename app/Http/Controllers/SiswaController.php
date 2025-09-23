@@ -97,13 +97,38 @@ class SiswaController extends Controller
         $progress = [];
         foreach ($enrolledClasses as $kelas) {
             $totalMateri = $kelas->materi()->where('status', 'approved')->count();
-            $completedMateri = $this->getCompletedMateriCount($user, $kelas);
+            
+            // Hitung materi yang sudah selesai berdasarkan MateriProgress
+            $completedMateri = \App\Models\MateriProgress::where('user_id', $user->id)
+                ->whereHas('materi', function($query) use ($kelas) {
+                    $query->where('kelas_id', $kelas->id)->where('status', 'approved');
+                })
+                ->where('is_completed', true)
+                ->count();
+            
+            // Hitung rata-rata progres dari semua materi yang sudah dibaca
+            $progressData = \App\Models\MateriProgress::where('user_id', $user->id)
+                ->whereHas('materi', function($query) use ($kelas) {
+                    $query->where('kelas_id', $kelas->id)->where('status', 'approved');
+                })
+                ->get();
+            
+            $averageProgress = 0;
+            if ($progressData->count() > 0) {
+                $averageProgress = $progressData->avg('progress_percentage');
+            }
+            
+            // Gunakan rata-rata progres jika ada, jika tidak gunakan persentase materi selesai
+            $percentage = $totalMateri > 0 ? 
+                ($progressData->count() > 0 ? round($averageProgress, 1) : round(($completedMateri / $totalMateri) * 100, 1)) : 0;
             
             $progress[] = [
                 'kelas' => $kelas,
                 'total_materi' => $totalMateri,
                 'completed_materi' => $completedMateri,
-                'percentage' => $totalMateri > 0 ? round(($completedMateri / $totalMateri) * 100, 2) : 0
+                'percentage' => $percentage,
+                'average_progress' => round($averageProgress, 1),
+                'materi_with_progress' => $progressData->count()
             ];
         }
 
