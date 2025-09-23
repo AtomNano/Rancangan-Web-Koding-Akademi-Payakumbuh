@@ -4,7 +4,12 @@ Platform E-Learning "Materi Online" adalah sistem pembelajaran digital yang dira
 
 ## Fitur Utama
 
-Platform ini memiliki tiga hak akses utama dengan fungsionalitas yang berbeda: di web ini
+Platform ini memiliki tiga hak akses utama dengan fungsionalitas yang berbeda: di web ini 
+
+luthfi Punya teST 1234
+
+gabung ke main
+
 
 ### 1. Panel Admin
 - **Manajemen Pengguna:** Mendaftarkan, mengubah, dan menghapus data Guru dan Siswa.
