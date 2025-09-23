@@ -92,6 +92,12 @@ Berikut adalah langkah-langkah untuk menginstal dan menjalankan proyek ini di li
     php artisan serve
     ```
 
+10.  **Jalan Storage Link Untuk menyambung Data**
+
+    ```bash
+    php artisan storage:link
+    ```
+
 ## Penggunaan
 
 Setelah instalasi selesai, Anda dapat mengakses aplikasi melalui browser. Halaman utama akan menampilkan landing page.
