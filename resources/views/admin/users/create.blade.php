@@ -90,6 +90,10 @@
                                     <x-input-label for="durasi" :value="__('Durasi Program')" />
                                     <div class="mt-2 flex space-x-4">
                                         <label class="flex items-center">
+                                            <input type="radio" name="durasi" value="1 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi') == '1 Bulan' ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm text-gray-600">1 Bulan</span>
+                                        </label>
+                                        <label class="flex items-center">
                                             <input type="radio" name="durasi" value="3 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi') == '3 Bulan' ? 'checked' : '' }}>
                                             <span class="ml-2 text-sm text-gray-600">3 Bulan</span>
                                         </label>
