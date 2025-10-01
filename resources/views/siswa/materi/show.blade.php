@@ -51,16 +51,7 @@
                     <div class="mb-8">
                         <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">File Materi</h4>
                         <div class="border border-gray-200 rounded-lg p-6">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <svg class="h-12 w-12 text-gray-400 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    <div>
-                                        <p class="text-lg font-medium text-gray-900">{{ basename($materi->file_path) }}</p>
-                                        <p class="text-sm text-gray-500">{{ ucfirst($materi->file_type) }} File</p>
-                                    </div>
-                                </div>
+                            <div class="flex items-center justify-end space-x-4">
                                 <div class="flex space-x-2">
                                     <a href="{{ Storage::url($materi->file_path) }}" target="_blank"
                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
