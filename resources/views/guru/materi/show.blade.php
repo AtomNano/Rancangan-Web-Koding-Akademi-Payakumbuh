@@ -68,8 +68,7 @@
                     <div class="mb-8">
                         <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">File</h4>
                         <div class="border border-gray-200 rounded-lg p-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
+                                <div class="flex items-center mb-4">
                                     <svg class="h-8 w-8 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
@@ -90,7 +89,6 @@
                                         </a>
                                     @endif
                                 </div>
-                            </div>
                         </div>
                     </div>
 
