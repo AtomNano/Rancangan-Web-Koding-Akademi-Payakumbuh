@@ -43,7 +43,7 @@
                                 </div>
                                 <div>
                                     <x-input-label for="tanggal_lahir" :value="__('Tanggal Lahir')" />
-                                    <x-text-input id="tanggal_lahir" class="block mt-1 w-full" type="date" name="tanggal_lahir" :value="old('tanggal_lahir')" />
+                                    <x-text-input id="tanggal_lahir" class="block mt-1 w-full" type="date" name="tanggal_lahir" :value="old('tanggal_lahir')" max="{{ date('Y-m-d') }}" />
                                 </div>
                                 <div>
                                     <x-input-label for="jenis_kelamin" :value="__('Jenis Kelamin')" />

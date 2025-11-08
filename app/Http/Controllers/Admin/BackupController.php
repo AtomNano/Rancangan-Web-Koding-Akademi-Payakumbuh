@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Spatie\Backup\BackupDestination\BackupDestination;
 use Illuminate\Support\Facades\Artisan;
@@ -45,6 +46,10 @@ class BackupController extends Controller
     {
         try {
             Artisan::call('backup:run', ['--only-db' => false, '--only-files' => false]);
+            
+            // Log activity
+            ActivityLogger::logBackupCreated();
+            
             return redirect()->back()->with('success', 'Proses backup manual berhasil dimulai.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal memulai backup: ' . $e->getMessage());

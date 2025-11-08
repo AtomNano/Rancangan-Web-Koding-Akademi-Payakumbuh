@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Kelas;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -104,7 +105,7 @@ class UserController extends Controller
                 'status_promo' => 'nullable|string|max:255',
                 'no_telepon' => 'nullable|string|max:20',
                 'alamat' => 'nullable|string',
-                'tanggal_lahir' => 'nullable|date',
+                'tanggal_lahir' => 'nullable|date|before_or_equal:today',
                 'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
                 'enrollment_status' => 'required|in:active,inactive',
             ]);
@@ -135,6 +136,9 @@ class UserController extends Controller
                 }
             }
         }
+
+        // Log activity
+        ActivityLogger::logUserCreated($user);
 
         return redirect()->route('admin.users.index', ['role' => $user->role])
             ->with('success', 'User berhasil dibuat.');
@@ -206,7 +210,7 @@ class UserController extends Controller
                 'status_promo' => 'nullable|string|max:255',
                 'no_telepon' => 'nullable|string|max:20',
                 'alamat' => 'nullable|string',
-                'tanggal_lahir' => 'nullable|date',
+                'tanggal_lahir' => 'nullable|date|before_or_equal:today',
                 'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
                 'enrollment_status' => 'required|in:active,inactive',
             ]);
@@ -223,7 +227,10 @@ class UserController extends Controller
             $userData['no_telepon'] = $guruValidated['no_telepon'] ?? $user->no_telepon;
         }
 
+        // Log activity
+        $oldValues = $user->toArray();
         $user->update($userData);
+        $newValues = $user->fresh()->toArray();
 
         if (($request->role === 'siswa' || $request->role === 'guru')) {
             $selectedKelasIds = [];
@@ -258,6 +265,9 @@ class UserController extends Controller
             }
         }
 
+        // Log activity
+        ActivityLogger::logUserUpdated($user, $oldValues, $newValues);
+
         return redirect()->route('admin.users.index', ['role' => $user->role])
             ->with('success', 'User berhasil diperbarui.');
     }
@@ -267,6 +277,11 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $role = $user->role;
+        $userData = $user->toArray();
+        
+        // Log activity sebelum delete
+        ActivityLogger::logUserDeleted($user);
+        
         $user->delete();
 
         return redirect()->route('admin.users.index', ['role' => $role])

@@ -143,8 +143,18 @@
                                     {{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : 'Siswa') }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $user->enrolledClasses->first()->nama_kelas ?? '-' }}
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                @if($user->enrolledClasses->count() > 0)
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach($user->enrolledClasses as $kelas)
+                                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                {{ $kelas->nama_kelas }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">

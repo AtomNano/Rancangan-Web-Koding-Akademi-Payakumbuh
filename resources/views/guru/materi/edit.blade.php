@@ -54,7 +54,7 @@
                             <div>
                                 <x-input-label for="file" :value="__('File Baru (kosongkan jika tidak ingin mengubah)')" />
                                 <input id="file" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" type="file" name="file" />
-                                <p class="mt-1 text-sm text-gray-500">Maksimal 10MB. Format yang didukung: PDF, MP4, DOC, DOCX</p>
+                                <p class="mt-1 text-sm text-gray-500">Maksimal 100MB. Format yang didukung: PDF, MP4, DOC, DOCX</p>
                                 <x-input-error :messages="$errors->get('file')" class="mt-2" />
                                 
                                 @if($materi->file_path)

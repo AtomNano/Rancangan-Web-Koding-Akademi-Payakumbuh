@@ -26,15 +26,16 @@
                             </div>
 
                             <div>
-                                <x-input-label for="kelas_id" :value="__('Kelas')" />
+                                <x-input-label for="kelas_id" :value="__('Pilih Kelas')" />
                                 <select id="kelas_id" name="kelas_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                    <option value="">Pilih Kelas</option>
+                                    <option value="">-- Pilih Kelas yang Akan Diberi Materi --</option>
                                     @foreach($kelas as $k)
                                         <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>
                                             {{ $k->nama_kelas }} ({{ $k->bidang === 'coding' ? 'Coding' : ($k->bidang === 'desain' ? 'Desain' : 'Robotik') }})
                                         </option>
                                     @endforeach
                                 </select>
+                                <p class="mt-1 text-sm text-gray-500">Pilih kelas yang akan menerima materi ini. Hanya kelas yang Anda ajar yang tersedia.</p>
                                 <x-input-error :messages="$errors->get('kelas_id')" class="mt-2" />
                             </div>
 
@@ -53,7 +54,7 @@
                             <div>
                                 <x-input-label for="file" :value="__('File')" />
                                 <input id="file" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" type="file" name="file" required />
-                                <p class="mt-1 text-sm text-gray-500">Maksimal 10MB. Format yang didukung: PDF, MP4, DOC, DOCX</p>
+                                <p class="mt-1 text-sm text-gray-500">Maksimal 100MB. Format yang didukung: PDF, MP4, DOC, DOCX</p>
                                 <x-input-error :messages="$errors->get('file')" class="mt-2" />
                             </div>
                         </div>

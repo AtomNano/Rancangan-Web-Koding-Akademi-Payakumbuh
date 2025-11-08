@@ -1,29 +1,36 @@
 @props(['user'])
 
-<div :class="{'w-72': sidebarOpen, 'w-20': !sidebarOpen}" class="fixed inset-y-0 left-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl z-30 transform md:relative md:translate-x-0 transition-all duration-300 ease-in-out border-r border-slate-700/50">
+<div :class="{'w-60': sidebarOpen, 'w-20': !sidebarOpen}" class="fixed inset-y-0 left-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl z-30 transform md:relative md:translate-x-0 transition-all duration-300 ease-in-out border-r border-slate-700/50">
     
     <div class="flex flex-col h-full">
         <!-- Sidebar Header -->
-        <div class="flex items-center justify-center h-20 px-4 border-b border-slate-700/50 flex-shrink-0 bg-slate-900/50 backdrop-blur-sm">
-            <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
-                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-white/10 p-1.5 group-hover:bg-white/20 transition-colors">
-                    @if($user->role === 'admin')
-                        <img src="{{ asset('images/logo/logo-white.png') }}" alt="Coding Academy" class="w-full h-full object-contain">
-                    @else
-                        <img src="{{ asset('images/logo/logo-white.png') }}" alt="Coding Academy" class="w-full h-full object-contain">
-                    @endif
+        <div class="flex items-center h-20 px-2 border-b border-slate-700/50 flex-shrink-0 bg-slate-900/50 backdrop-blur-sm overflow-hidden">
+            <a href="{{ route('dashboard') }}" class="flex items-center w-full group transition-all duration-200 min-w-0" :class="{'justify-center': !sidebarOpen, 'justify-start': sidebarOpen}">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center justify-center">
+                    <img src="{{ asset('images/logo/logo-transparent.png') }}" alt="Coding Academy" 
+                         class="object-contain group-hover:scale-105 transition-transform duration-200 brightness-0 invert"
+                         :class="sidebarOpen ? 'h-12' : 'h-10'">
                 </div>
-                <div x-show="sidebarOpen" class="flex flex-col whitespace-nowrap">
-                    <span class="text-base font-bold text-white">
+                <!-- Text - Only show when sidebar is open -->
+                <div x-show="sidebarOpen" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 transform scale-100"
+                     x-transition:leave-end="opacity-0 transform scale-95"
+                     class="hidden md:flex flex-col ml-3 min-w-0 flex-1 overflow-hidden">
+                    <span class="text-sm font-bold text-white leading-tight truncate">
                         Coding Academy
                     </span>
-                    <span class="text-xs text-slate-400 font-medium">
+                    <span class="text-xs text-slate-400 font-medium mt-0.5 truncate">
                         @if($user->role === 'admin')
-                            Admin Panel
+                            Panel Admin
                         @elseif($user->role === 'guru')
-                            Teacher Panel
+                            Panel Guru
                         @else
-                            Student Panel
+                            Panel Siswa
                         @endif
                     </span>
                 </div>
@@ -39,35 +46,35 @@
                         <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
-                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Dashboard</span>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Dasbor</span>
                     </x-nav-link>
                 </div>
                 <div class="mt-8">
-                    <h3 x-show="sidebarOpen" class="px-3 mb-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Management</h3>
+                    <h3 x-show="sidebarOpen" class="px-3 mb-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Manajemen</h3>
                     <div class="space-y-1.5">
                         <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                             <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m-4.5 3.903A2.5 2.5 0 017 15h10a2.5 2.5 0 012.5 2.5V21" />
                             </svg>
-                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Users</span>
+                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Pengguna</span>
                         </x-nav-link>
                         <x-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.kelas.*')">
                              <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
                             </svg>
-                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Classes</span>
+                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Kelas</span>
                         </x-nav-link>
                         <x-nav-link :href="route('admin.materi.index')" :active="request()->routeIs('admin.materi.*')">
                             <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Materials</span>
+                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Materi</span>
                         </x-nav-link>
                         <x-nav-link :href="route('admin.backup.index')" :active="request()->routeIs('admin.backup.*')">
                             <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7s0 4 8 4 8-4 8-4" />
                             </svg>
-                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Backup</span>
+                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Cadangan Data</span>
                         </x-nav-link>
                     </div>
                 </div>
@@ -79,13 +86,13 @@
                         <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
-                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Dashboard</span>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Dasbor</span>
                     </x-nav-link>
                     <x-nav-link :href="route('guru.materi.index')" :active="request()->routeIs('guru.materi.*')">
                         <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                         </svg>
-                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Materials</span>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Materi</span>
                     </x-nav-link>
                 </div>
 
@@ -96,27 +103,27 @@
                         <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
-                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Dashboard</span>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Dasbor</span>
                     </x-nav-link>
                     <x-nav-link :href="route('siswa.progress')" :active="request()->routeIs('siswa.progress')">
                         <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Progress</span>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Kemajuan</span>
                     </x-nav-link>
                 </div>
             @endif
 
             {{-- Common Links for All Roles --}}
             <div class="mt-8">
-                <h3 x-show="sidebarOpen" class="px-3 mb-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Account</h3>
+                <h3 x-show="sidebarOpen" class="px-3 mb-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Akun</h3>
                 <div class="space-y-1.5">
                      <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                         <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0 3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.608 3.292 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Profile</span>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap">Profil</span>
                     </x-nav-link>
                 </div>
             </div>
