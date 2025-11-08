@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah ') . ucfirst($role) }}
+            {{ __('Tambah ') . ($role === 'admin' ? 'Admin' : ($role === 'guru' ? 'Guru' : 'Siswa')) }}
         </h2>
     </x-slot>
 
@@ -11,7 +11,7 @@
                 
                 @if ($errors->any())
                     <div class="p-6">
-                        <div class="font-medium text-red-600">{{ __('Whoops! Something went wrong.') }}</div>
+                        <div class="font-medium text-red-600">{{ __('Ups! Terjadi kesalahan.') }}</div>
                         <ul class="mt-3 list-disc list-inside text-sm text-red-600">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -150,7 +150,7 @@
                                 </div>
                                 <div>
                                     <x-input-label for="status_promo" :value="__('Status Promo')" />
-                                    <x-text-input id="status_promo" class="block mt-1 w-full" type="text" name="status_promo" :value="old('status_promo')" placeholder="e.g., Free Siblings Promo" />
+                                    <x-text-input id="status_promo" class="block mt-1 w-full" type="text" name="status_promo" :value="old('status_promo')" placeholder="contoh: Promo Saudara Gratis" />
                                 </div>
                                 <div>
                                     <x-input-label for="biaya_pendaftaran" :value="__('Biaya Pendaftaran')" />
@@ -171,14 +171,14 @@
 
                         <!-- Login Information Section -->
                         <div class="p-6 bg-purple-50 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Informasi Login</h3>
+                            <h3 class="text-lg font-semibold text-gray-800">Informasi Masuk</h3>
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-input-label for="password" :value="__('Password')" />
+                                    <x-input-label for="password" :value="__('Kata Sandi')" />
                                     <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
                                 </div>
                                 <div>
-                                    <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" />
+                                    <x-input-label for="password_confirmation" :value="__('Konfirmasi Kata Sandi')" />
                                     <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required />
                                 </div>
                             </div>
@@ -192,7 +192,7 @@
                                 <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus />
                             </div>
                             <div>
-                                <x-input-label for="email" :value="__('Email')" />
+                                <x-input-label for="email" :value="__('Surel')" />
                                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
                             </div>
                             <div>
@@ -213,11 +213,11 @@
                             </div>
 
                             <div>
-                                <x-input-label for="password" :value="__('Password')" />
+                                <x-input-label for="password" :value="__('Kata Sandi')" />
                                 <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
                             </div>
                             <div>
-                                <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" />
+                                <x-input-label for="password_confirmation" :value="__('Konfirmasi Kata Sandi')" />
                                 <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required />
                             </div>
                         </div>
@@ -229,15 +229,15 @@
                                 <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus />
                             </div>
                             <div class="mt-4">
-                                <x-input-label for="email" :value="__('Email')" />
+                                <x-input-label for="email" :value="__('Surel')" />
                                 <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
                             </div>
                             <div class="mt-4">
-                                <x-input-label for="password" :value="__('Password')" />
+                                <x-input-label for="password" :value="__('Kata Sandi')" />
                                 <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
                             </div>
                             <div class="mt-4">
-                                <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" />
+                                <x-input-label for="password_confirmation" :value="__('Konfirmasi Kata Sandi')" />
                                 <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required />
                             </div>
                         </div>

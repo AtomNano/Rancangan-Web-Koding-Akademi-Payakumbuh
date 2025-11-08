@@ -16,7 +16,7 @@
                         <div class="flex space-x-2">
                             <a href="{{ route('guru.materi.edit', $materi) }}" 
                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Edit
+                                Ubah
                             </a>
                             <a href="{{ route('guru.materi.index') }}" 
                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
@@ -39,7 +39,7 @@
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Tipe File</dt>
-                                    <dd class="text-sm text-gray-900">{{ ucfirst($materi->file_type) }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $materi->file_type === 'pdf' ? 'PDF' : ($materi->file_type === 'video' ? 'Video' : ($materi->file_type === 'document' ? 'Dokumen' : 'File')) }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Status</dt>
@@ -74,7 +74,7 @@
                                     </svg>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ basename($materi->file_path) }}</p>
-                                        <p class="text-sm text-gray-500">{{ ucfirst($materi->file_type) }} File</p>
+                                        <p class="text-sm text-gray-500">{{ $materi->file_type === 'pdf' ? 'PDF' : ($materi->file_type === 'video' ? 'Video' : 'File') }} File</p>
                                     </div>
                                 </div>
                                 <div class="flex space-x-2">
@@ -85,7 +85,7 @@
                                     @else
                                         <a href="{{ Storage::url($materi->file_path) }}" download
                                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
-                                            Download
+                                            Unduh
                                         </a>
                                     @endif
                                 </div>

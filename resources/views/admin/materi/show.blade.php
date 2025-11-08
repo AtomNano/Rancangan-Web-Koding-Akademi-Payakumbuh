@@ -26,7 +26,7 @@
                                     ];
                                 @endphp
                                 <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full {{ $status_classes[$materi->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                    {{ ucfirst($materi->status) }}
+                                    {{ $materi->status === 'pending' ? 'Menunggu' : ($materi->status === 'approved' ? 'Disetujui' : 'Ditolak') }}
                                 </span>
                             </div>
 
@@ -58,14 +58,14 @@
                                         @csrf
                                         <button type="submit" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                            Approve
+                                            Setujui
                                         </button>
                                     </form>
                                     <form action="{{ route('admin.materi.reject', $materi->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menolak materi ini?');">
                                         @csrf
                                         <button type="submit" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                            Reject
+                                            Tolak
                                         </button>
                                     </form>
                                 </div>

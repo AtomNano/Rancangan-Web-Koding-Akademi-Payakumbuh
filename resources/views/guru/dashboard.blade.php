@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Guru Dashboard') }}
+            {{ __('Dasbor Guru') }}
         </h2>
     </x-slot>
 
@@ -15,17 +15,17 @@
                         <p class="mt-1 text-3xl font-semibold text-gray-900">{{ $stats['total_materi'] ?? 0 }}</p>
                     </div>
                 </div>
-                <!-- Pending Materi -->
+                <!-- Materi Menunggu -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-500">Pending Materi</h3>
+                        <h3 class="text-lg font-medium text-gray-500">Materi Menunggu</h3>
                         <p class="mt-1 text-3xl font-semibold text-gray-900">{{ $stats['pending_materi'] ?? 0 }}</p>
                     </div>
                 </div>
-                <!-- Approved Materi -->
+                <!-- Materi Disetujui -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <h3 class="text-lg font-medium text-gray-500">Approved Materi</h3>
+                        <h3 class="text-lg font-medium text-gray-500">Materi Disetujui</h3>
                         <p class="mt-1 text-3xl font-semibold text-gray-900">{{ $stats['approved_materi'] ?? 0 }}</p>
                     </div>
                 </div>

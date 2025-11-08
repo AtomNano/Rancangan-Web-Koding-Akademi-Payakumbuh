@@ -30,13 +30,13 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex space-x-4">
                             <a href="{{ route('admin.materi.index', ['status' => 'pending']) }}" class="px-3 py-2 text-sm font-medium rounded-md {{ request('status', 'pending') == 'pending' ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-200 text-gray-800 dark:text-gray-800' }}">
-                                Pending
+                                Menunggu
                             </a>
                             <a href="{{ route('admin.materi.index', ['status' => 'approved']) }}" class="px-3 py-2 text-sm font-medium rounded-md {{ request('status') == 'approved' ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-200 text-gray-800 dark:text-gray-800' }}">
-                                Approved
+                                Disetujui
                             </a>
                             <a href="{{ route('admin.materi.index', ['status' => 'rejected']) }}" class="px-3 py-2 text-sm font-medium rounded-md {{ request('status') == 'rejected' ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-200 text-gray-800 dark:text-gray-800' }}">
-                                Rejected
+                                Ditolak
                             </a>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                                             ];
                                         @endphp
                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $status_classes[$item->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                            {{ ucfirst($item->status) }}
+                                            {{ $item->status === 'pending' ? 'Menunggu' : ($item->status === 'approved' ? 'Disetujui' : 'Ditolak') }}
                                         </span>
                                     </div>
                                     
@@ -81,11 +81,11 @@
                                                 <div class="flex items-center space-x-3">
                                                     <form action="{{ route('admin.materi.approve', $item->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menyetujui materi ini?');">
                                                         @csrf
-                                                        <button type="submit" class="text-green-600 hover:text-green-800 dark:text-green-600 dark:hover:text-green-800 font-semibold text-sm">Approve</button>
+                                                        <button type="submit" class="text-green-600 hover:text-green-800 dark:text-green-600 dark:hover:text-green-800 font-semibold text-sm">Setujui</button>
                                                     </form>
                                                     <form action="{{ route('admin.materi.reject', $item->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menolak materi ini?');">
                                                         @csrf
-                                                        <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-600 dark:hover:text-red-800 font-semibold text-sm">Reject</button>
+                                                        <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-600 dark:hover:text-red-800 font-semibold text-sm">Tolak</button>
                                                     </form>
                                                 </div>
                                             @else

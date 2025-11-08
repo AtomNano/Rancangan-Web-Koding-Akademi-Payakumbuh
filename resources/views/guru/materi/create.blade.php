@@ -31,7 +31,7 @@
                                     <option value="">Pilih Kelas</option>
                                     @foreach($kelas as $k)
                                         <option value="{{ $k->id }}" {{ old('kelas_id') == $k->id ? 'selected' : '' }}>
-                                            {{ $k->nama_kelas }} ({{ ucfirst($k->bidang) }})
+                                            {{ $k->nama_kelas }} ({{ $k->bidang === 'coding' ? 'Coding' : ($k->bidang === 'desain' ? 'Desain' : 'Robotik') }})
                                         </option>
                                     @endforeach
                                 </select>

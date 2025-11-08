@@ -29,7 +29,7 @@
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Tipe File</dt>
-                                    <dd class="text-sm text-gray-900">{{ ucfirst($materi->file_type) }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $materi->file_type === 'pdf' ? 'PDF' : ($materi->file_type === 'video' ? 'Video' : 'File') }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Oleh</dt>
@@ -59,7 +59,7 @@
                                     </a>
                                     <a href="{{ Storage::url($materi->file_path) }}" download
                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                        Download
+                                        Unduh
                                     </a>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
                     <!-- PDF Viewer for PDF files -->
                     @if($materi->file_type === 'pdf')
                         <div class="mb-8">
-                            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Preview</h4>
+                            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Pratinjau</h4>
                             @php
                                 $userProgress = $materi->userProgress(auth()->id());
                                 $currentPage = $userProgress ? $userProgress->current_page : null;
@@ -89,7 +89,7 @@
                     <!-- Video Player for Video files -->
                     @if($materi->file_type === 'video')
                         <div class="mb-8">
-                            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Video Player</h4>
+                            <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Pemutar Video</h4>
                             <div class="border border-gray-200 rounded-lg">
                                 <video controls class="w-full">
                                     <source src="{{ Storage::url($materi->file_path) }}" type="video/mp4">
