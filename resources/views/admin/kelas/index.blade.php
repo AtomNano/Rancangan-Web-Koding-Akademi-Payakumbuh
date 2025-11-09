@@ -30,6 +30,34 @@
         </div>
     </div>
 
+    <!-- Alert for unassigned classes -->
+    @if(isset($unassignedKelas) && $unassignedKelas->count() > 0)
+        <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">
+                        <strong>Peringatan:</strong> Ada {{ $unassignedKelas->count() }} kelas yang belum diassign ke guru. 
+                        Silakan edit kelas tersebut dan pilih guru pengajar.
+                    </p>
+                    <ul class="mt-2 list-disc list-inside text-sm text-yellow-600">
+                        @foreach($unassignedKelas as $kelas)
+                            <li>
+                                <a href="{{ route('admin.kelas.edit', $kelas) }}" class="underline hover:text-yellow-800">
+                                    {{ $kelas->nama_kelas }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Actions -->
     <div class="flex justify-between items-center mb-6">
         <h3 class="text-xl font-bold text-slate-900">Daftar Kelas</h3>
@@ -41,9 +69,28 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @foreach($kelasList as $kelas)
             @php 
+                // Count only students (not teachers) in enrollments
+                // Filter by role = 'siswa'
+                $totalSiswa = $kelas->students()->where('users.role', 'siswa')->count();
+                
                 $totalMateri = $kelas->materi->count();
-                // Assuming progress is based on number of materials, max 15 for 100%
-                $progress = $totalMateri > 0 ? min(100, ($totalMateri / 15) * 100) : 0; 
+                $approvedMateri = $kelas->materi->where('status', 'approved')->count();
+                
+                // Calculate progress based on student completion
+                $progress = 0;
+                if ($totalSiswa > 0 && $approvedMateri > 0) {
+                    $totalProgress = 0;
+                    $students = $kelas->students()->where('users.role', 'siswa')->get();
+                    foreach ($students as $student) {
+                        $completedMateri = \App\Models\MateriProgress::where('user_id', $student->id)
+                            ->whereIn('materi_id', $kelas->materi->where('status', 'approved')->pluck('id'))
+                            ->where('is_completed', true)
+                            ->count();
+                        $studentProgress = $approvedMateri > 0 ? ($completedMateri / $approvedMateri) * 100 : 0;
+                        $totalProgress += $studentProgress;
+                    }
+                    $progress = $totalSiswa > 0 ? round($totalProgress / $totalSiswa, 1) : 0;
+                }
             @endphp
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-xl hover:border-slate-300 transition-all duration-200 cursor-pointer group" onclick="window.location.href='{{ route('admin.kelas.show', $kelas->id) }}'">
                 <!-- You can replace this with your actual images -->
@@ -61,11 +108,11 @@
                     
                     <div class="grid grid-cols-3 gap-4 text-center mb-4">
                         <div class="p-3 bg-slate-50 rounded-lg">
-                            <p class="text-2xl font-bold text-slate-900">{{ $kelas->enrollments->count() }}</p>
+                            <p class="text-2xl font-bold text-slate-900">{{ $totalSiswa }}</p>
                             <p class="text-xs text-slate-500 mt-1">Siswa</p>
                         </div>
                         <div class="p-3 bg-slate-50 rounded-lg">
-                            <p class="text-2xl font-bold text-slate-900">{{ $kelas->materi->count() }}</p>
+                            <p class="text-2xl font-bold text-slate-900">{{ $totalMateri }}</p>
                             <p class="text-xs text-slate-500 mt-1">Materi</p>
                         </div>
                         <div class="p-3 bg-slate-50 rounded-lg">
@@ -80,11 +127,18 @@
 
                     <div class="border-t border-slate-200 pt-4">
                         <p class="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Guru Pengajar</p>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                                <span class="text-white font-bold text-sm">{{ substr($kelas->guru->name ?? 'N/A', 0, 2) }}</span>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                    <span class="text-white font-bold text-sm">{{ substr($kelas->guru->name ?? 'N/A', 0, 2) }}</span>
+                                </div>
+                                <p class="ml-3 text-sm font-semibold text-slate-900 truncate" title="{{ $kelas->guru->name ?? 'Belum ditugaskan' }}">{{ $kelas->guru->name ?? 'Belum ditugaskan' }}</p>
                             </div>
-                            <p class="ml-3 text-sm font-semibold text-slate-900">{{ $kelas->guru->name ?? 'Belum ditugaskan' }}</p>
+                            @if(!$kelas->guru_id)
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Perlu Assign
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>

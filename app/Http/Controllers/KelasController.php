@@ -15,15 +15,32 @@ class KelasController extends Controller
     public function index()
     {
         $kelasList = Kelas::with('guru', 'enrollments', 'materi')->latest()->get();
+        
+        // Get unassigned classes (classes without guru_id) for admin notice
+        $unassignedKelas = Kelas::whereNull('guru_id')->get();
 
+        // Count students enrolled in classes (not all students in system)
+        $enrolledStudentIds = \App\Models\Enrollment::select('enrollments.user_id')
+            ->join('users', 'enrollments.user_id', '=', 'users.id')
+            ->where('users.role', 'siswa')
+            ->distinct()
+            ->pluck('user_id')
+            ->toArray();
+        $totalEnrolledSiswa = count($enrolledStudentIds);
+        
         $stats = [
             'total_kelas' => \App\Models\Kelas::count(),
-            'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
+            'total_siswa' => $totalEnrolledSiswa, // Count enrolled students, not all students
             'total_guru' => \App\Models\User::where('role', 'guru')->count(),
             'total_materi' => \App\Models\Materi::count(),
+            'unassigned_kelas_count' => $unassignedKelas->count(),
         ];
 
-        return view('admin.kelas.index', ['kelasList' => $kelasList, 'stats' => $stats]);
+        return view('admin.kelas.index', [
+            'kelasList' => $kelasList, 
+            'stats' => $stats,
+            'unassignedKelas' => $unassignedKelas
+        ]);
     }
 
     /**

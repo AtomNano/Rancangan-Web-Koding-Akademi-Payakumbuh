@@ -150,22 +150,74 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', function () {
             $user = auth()->user();
             
-            // Get classes where guru is assigned via enrollment OR via guru_id
-            $enrolledKelas = $user->enrolledClasses()->withCount('students')->get();
-            $assignedKelas = \App\Models\Kelas::where('guru_id', $user->id)->withCount('students')->get();
+            // Get classes assigned to this guru via guru_id
+            $kelas = \App\Models\Kelas::where('guru_id', $user->id)
+                ->withCount('students')
+                ->with('guru')
+                ->orderBy('created_at', 'desc')
+                ->get();
             
-            // Merge and remove duplicates
-            $kelas = $enrolledKelas->merge($assignedKelas)->unique('id');
-            $assignedKelasIds = $kelas->pluck('id')->toArray();
-
-            // If no classes assigned, set empty array to avoid query errors
-            if (empty($assignedKelasIds)) {
-                $assignedKelasIds = [0]; // Use [0] to return empty results
+            // Also get classes where guru is enrolled (secondary method)
+            $enrolledKelasIds = \App\Models\Enrollment::where('user_id', $user->id)
+                ->pluck('kelas_id')
+                ->toArray();
+            
+            if (!empty($enrolledKelasIds)) {
+                $enrolledKelas = \App\Models\Kelas::whereIn('id', $enrolledKelasIds)
+                    ->where('guru_id', '!=', $user->id) // Don't duplicate classes already in $kelas
+                    ->withCount('students')
+                    ->with('guru')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+                
+                // Merge enrolled classes with assigned classes
+                $kelas = $kelas->merge($enrolledKelas)->unique('id');
             }
+            
+            // Ensure we have a collection
+            if (!$kelas || !($kelas instanceof \Illuminate\Support\Collection)) {
+                $kelas = collect();
+            }
+            
+            $assignedKelasIds = $kelas->pluck('id')->toArray();
+            
+            // Log for debugging
+            \Log::info('Guru Dashboard: Loading classes for guru', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'total_kelas_count' => $kelas->count(),
+                'kelas_list' => $kelas->pluck('id', 'nama_kelas')->toArray(),
+                'assigned_via_guru_id' => \App\Models\Kelas::where('guru_id', $user->id)->count(),
+                'enrolled_count' => count($enrolledKelasIds),
+            ]);
 
-            $materi_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->count();
-            $pending_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
-            $approved_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
+            // Calculate stats
+            if (empty($assignedKelasIds)) {
+                $materi_count = 0;
+                $pending_count = 0;
+                $approved_count = 0;
+            } else {
+                $materi_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->count();
+                $pending_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
+                $approved_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
+            }
+            
+            // Debug logging
+            \Log::info('Guru Dashboard: Loading ALL classes (NO AUTH CHECK)', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'user_name' => $user->name,
+                'total_kelas_found' => $kelas->count(),
+                'kelas_details' => $kelas->map(function($k) {
+                    return [
+                        'id' => $k->id, 
+                        'nama' => $k->nama_kelas, 
+                        'guru_id' => $k->guru_id, 
+                        'status' => $k->status,
+                        'students_count' => $k->students_count ?? 0
+                    ];
+                })->toArray(),
+            ]);
             
             $stats = [
                 'total_materi' => $materi_count,
@@ -175,7 +227,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return view('guru.dashboard', compact('stats', 'kelas'));
         })->name('dashboard');
         
-        Route::resource('materi', MateriController::class);
+        // Explicit routes for materi to avoid route model binding issues
+        Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
+        Route::get('materi/create', [MateriController::class, 'create'])->name('materi.create');
+        Route::post('materi', [MateriController::class, 'store'])->name('materi.store');
+        Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
+        Route::get('materi/{materi}/edit', [MateriController::class, 'edit'])->name('materi.edit');
+        Route::put('materi/{materi}', [MateriController::class, 'update'])->name('materi.update');
+        Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
+        
         Route::resource('kelas', GuruKelasController::class)->only(['index', 'show']);
     });
 

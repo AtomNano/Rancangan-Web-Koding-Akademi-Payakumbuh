@@ -16,6 +16,10 @@ class Presensi extends Model
         'tanggal_akses',
     ];
 
+    protected $casts = [
+        'tanggal_akses' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

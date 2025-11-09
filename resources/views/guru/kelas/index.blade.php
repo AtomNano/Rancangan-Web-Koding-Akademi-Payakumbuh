@@ -32,7 +32,7 @@
                                     </span>
                                 </div>
                                 
-                                <a href="{{ route('guru.kelas.show', $k) }}" 
+                                <a href="{{ route('guru.kelas.show', $k->id) }}" 
                                    class="block w-full bg-indigo-500 text-white text-center py-2 px-4 rounded hover:bg-indigo-600 transition-colors">
                                     Lihat Detail Kelas
                                 </a>
