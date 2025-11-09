@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Presensi;
 use App\Models\MateriProgress;
 use App\Models\Enrollment;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,8 +37,14 @@ class DashboardController extends Controller
                         'materi_aktif' => Materi::where('status', 'approved')->count(),
                     ];
                     $pending_verifications = Materi::where('status', 'pending')->with(['uploadedBy', 'kelas'])->latest()->take(5)->get();
+                    
+                    // Get recent activities with pagination (10 per page)
+                    $recent_activities = ActivityLog::with('user')
+                        ->latest()
+                        ->paginate(10)
+                        ->withQueryString();
 
-                    return view('admin.dashboard', compact('stats', 'pending_verifications'));
+                    return view('admin.dashboard', compact('stats', 'pending_verifications', 'recent_activities'));
                 
                 case 'guru':
                     $user = auth()->user();

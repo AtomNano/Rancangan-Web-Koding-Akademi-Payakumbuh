@@ -119,10 +119,18 @@
         <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <div class="flex justify-between items-center mb-6">
                 <h4 class="text-lg font-bold text-slate-900">Aktivitas Terbaru</h4>
-                <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-700">Lihat Semua</a>
             </div>
             <div class="space-y-4">
-                @forelse($recent_activities ?? [] as $activity)
+                @php
+                    // Ensure we have a paginator or collection
+                    $activities = $recent_activities ?? collect();
+                    if ($activities instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+                        $activitiesList = $activities;
+                    } else {
+                        $activitiesList = is_iterable($activities) ? $activities : collect();
+                    }
+                @endphp
+                @forelse($activitiesList as $activity)
                     @php
                         $colorClasses = [
                             'create' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-600'],
@@ -190,6 +198,79 @@
                     </div>
                 @endforelse
             </div>
+            
+            <!-- Pagination -->
+            @php
+                $showPagination = false;
+                $paginator = null;
+                if (isset($recent_activities) && $recent_activities instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+                    $paginator = $recent_activities;
+                    $showPagination = $paginator->total() > 0;
+                }
+            @endphp
+            
+            @if($showPagination && $paginator)
+                <div class="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
+                    <div class="text-sm text-slate-600">
+                        Menampilkan {{ $paginator->firstItem() ?? 0 }} sampai {{ $paginator->lastItem() ?? 0 }} dari {{ $paginator->total() }} aktivitas
+                    </div>
+                    @if($paginator->hasPages())
+                    <div class="flex items-center space-x-2">
+                        @if ($paginator->onFirstPage())
+                            <span class="px-3 py-1 text-sm text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed">Sebelumnya</span>
+                        @else
+                            <a href="{{ $paginator->previousPageUrl() }}" class="px-3 py-1 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">Sebelumnya</a>
+                        @endif
+                        
+                        <div class="flex items-center space-x-1">
+                            @php
+                                $currentPage = $paginator->currentPage();
+                                $lastPage = $paginator->lastPage();
+                                $startPage = max(1, $currentPage - 2);
+                                $endPage = min($lastPage, $currentPage + 2);
+                                
+                                // Adjust range if near start or end
+                                if ($endPage - $startPage < 4) {
+                                    if ($startPage == 1) {
+                                        $endPage = min($lastPage, $startPage + 4);
+                                    } else {
+                                        $startPage = max(1, $endPage - 4);
+                                    }
+                                }
+                            @endphp
+                            
+                            @if ($startPage > 1)
+                                <a href="{{ $paginator->url(1) }}" class="px-3 py-1 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">1</a>
+                                @if ($startPage > 2)
+                                    <span class="px-2 py-1 text-sm text-slate-500">...</span>
+                                @endif
+                            @endif
+                            
+                            @for ($page = $startPage; $page <= $endPage; $page++)
+                                @if ($page == $currentPage)
+                                    <span class="px-3 py-1 text-sm font-semibold text-white bg-indigo-600 rounded-lg">{{ $page }}</span>
+                                @else
+                                    <a href="{{ $paginator->url($page) }}" class="px-3 py-1 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">{{ $page }}</a>
+                                @endif
+                            @endfor
+                            
+                            @if ($endPage < $lastPage)
+                                @if ($endPage < $lastPage - 1)
+                                    <span class="px-2 py-1 text-sm text-slate-500">...</span>
+                                @endif
+                                <a href="{{ $paginator->url($lastPage) }}" class="px-3 py-1 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">{{ $lastPage }}</a>
+                            @endif
+                        </div>
+                        
+                        @if ($paginator->hasMorePages())
+                            <a href="{{ $paginator->nextPageUrl() }}" class="px-3 py-1 text-sm text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">Selanjutnya</a>
+                        @else
+                            <span class="px-3 py-1 text-sm text-slate-400 bg-slate-100 rounded-lg cursor-not-allowed">Selanjutnya</span>
+                        @endif
+                    </div>
+                    @endif
+                </div>
+            @endif
         </div>
 
         <!-- Pending Verifications -->
