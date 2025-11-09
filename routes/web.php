@@ -137,6 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Material verification routes
         Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
         Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
+        Route::get('materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::post('materi/{materi}/approve', [MateriController::class, 'approve'])->name('materi.approve');
         Route::post('materi/{materi}/reject', [MateriController::class, 'reject'])->name('materi.reject');
 
@@ -232,6 +233,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('materi/create', [MateriController::class, 'create'])->name('materi.create');
         Route::post('materi', [MateriController::class, 'store'])->name('materi.store');
         Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
+        Route::get('materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::get('materi/{materi}/edit', [MateriController::class, 'edit'])->name('materi.edit');
         Route::put('materi/{materi}', [MateriController::class, 'update'])->name('materi.update');
         Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
@@ -244,6 +246,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
         Route::get('/kelas/{kelas}', [SiswaController::class, 'showClass'])->name('kelas.show');
         Route::get('/materi/{materi}', [SiswaController::class, 'showMateri'])->name('materi.show');
+        Route::get('/materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::post('/materi/{materi}/complete', [SiswaController::class, 'completeMateri'])->name('materi.complete');
         Route::get('/progress', [SiswaController::class, 'progress'])->name('progress');
         

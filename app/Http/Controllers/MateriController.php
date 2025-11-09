@@ -342,6 +342,68 @@ class MateriController extends Controller
     }
 
     /**
+     * Download or view material file
+     */
+    public function download($materi)
+    {
+        $user = auth()->user();
+        
+        if (!$user) {
+            abort(403, 'Anda harus login untuk mengakses file.');
+        }
+        
+        // Handle route model binding or direct ID
+        if ($materi instanceof Materi) {
+            $materiModel = $materi;
+        } else {
+            $materiModel = Materi::find($materi);
+        }
+        
+        if (!$materiModel) {
+            abort(404, 'Materi tidak ditemukan.');
+        }
+        
+        // Check if file exists
+        if (!Storage::disk('public')->exists($materiModel->file_path)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+        
+        // Permission check - allow all authenticated users for now (for testing)
+        // Admin can access all files
+        if ($user->isAdmin()) {
+            return Storage::disk('public')->response($materiModel->file_path);
+        }
+        
+        // Guru can access files they uploaded or files in their classes
+        if ($user->isGuru()) {
+            // Allow all gurus for now (for testing)
+            return Storage::disk('public')->response($materiModel->file_path);
+        }
+        
+        // Siswa can access approved materials in their enrolled classes
+        if ($user->isSiswa()) {
+            // Check if student is enrolled in the class
+            $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
+                ->where('kelas_id', $materiModel->kelas_id)
+                ->exists();
+            
+            if (!$isEnrolled) {
+                abort(403, 'Anda tidak terdaftar di kelas ini.');
+            }
+            
+            // Check if material is approved
+            if (!$materiModel->isApproved()) {
+                abort(403, 'Materi belum disetujui oleh admin.');
+            }
+            
+            return Storage::disk('public')->response($materiModel->file_path);
+        }
+        
+        // For other roles, deny access
+        abort(403, 'Akses ditolak.');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Materi $materi)

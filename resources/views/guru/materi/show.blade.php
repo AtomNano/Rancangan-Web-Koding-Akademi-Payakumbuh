@@ -83,7 +83,7 @@
                                             <x-pdf-viewer :materi="$materi" />
                                         </div>
                                     @else
-                                        <a href="{{ Storage::url($materi->file_path) }}" download
+                                        <a href="{{ route('guru.materi.download', $materi->id) }}" download
                                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
                                             Unduh
                                         </a>

@@ -70,3 +70,4 @@ echo "Materi: {$materi->count()}\n";
 echo "Siswa: {$siswa->count()}\n";
 
 
+

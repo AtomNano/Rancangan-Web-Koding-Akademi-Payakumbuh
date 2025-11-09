@@ -53,11 +53,11 @@
                         <div class="border border-gray-200 rounded-lg p-6">
                             <div class="flex items-center justify-end space-x-4">
                                 <div class="flex space-x-2">
-                                    <a href="{{ Storage::url($materi->file_path) }}" target="_blank"
+                                    <a href="{{ route('siswa.materi.download', $materi->id) }}" target="_blank"
                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                         Buka File
                                     </a>
-                                    <a href="{{ Storage::url($materi->file_path) }}" download
+                                    <a href="{{ route('siswa.materi.download', $materi->id) }}" download
                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                         Unduh
                                     </a>
@@ -92,7 +92,7 @@
                             <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Pemutar Video</h4>
                             <div class="border border-gray-200 rounded-lg">
                                 <video controls class="w-full">
-                                    <source src="{{ Storage::url($materi->file_path) }}" type="video/mp4">
+                                    <source src="{{ route('siswa.materi.download', $materi->id) }}" type="video/mp4">
                                     Browser Anda tidak mendukung video player.
                                 </video>
                             </div>
