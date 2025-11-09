@@ -3,42 +3,83 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     }
     
+    /* Full Canvas PDF Viewer */
+    #mainContent {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+    
+    #pdfViewerContainer {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    
+    #pdfViewer {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    
+    /* Floating Controls Bar */
+    #pdfControlsBar {
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+    
+    #pdfControlsBar.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    /* Right Sidebar - Overlay */
     #rightSidebar {
         transform: translateX(100%);
+        z-index: 60;
     }
     
     #rightSidebar.open {
         transform: translateX(0);
     }
     
+    /* Sidebar tidak push content, hanya overlay */
     #mainContent.right-sidebar-open {
-        margin-right: 20rem;
+        margin-right: 0;
     }
     
-    /* Center PDF viewer */
-    #mainContent .bg-gray-100 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
+    /* Floating Sidebar Toggle Button */
+    #floatingSidebarToggle {
+        opacity: 1;
+        transition: opacity 0.3s ease;
     }
     
-    #mainContent #pdfContainer {
-        max-width: 100%;
-        width: 100%;
+    #floatingSidebarToggle.hidden {
+        opacity: 0;
+        pointer-events: none;
     }
+    
     
     @media (max-width: 768px) {
         #rightSidebar {
             width: 100%;
         }
         
-        #mainContent {
-            margin-left: 0;
-        }
-        
-        #mainContent.right-sidebar-open {
-            margin-right: 0;
+        #pdfControlsBar {
+            left: 1rem;
+            right: 1rem;
+            transform: translateX(0);
+            width: auto;
         }
     }
     
@@ -88,8 +129,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const rightSidebar = document.getElementById('rightSidebar');
     const toggleRightSidebarBtn = document.getElementById('toggleRightSidebar');
+    const floatingSidebarToggle = document.getElementById('floatingSidebarToggle');
     const mainContent = document.getElementById('mainContent');
     const pdfViewer = document.getElementById('pdfViewer');
+    const pdfControlsBar = document.getElementById('pdfControlsBar');
     const prevPageBtn = document.getElementById('prevPage');
     const nextPageBtn = document.getElementById('nextPage');
     const pageInput = document.getElementById('pageInput');
@@ -121,21 +164,65 @@ document.addEventListener('DOMContentLoaded', function() {
     if (rightSidebar) {
         rightSidebarOpen = true;
         rightSidebar.classList.add('open');
-        if (window.innerWidth > 768) {
-            mainContent.classList.add('right-sidebar-open');
+        if (floatingSidebarToggle) {
+            floatingSidebarToggle.classList.add('hidden');
         }
     }
 
     // Right Sidebar Toggle
-    if (toggleRightSidebarBtn && rightSidebar) {
-        toggleRightSidebarBtn.addEventListener('click', () => {
-            rightSidebarOpen = !rightSidebarOpen;
-            rightSidebar.classList.toggle('open', rightSidebarOpen);
-            if (window.innerWidth > 768) {
-                mainContent.classList.toggle('right-sidebar-open', rightSidebarOpen);
+    function toggleSidebar() {
+        rightSidebarOpen = !rightSidebarOpen;
+        rightSidebar.classList.toggle('open', rightSidebarOpen);
+        if (floatingSidebarToggle) {
+            if (rightSidebarOpen) {
+                floatingSidebarToggle.classList.add('hidden');
+            } else {
+                floatingSidebarToggle.classList.remove('hidden');
             }
-        });
+        }
     }
+    
+    if (toggleRightSidebarBtn && rightSidebar) {
+        toggleRightSidebarBtn.addEventListener('click', toggleSidebar);
+    }
+    
+    if (floatingSidebarToggle && rightSidebar) {
+        floatingSidebarToggle.addEventListener('click', toggleSidebar);
+    }
+    
+    // Auto-hide controls bar on scroll/mouse move
+    let controlsBarTimeout;
+    let lastMouseMove = Date.now();
+    
+    function showControlsBar() {
+        if (pdfControlsBar) {
+            pdfControlsBar.classList.remove('hidden');
+            clearTimeout(controlsBarTimeout);
+            controlsBarTimeout = setTimeout(() => {
+                if (pdfControlsBar && Date.now() - lastMouseMove > 3000) {
+                    pdfControlsBar.classList.add('hidden');
+                }
+            }, 3000);
+        }
+    }
+    
+    function hideControlsBar() {
+        if (pdfControlsBar) {
+            pdfControlsBar.classList.add('hidden');
+        }
+    }
+    
+    // Show controls on mouse move
+    document.addEventListener('mousemove', () => {
+        lastMouseMove = Date.now();
+        showControlsBar();
+    });
+    
+    // Show controls on scroll
+    window.addEventListener('scroll', showControlsBar);
+    
+    // Initially show controls
+    showControlsBar();
 
     // Page Navigation
     prevPageBtn.addEventListener('click', () => {
@@ -385,15 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle window resize
     window.addEventListener('resize', () => {
-        if (window.innerWidth <= 768) {
-            if (rightSidebarOpen) {
-                mainContent.classList.remove('right-sidebar-open');
-            }
-        } else {
-            if (rightSidebarOpen) {
-                mainContent.classList.add('right-sidebar-open');
-            }
-        }
+        // PDF viewer akan otomatis resize karena menggunakan 100% width/height
     });
 
     // Close sidebar when clicking outside on mobile

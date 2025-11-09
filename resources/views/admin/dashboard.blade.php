@@ -18,9 +18,7 @@
                 <h3 class="text-3xl font-bold text-white mb-2">Selamat Datang Kembali, Admin!</h3>
                 <p class="text-slate-300 text-lg">Kelola platform Coding Academy dengan mudah dan efisien.</p>
             </div>
-            <a href="{{ route('admin.analytics') }}" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-medium transition-colors backdrop-blur-sm border border-white/20">
-                📊 Lihat Analitik
-            </a>
+            
         </div>
     </div>
 

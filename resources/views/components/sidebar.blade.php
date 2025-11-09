@@ -20,11 +20,11 @@
                      x-transition:leave="transition ease-in duration-150"
                      x-transition:leave-start="opacity-100 transform scale-100"
                      x-transition:leave-end="opacity-0 transform scale-95"
-                     class="hidden md:flex flex-col ml-3 min-w-0 flex-1 overflow-hidden">
-                    <span class="text-sm font-bold text-white leading-tight truncate">
-                        Coding Academy
+                     class="hidden md:flex flex-col ml-3 min-w-0 flex-1">
+                    <span class="text-sm font-bold text-white leading-tight break-words">
+                        Coding Academy Payakumbuh
                     </span>
-                    <span class="text-xs text-slate-400 font-medium mt-0.5 truncate">
+                    <span class="text-xs text-slate-400 font-medium mt-0.5 break-words">
                         @if($user->role === 'admin')
                             Panel Admin
                         @elseif($user->role === 'guru')

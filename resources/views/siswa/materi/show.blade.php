@@ -195,11 +195,11 @@
                 </div>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="transition-all duration-300" id="mainContent" style="margin-left: 0;">
-                <!-- PDF Controls Bar -->
-                <div class="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 z-30 shadow-sm">
-                    <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Main Content Area - Full Canvas -->
+            <div class="fixed inset-0 transition-all duration-300" id="mainContent" style="margin: 0; padding: 0;">
+                <!-- Floating PDF Controls Bar -->
+                <div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-lg px-4 py-2 z-50 shadow-lg transition-all duration-300" id="pdfControlsBar">
+                    <div class="flex items-center space-x-4">
                         <!-- Navigation Controls -->
                         <div class="flex items-center space-x-2">
                             <button id="prevPage" class="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" title="Halaman Sebelumnya">
@@ -221,7 +221,7 @@
                         </div>
 
                         <!-- Zoom Controls -->
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2 border-l border-gray-200 pl-4">
                             <button id="zoomOut" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Zoom Out">
                                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path>
@@ -243,19 +243,21 @@
                     </div>
                 </div>
 
-                <!-- PDF Viewer Container -->
-                <div class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-                    <div class="w-full max-w-6xl mx-auto">
-                        <div class="bg-white shadow-2xl rounded-lg overflow-hidden" id="pdfContainer">
-                            <iframe id="pdfViewer" 
-                                    src="{{ route('siswa.materi.download', $materi->id) }}#toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit" 
-                                    class="w-full"
-                                    style="height: calc(100vh - 200px); min-height: 600px;"
-                                    frameborder="0">
-                            </iframe>
-                        </div>
-                    </div>
+                <!-- PDF Viewer Container - Full Canvas -->
+                <div class="w-full h-full bg-gray-900" id="pdfViewerContainer">
+                    <iframe id="pdfViewer" 
+                            src="{{ route('siswa.materi.download', $materi->id) }}#toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit" 
+                            class="w-full h-full"
+                            frameborder="0">
+                    </iframe>
                 </div>
+                
+                <!-- Floating Sidebar Toggle Button -->
+                <button id="floatingSidebarToggle" class="fixed right-4 top-1/2 transform -translate-y-1/2 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-lg p-3 z-50 shadow-lg transition-all duration-300 hover:bg-white" title="Buka Sidebar">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </button>
             </div>
         </div>
 

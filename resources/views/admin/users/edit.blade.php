@@ -28,23 +28,37 @@
                     @if ($user->role === 'siswa')
                         <!-- Basic Information Section -->
                         <div class="p-6 bg-white border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Informasi Dasar</h3>
+                            <div class="flex items-center mb-4">
+                                <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-800">Informasi Dasar</h3>
+                            </div>
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="name" :value="__('Nama Lengkap')" />
-                                    <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name', $user->name)" required autofocus />
+                                    <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name', $user->name)" required autofocus placeholder="Masukkan nama lengkap" />
+                                    <p class="mt-1 text-xs text-gray-500">Nama lengkap sesuai identitas</p>
                                 </div>
                                 <div>
                                     <x-input-label for="email" :value="__('Email')" />
-                                    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $user->email)" required />
+                                    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $user->email)" required placeholder="email@example.com" />
+                                    <p class="mt-1 text-xs text-gray-500">Email aktif untuk login</p>
                                 </div>
                                 <div>
-                                    <x-input-label for="no_telepon" :value="__('No. Telepon')" />
-                                    <x-text-input id="no_telepon" class="block mt-1 w-full" type="text" name="no_telepon" :value="old('no_telepon', $user->no_telepon)" />
+                                    <x-input-label for="no_telepon" :value="__('No. Telepon / WhatsApp')" />
+                                    <div class="mt-1 relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">+62</span>
+                                        </div>
+                                        <x-text-input id="no_telepon" class="block w-full pl-12" type="tel" name="no_telepon" :value="old('no_telepon', $user->no_telepon)" placeholder="81234567890" pattern="[0-9]{10,13}" />
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Contoh: 81234567890 (tanpa 0 di depan)</p>
                                 </div>
                                 <div>
                                     <x-input-label for="tanggal_lahir" :value="__('Tanggal Lahir')" />
-                                    <x-text-input id="tanggal_lahir" class="block mt-1 w-full" type="date" name="tanggal_lahir" :value="old('tanggal_lahir', $user->tanggal_lahir ? $user->tanggal_lahir->format('Y-m-d') : '')" max="{{ date('Y-m-d') }}" />
+                                    <x-text-input id="tanggal_lahir" class="block mt-1 w-full" type="date" name="tanggal_lahir" :value="old('tanggal_lahir', $user->tanggal_lahir ? $user->tanggal_lahir->format('Y-m-d') : '')" max="{{ date('Y-m-d', strtotime('-5 years')) }}" />
+                                    <p class="mt-1 text-xs text-gray-500">Minimal 5 tahun</p>
                                 </div>
                                 <div>
                                     <x-input-label for="jenis_kelamin" :value="__('Jenis Kelamin')" />
@@ -55,23 +69,154 @@
                                     </select>
                                 </div>
                                 <div class="md:col-span-2">
-                                    <x-input-label for="alamat" :value="__('Alamat')" />
-                                    <textarea id="alamat" name="alamat" rows="3" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('alamat', $user->alamat) }}</textarea>
+                                    <x-input-label :value="__('Alamat Lengkap')" />
+                                    <div class="mt-2 space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                        <!-- Detail Alamat -->
+                                        @php
+                                            // Parse alamat to extract components
+                                            $alamatParts = [];
+                                            if ($user->alamat) {
+                                                $parts = explode(',', $user->alamat);
+                                                foreach ($parts as $part) {
+                                                    $part = trim($part);
+                                                    if (strpos($part, 'Kel. ') === 0 || strpos($part, 'Kel ') === 0) {
+                                                        $alamatParts['kelurahan'] = str_replace(['Kel. ', 'Kel '], '', $part);
+                                                    } elseif (strpos($part, 'Kec. ') === 0 || strpos($part, 'Kec ') === 0) {
+                                                        $alamatParts['kecamatan'] = str_replace(['Kec. ', 'Kec '], '', $part);
+                                                    } else {
+                                                        // Check if it's a known province
+                                                        $provinces = [
+                                                            'Sumatera Barat', 'Sumatera Utara', 'Sumatera Selatan', 'Riau', 'Kepulauan Riau',
+                                                            'Jambi', 'Bengkulu', 'Lampung', 'Bangka Belitung', 'Aceh',
+                                                            'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur', 'Yogyakarta',
+                                                            'Banten', 'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur',
+                                                            'Kalimantan Barat', 'Kalimantan Tengah', 'Kalimantan Selatan', 'Kalimantan Timur', 'Kalimantan Utara',
+                                                            'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Selatan', 'Sulawesi Tenggara', 'Gorontalo', 'Sulawesi Barat',
+                                                            'Maluku', 'Maluku Utara', 'Papua Barat', 'Papua', 'Papua Selatan', 'Papua Tengah', 'Papua Pegunungan'
+                                                        ];
+                                                        if (in_array($part, $provinces)) {
+                                                            $alamatParts['provinsi'] = $part;
+                                                        } elseif (!isset($alamatParts['jalan']) && !isset($alamatParts['kota']) && !isset($alamatParts['provinsi'])) {
+                                                            // First part without prefix is usually jalan
+                                                            $alamatParts['jalan'] = $part;
+                                                        } elseif (!isset($alamatParts['kota']) && isset($alamatParts['jalan']) && !isset($alamatParts['provinsi'])) {
+                                                            // Second part without prefix is usually kota
+                                                            $alamatParts['kota'] = $part;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                        <div>
+                                            <x-input-label for="jalan" :value="__('Jalan / Nama Jalan')" />
+                                            <x-text-input id="jalan" class="block mt-1 w-full" type="text" name="jalan" :value="old('jalan', $alamatParts['jalan'] ?? '')" placeholder="Jl. Contoh No. 123" />
+                                        </div>
+                                        
+                                        <!-- Provinsi -->
+                                        <div>
+                                            <x-input-label for="provinsi" :value="__('Provinsi')" />
+                                            <select id="provinsi" name="provinsi" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                                <option value="">Pilih Provinsi</option>
+                                                @php
+                                                    $provinces = [
+                                                        'Sumatera Barat', 'Sumatera Utara', 'Sumatera Selatan', 'Riau', 'Kepulauan Riau',
+                                                        'Jambi', 'Bengkulu', 'Lampung', 'Bangka Belitung', 'Aceh',
+                                                        'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur', 'Yogyakarta',
+                                                        'Banten', 'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur',
+                                                        'Kalimantan Barat', 'Kalimantan Tengah', 'Kalimantan Selatan', 'Kalimantan Timur', 'Kalimantan Utara',
+                                                        'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Selatan', 'Sulawesi Tenggara', 'Gorontalo', 'Sulawesi Barat',
+                                                        'Maluku', 'Maluku Utara', 'Papua Barat', 'Papua', 'Papua Selatan', 'Papua Tengah', 'Papua Pegunungan'
+                                                    ];
+                                                @endphp
+                                                @foreach($provinces as $prov)
+                                                    <option value="{{ $prov }}" {{ old('provinsi', $alamatParts['provinsi'] ?? '') == $prov ? 'selected' : '' }}>{{ $prov }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Kota/Kabupaten -->
+                                        <div>
+                                            <x-input-label for="kota" :value="__('Kota / Kabupaten')" />
+                                            <select id="kota" name="kota" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" disabled>
+                                                <option value="">Pilih Provinsi terlebih dahulu</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Kecamatan -->
+                                        <div>
+                                            <x-input-label for="kecamatan" :value="__('Kecamatan')" />
+                                            <select id="kecamatan" name="kecamatan" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" disabled>
+                                                <option value="">Pilih Kota terlebih dahulu</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Kelurahan -->
+                                        <div>
+                                            <x-input-label for="kelurahan" :value="__('Kelurahan / Desa')" />
+                                            <select id="kelurahan" name="kelurahan" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" disabled>
+                                                <option value="">Pilih Kecamatan terlebih dahulu</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Alamat Lengkap (Hidden - akan diisi otomatis) -->
+                                        <input type="hidden" id="alamat" name="alamat" value="{{ old('alamat', $user->alamat) }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Academic Information Section -->
                         <div class="p-6 bg-gray-50 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Informasi Akademik</h3>
+                            <div class="flex items-center mb-4">
+                                <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-800">Informasi Akademik</h3>
+                            </div>
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="tanggal_pendaftaran" :value="__('Tanggal Pendaftaran')" />
-                                    <x-text-input id="tanggal_pendaftaran" class="block mt-1 w-full" type="date" name="tanggal_pendaftaran" :value="old('tanggal_pendaftaran', $user->tanggal_pendaftaran ? $user->tanggal_pendaftaran->format('Y-m-d') : '')" />
+                                    <x-text-input id="tanggal_pendaftaran" class="block mt-1 w-full" type="date" name="tanggal_pendaftaran" :value="old('tanggal_pendaftaran', $user->tanggal_pendaftaran ? $user->tanggal_pendaftaran->format('Y-m-d') : date('Y-m-d'))" />
+                                </div>
+                                @php
+                                    // Extract sekolah and kelas_sekolah from sekolah field
+                                    $sekolahValue = old('sekolah', $user->sekolah ?? '');
+                                    $kelasSekolahValue = '';
+                                    if (strpos($sekolahValue, ' - ') !== false) {
+                                        $parts = explode(' - ', $sekolahValue, 2);
+                                        $sekolahValue = $parts[0];
+                                        $kelasSekolahValue = $parts[1] ?? '';
+                                    }
+                                @endphp
+                                <div>
+                                    <x-input-label for="sekolah" :value="__('Nama Sekolah')" />
+                                    <x-text-input id="sekolah" class="block mt-1 w-full" type="text" name="sekolah" :value="old('sekolah', $sekolahValue)" placeholder="Contoh: SD Negeri 01 Payakumbuh" required />
+                                    <p class="mt-1 text-xs text-gray-500">Nama sekolah saat ini</p>
                                 </div>
                                 <div>
-                                    <x-input-label for="sekolah" :value="__('Sekolah/Institusi')" />
-                                    <x-text-input id="sekolah" class="block mt-1 w-full" type="text" name="sekolah" :value="old('sekolah', $user->sekolah)" />
+                                    <x-input-label for="kelas_sekolah" :value="__('Kelas')" />
+                                    <select id="kelas_sekolah" name="kelas_sekolah" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                        <option value="">Pilih Kelas</option>
+                                        <optgroup label="SD (Sekolah Dasar)">
+                                            <option value="1 SD" {{ old('kelas_sekolah', $kelasSekolahValue) == '1 SD' ? 'selected' : '' }}>Kelas 1 SD</option>
+                                            <option value="2 SD" {{ old('kelas_sekolah', $kelasSekolahValue) == '2 SD' ? 'selected' : '' }}>Kelas 2 SD</option>
+                                            <option value="3 SD" {{ old('kelas_sekolah', $kelasSekolahValue) == '3 SD' ? 'selected' : '' }}>Kelas 3 SD</option>
+                                            <option value="4 SD" {{ old('kelas_sekolah', $kelasSekolahValue) == '4 SD' ? 'selected' : '' }}>Kelas 4 SD</option>
+                                            <option value="5 SD" {{ old('kelas_sekolah', $kelasSekolahValue) == '5 SD' ? 'selected' : '' }}>Kelas 5 SD</option>
+                                            <option value="6 SD" {{ old('kelas_sekolah', $kelasSekolahValue) == '6 SD' ? 'selected' : '' }}>Kelas 6 SD</option>
+                                        </optgroup>
+                                        <optgroup label="SMP (Sekolah Menengah Pertama)">
+                                            <option value="7 SMP" {{ old('kelas_sekolah', $kelasSekolahValue) == '7 SMP' ? 'selected' : '' }}>Kelas 7 SMP</option>
+                                            <option value="8 SMP" {{ old('kelas_sekolah', $kelasSekolahValue) == '8 SMP' ? 'selected' : '' }}>Kelas 8 SMP</option>
+                                            <option value="9 SMP" {{ old('kelas_sekolah', $kelasSekolahValue) == '9 SMP' ? 'selected' : '' }}>Kelas 9 SMP</option>
+                                        </optgroup>
+                                        <optgroup label="SMA (Sekolah Menengah Atas)">
+                                            <option value="10 SMA" {{ old('kelas_sekolah', $kelasSekolahValue) == '10 SMA' ? 'selected' : '' }}>Kelas 10 SMA</option>
+                                            <option value="11 SMA" {{ old('kelas_sekolah', $kelasSekolahValue) == '11 SMA' ? 'selected' : '' }}>Kelas 11 SMA</option>
+                                            <option value="12 SMA" {{ old('kelas_sekolah', $kelasSekolahValue) == '12 SMA' ? 'selected' : '' }}>Kelas 12 SMA</option>
+                                        </optgroup>
+                                    </select>
+                                    <p class="mt-1 text-xs text-gray-500">Pilih kelas saat ini di sekolah</p>
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label :value="__('Bidang Ajar (Kelas)')" />
@@ -93,18 +238,22 @@
                                 </div>
                                 <div>
                                     <x-input-label for="durasi" :value="__('Durasi Program')" />
-                                    <div class="mt-2 flex space-x-4">
-                                        <label class="flex items-center">
+                                    <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors {{ old('durasi', $user->durasi) == '1 Bulan' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' }}">
+                                            <input type="radio" name="durasi" value="1 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi', $user->durasi) == '1 Bulan' ? 'checked' : '' }}>
+                                            <span class="ml-2 text-sm font-medium text-gray-700">1 Bulan</span>
+                                        </label>
+                                        <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors {{ old('durasi', $user->durasi) == '3 Bulan' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' }}">
                                             <input type="radio" name="durasi" value="3 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi', $user->durasi) == '3 Bulan' ? 'checked' : '' }}>
-                                            <span class="ml-2 text-sm text-gray-600">3 Bulan</span>
+                                            <span class="ml-2 text-sm font-medium text-gray-700">3 Bulan</span>
                                         </label>
-                                        <label class="flex items-center">
+                                        <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors {{ old('durasi', $user->durasi) == '6 Bulan' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' }}">
                                             <input type="radio" name="durasi" value="6 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi', $user->durasi) == '6 Bulan' ? 'checked' : '' }}>
-                                            <span class="ml-2 text-sm text-gray-600">6 Bulan</span>
+                                            <span class="ml-2 text-sm font-medium text-gray-700">6 Bulan</span>
                                         </label>
-                                        <label class="flex items-center">
+                                        <label class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors {{ old('durasi', $user->durasi) == '12 Bulan' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' }}">
                                             <input type="radio" name="durasi" value="12 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi', $user->durasi) == '12 Bulan' ? 'checked' : '' }}>
-                                            <span class="ml-2 text-sm text-gray-600">12 Bulan</span>
+                                            <span class="ml-2 text-sm font-medium text-gray-700">12 Bulan</span>
                                         </label>
                                     </div>
                                 </div>
@@ -126,7 +275,7 @@
                                 <div>
                                     <x-input-label for="enrollment_status" :value="__('Status Pendaftaran')" />
                                     @php
-                                        $currentEnrollmentStatus = old('enrollment_status', $user->enrollments->first()->status ?? 'inactive');
+                                        $currentEnrollmentStatus = old('enrollment_status', $user->enrollments->first()->status ?? 'active');
                                     @endphp
                                     <div class="mt-2 flex space-x-4">
                                         <label class="flex items-center">
@@ -145,31 +294,44 @@
 
                         <!-- Payment Information Section -->
                         <div class="p-6 bg-blue-50 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Informasi Pembayaran</h3>
+                            <div class="flex items-center mb-4">
+                                <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-800">Informasi Pembayaran</h3>
+                            </div>
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="metode_pembayaran" :value="__('Metode Pembayaran')" />
                                     <select id="metode_pembayaran" name="metode_pembayaran" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                        <option value="">Pilih Metode</option>
-                                        <option value="transfer" {{ old('metode_pembayaran', $user->metode_pembayaran) == 'transfer' ? 'selected' : '' }}>Transfer</option>
-                                        <option value="cash" {{ old('metode_pembayaran', $user->metode_pembayaran) == 'cash' ? 'selected' : '' }}>Cash</option>
+                                        <option value="">Pilih Metode Pembayaran</option>
+                                        <option value="transfer" {{ old('metode_pembayaran', $user->metode_pembayaran) == 'transfer' ? 'selected' : '' }}>Transfer Bank</option>
+                                        <option value="cash" {{ old('metode_pembayaran', $user->metode_pembayaran) == 'cash' ? 'selected' : '' }}>Tunai (Cash)</option>
                                     </select>
+                                    <p class="mt-1 text-xs text-gray-500">Pilih metode pembayaran yang digunakan</p>
                                 </div>
                                 <div>
-                                    <x-input-label for="status_promo" :value="__('Status Promo')" />
-                                    <x-text-input id="status_promo" class="block mt-1 w-full" type="text" name="status_promo" :value="old('status_promo', $user->status_promo)" placeholder="e.g., Free Siblings Promo" />
+                                    <x-input-label for="status_promo" :value="__('Status Promo / Diskon')" />
+                                    <select id="status_promo" name="status_promo" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                        <option value="">Tidak Ada Promo</option>
+                                        <option value="Promo Saudara Gratis" {{ old('status_promo', $user->status_promo) == 'Promo Saudara Gratis' ? 'selected' : '' }}>Promo Saudara Gratis</option>
+                                        <option value="Promo Early Bird" {{ old('status_promo', $user->status_promo) == 'Promo Early Bird' ? 'selected' : '' }}>Promo Early Bird</option>
+                                        <option value="Promo Referral" {{ old('status_promo', $user->status_promo) == 'Promo Referral' ? 'selected' : '' }}>Promo Referral</option>
+                                        <option value="Beasiswa" {{ old('status_promo', $user->status_promo) == 'Beasiswa' ? 'selected' : '' }}>Beasiswa</option>
+                                    </select>
+                                    <p class="mt-1 text-xs text-gray-500">Pilih promo atau diskon yang berlaku (jika ada)</p>
                                 </div>
                                 <div>
                                     <x-input-label for="biaya_pendaftaran" :value="__('Biaya Pendaftaran')" />
-                                    <x-text-input id="biaya_pendaftaran" class="block mt-1 w-full" type="text" name="biaya_pendaftaran" :value="old('biaya_pendaftaran', $user->biaya_pendaftaran)" />
+                                    <x-text-input id="biaya_pendaftaran" class="block mt-1 w-full" type="text" name="biaya_pendaftaran" :value="old('biaya_pendaftaran', $user->biaya_pendaftaran ? 'Rp. ' . number_format($user->biaya_pendaftaran, 0, ',', '.') : 'Rp. 150.000')" />
                                 </div>
                                 <div>
                                     <x-input-label for="biaya_angsuran" :value="__('Biaya Angsuran')" />
-                                    <x-text-input id="biaya_angsuran" class="block mt-1 w-full" type="text" name="biaya_angsuran" :value="old('biaya_angsuran', $user->biaya_angsuran)" />
+                                    <x-text-input id="biaya_angsuran" class="block mt-1 w-full" type="text" name="biaya_angsuran" :value="old('biaya_angsuran', $user->biaya_angsuran ? 'Rp. ' . number_format($user->biaya_angsuran, 0, ',', '.') : 'Rp. 1.250.000')" />
                                 </div>
                                 <div class="md:col-span-2">
                                     <x-input-label for="total_biaya" :value="__('Total Biaya')" />
-                                    <x-text-input id="total_biaya" class="block mt-1 w-full bg-gray-200" type="text" name="total_biaya" :value="old('total_biaya', $user->total_biaya)" readonly />
+                                    <x-text-input id="total_biaya" class="block mt-1 w-full bg-gray-200" type="text" name="total_biaya" :value="old('total_biaya', $user->total_biaya ? 'Rp. ' . number_format($user->total_biaya, 0, ',', '.') : '')" readonly />
                                 </div>
                             </div>
                         </div>
@@ -178,15 +340,20 @@
 
                         <!-- Login Information Section -->
                         <div class="p-6 bg-purple-50 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-800">Informasi Login</h3>
+                            <div class="flex items-center mb-4">
+                                <svg class="w-6 h-6 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                <h3 class="text-lg font-semibold text-gray-800">Informasi Masuk</h3>
+                            </div>
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-input-label for="password" :value="__('Password Baru (Opsional)')" />
+                                    <x-input-label for="password" :value="__('Kata Sandi')" />
                                     <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" />
-                                    <p class="text-sm text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password.</p>
+                                    <p class="text-sm text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah kata sandi.</p>
                                 </div>
                                 <div>
-                                    <x-input-label for="password_confirmation" :value="__('Konfirmasi Password Baru')" />
+                                    <x-input-label for="password_confirmation" :value="__('Konfirmasi Kata Sandi')" />
                                     <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" />
                                 </div>
                             </div>
@@ -275,6 +442,222 @@
     @if ($user->role === 'siswa')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Address Data (Indonesia - focused on Sumatera Barat)
+            const addressData = {
+                'Sumatera Barat': {
+                    'Kota Padang': {
+                        'Padang Barat': ['Belakang Tangsi', 'Flamboyan Baru', 'Kampung Jao', 'Kampung Pondok', 'Korong Gadang', 'Lolong Belanti', 'Purus', 'Seberang Padang', 'Seberang Palinggam', 'Teluk Bayur'],
+                        'Padang Selatan': ['Air Manis', 'Alang Laweh', 'Batang Arau', 'Bukit Gado-Gado', 'Mato Aie', 'Pasa Gadang', 'Ranah Parak Rumbio', 'Seberang Palinggam', 'Teluk Bayur'],
+                        'Padang Timur': ['Andalas', 'Ganting', 'Jati', 'Jati Baru', 'Kubu Marapalam', 'Kubu Parak Karakah', 'Lubuk Begalung', 'Parak Gadang', 'Sawahan', 'Sawahan Timur'],
+                        'Padang Utara': ['Air Tawar Barat', 'Air Tawar Timur', 'Alai Parak Kopi', 'Gunung Pangilun', 'Lolong', 'Ulak Karang Selatan', 'Ulak Karang Utara'],
+                        'Koto Tangah': ['Batang Kabung Ganting', 'Bungus Selatan', 'Bungus Timur', 'Indarung', 'Koto Tangah', 'Lubuk Kilangan', 'Lubuk Minturun', 'Padang Besi', 'Tanjung Saba'],
+                        'Lubuk Begalung': ['Ampang', 'Batang Kabung', 'Batu Gadang', 'Koto Baru', 'Lubuk Begalung', 'Piai', 'Piai Tangah', 'Sungai Sapih'],
+                        'Lubuk Kilangan': ['Bandar Buat', 'Batu Gadang', 'Indarung', 'Koto Baru', 'Lubuk Begalung', 'Piai', 'Sungai Sapih'],
+                        'Nanggalo': ['Gurun Laweh', 'Kampung Jua', 'Koto Tangah', 'Nanggalo', 'Surau Gadang'],
+                        'Pauh': ['Bandar Buat', 'Batu Gadang', 'Indarung', 'Koto Baru', 'Lubuk Begalung', 'Piai', 'Sungai Sapih']
+                    },
+                    'Kota Payakumbuh': {
+                        'Payakumbuh Barat': ['Aie Tabik', 'Balai Nan Duo', 'Koto Nan Gadang', 'Koto Nan IV', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan', 'Tanjung Pauh'],
+                        'Payakumbuh Selatan': ['Aie Dingin', 'Koto Baru', 'Koto Nan Gadang', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan'],
+                        'Payakumbuh Timur': ['Aie Dingin', 'Koto Baru', 'Koto Nan Gadang', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan'],
+                        'Payakumbuh Utara': ['Aie Tabik', 'Balai Nan Duo', 'Koto Nan Gadang', 'Koto Nan IV', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan'],
+                        'Lamposi Tigo Nagori': ['Aie Dingin', 'Koto Baru', 'Koto Nan Gadang', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan']
+                    },
+                    'Kota Bukittinggi': {
+                        'Guguk Panjang': ['Aur Tajungkang', 'Bukit Cangang', 'Guguk Panjang', 'Koto Selayan', 'Kubang Putiah', 'Pakan Sinayan'],
+                        'Mandiangin Koto Selayan': ['Aur Tajungkang', 'Bukit Cangang', 'Guguk Panjang', 'Koto Selayan', 'Kubang Putiah', 'Pakan Sinayan'],
+                        'Aur Birugo Tigo Baleh': ['Aur Birugo', 'Kubang Putiah', 'Pakan Sinayan', 'Tigo Baleh']
+                    },
+                    'Kota Padang Panjang': {
+                        'Padang Panjang Barat': ['Ganting', 'Guguk Malintang', 'Koto Baru', 'Koto Panjang', 'Pasar Baru', 'Pasar Usang'],
+                        'Padang Panjang Timur': ['Ganting', 'Guguk Malintang', 'Koto Baru', 'Koto Panjang', 'Pasar Baru', 'Pasar Usang']
+                    },
+                    'Kota Pariaman': {
+                        'Pariaman Selatan': ['Ampalu', 'Kampung Baru', 'Kampung Gadang', 'Pariaman', 'Pasar Baru', 'Pasar Usang'],
+                        'Pariaman Tengah': ['Ampalu', 'Kampung Baru', 'Kampung Gadang', 'Pariaman', 'Pasar Baru', 'Pasar Usang'],
+                        'Pariaman Utara': ['Ampalu', 'Kampung Baru', 'Kampung Gadang', 'Pariaman', 'Pasar Baru', 'Pasar Usang']
+                    },
+                    'Kota Sawahlunto': {
+                        'Barangin': ['Aie Dingin', 'Kampung Baru', 'Koto Baru', 'Kubang', 'Labuh Baru', 'Padang Tangah'],
+                        'Lembah Segar': ['Aie Dingin', 'Kampung Baru', 'Koto Baru', 'Kubang', 'Labuh Baru', 'Padang Tangah'],
+                        'Silungkang': ['Aie Dingin', 'Kampung Baru', 'Koto Baru', 'Kubang', 'Labuh Baru', 'Padang Tangah'],
+                        'Talawi': ['Aie Dingin', 'Kampung Baru', 'Koto Baru', 'Kubang', 'Labuh Baru', 'Padang Tangah']
+                    },
+                    'Kota Solok': {
+                        'Lubuk Sikarah': ['Aie Dingin', 'Kampung Baru', 'Koto Baru', 'Kubang', 'Labuh Baru', 'Padang Tangah'],
+                        'Tanjung Harapan': ['Aie Dingin', 'Kampung Baru', 'Koto Baru', 'Kubang', 'Labuh Baru', 'Padang Tangah']
+                    }
+                },
+                'DKI Jakarta': {
+                    'Jakarta Pusat': {
+                        'Cempaka Putih': ['Cempaka Putih Barat', 'Cempaka Putih Timur', 'Rawasari'],
+                        'Gambir': ['Cideng', 'Duri Pulo', 'Gambir', 'Kebon Kelapa', 'Petojo Selatan', 'Petojo Utara'],
+                        'Johar Baru': ['Galur', 'Johar Baru', 'Kampung Rawa', 'Tanah Tinggi'],
+                        'Kemayoran': ['Cempaka Baru', 'Gunung Sahari Selatan', 'Harapan Mulya', 'Kebon Kosong', 'Kemayoran', 'Serdang', 'Sumur Batu', 'Utan Panjang']
+                    }
+                },
+                'Jawa Barat': {
+                    'Kota Bandung': {
+                        'Andir': ['Ciroyom', 'Ciseureuh', 'Dungus Cariang', 'Garuda', 'Kebon Jeruk'],
+                        'Astana Anyar': ['Cibadak', 'Karang Anyar', 'Karasak', 'Nyengseret', 'Panjunan', 'Pelindung Hewan'],
+                        'Bandung Kulon': ['Caringin', 'Cibuntu', 'Cigondewah Hilir', 'Cigondewah Kaler', 'Cigondewah Rahayu', 'Cijerah', 'Gempolsari', 'Warung Muncang']
+                    }
+                }
+            };
+
+            // Address form elements
+            const provinsiSelect = document.getElementById('provinsi');
+            const kotaSelect = document.getElementById('kota');
+            const kecamatanSelect = document.getElementById('kecamatan');
+            const kelurahanSelect = document.getElementById('kelurahan');
+            const jalanInput = document.getElementById('jalan');
+            const alamatHidden = document.getElementById('alamat');
+
+            // Initialize address from existing data
+            @if(isset($alamatParts) && !empty($alamatParts))
+                const existingProvinsi = '{{ $alamatParts['provinsi'] ?? '' }}';
+                const existingKota = '{{ $alamatParts['kota'] ?? '' }}';
+                const existingKecamatan = '{{ $alamatParts['kecamatan'] ?? '' }}';
+                const existingKelurahan = '{{ $alamatParts['kelurahan'] ?? '' }}';
+                
+                if (existingProvinsi && addressData[existingProvinsi]) {
+                    provinsiSelect.value = existingProvinsi;
+                    kotaSelect.disabled = false;
+                    Object.keys(addressData[existingProvinsi]).forEach(kota => {
+                        const option = document.createElement('option');
+                        option.value = kota;
+                        option.textContent = kota;
+                        if (kota === existingKota) {
+                            option.selected = true;
+                        }
+                        kotaSelect.appendChild(option);
+                    });
+                    
+                    if (existingKota && addressData[existingProvinsi][existingKota]) {
+                        kecamatanSelect.disabled = false;
+                        Object.keys(addressData[existingProvinsi][existingKota]).forEach(kecamatan => {
+                            const option = document.createElement('option');
+                            option.value = kecamatan;
+                            option.textContent = kecamatan;
+                            if (kecamatan === existingKecamatan) {
+                                option.selected = true;
+                            }
+                            kecamatanSelect.appendChild(option);
+                        });
+                        
+                        if (existingKecamatan && addressData[existingProvinsi][existingKota][existingKecamatan]) {
+                            kelurahanSelect.disabled = false;
+                            addressData[existingProvinsi][existingKota][existingKecamatan].forEach(kelurahan => {
+                                const option = document.createElement('option');
+                                option.value = kelurahan;
+                                option.textContent = kelurahan;
+                                if (kelurahan === existingKelurahan) {
+                                    option.selected = true;
+                                }
+                                kelurahanSelect.appendChild(option);
+                            });
+                        }
+                    }
+                }
+            @endif
+
+            // Update kota dropdown based on provinsi
+            provinsiSelect.addEventListener('change', function() {
+                const provinsi = this.value;
+                kotaSelect.innerHTML = '<option value="">Pilih Kota / Kabupaten</option>';
+                kecamatanSelect.innerHTML = '<option value="">Pilih Kota terlebih dahulu</option>';
+                kelurahanSelect.innerHTML = '<option value="">Pilih Kecamatan terlebih dahulu</option>';
+                
+                if (provinsi && addressData[provinsi]) {
+                    kotaSelect.disabled = false;
+                    Object.keys(addressData[provinsi]).forEach(kota => {
+                        const option = document.createElement('option');
+                        option.value = kota;
+                        option.textContent = kota;
+                        kotaSelect.appendChild(option);
+                    });
+                } else {
+                    kotaSelect.disabled = true;
+                    kecamatanSelect.disabled = true;
+                    kelurahanSelect.disabled = true;
+                }
+                updateAlamat();
+            });
+
+            // Update kecamatan dropdown based on kota
+            kotaSelect.addEventListener('change', function() {
+                const provinsi = provinsiSelect.value;
+                const kota = this.value;
+                kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                kelurahanSelect.innerHTML = '<option value="">Pilih Kecamatan terlebih dahulu</option>';
+                
+                if (provinsi && kota && addressData[provinsi] && addressData[provinsi][kota]) {
+                    kecamatanSelect.disabled = false;
+                    Object.keys(addressData[provinsi][kota]).forEach(kecamatan => {
+                        const option = document.createElement('option');
+                        option.value = kecamatan;
+                        option.textContent = kecamatan;
+                        kecamatanSelect.appendChild(option);
+                    });
+                } else {
+                    kecamatanSelect.disabled = true;
+                    kelurahanSelect.disabled = true;
+                }
+                updateAlamat();
+            });
+
+            // Update kelurahan dropdown based on kecamatan
+            kecamatanSelect.addEventListener('change', function() {
+                const provinsi = provinsiSelect.value;
+                const kota = kotaSelect.value;
+                const kecamatan = this.value;
+                kelurahanSelect.innerHTML = '<option value="">Pilih Kelurahan / Desa</option>';
+                
+                if (provinsi && kota && kecamatan && addressData[provinsi] && addressData[provinsi][kota] && addressData[provinsi][kota][kecamatan]) {
+                    kelurahanSelect.disabled = false;
+                    addressData[provinsi][kota][kecamatan].forEach(kelurahan => {
+                        const option = document.createElement('option');
+                        option.value = kelurahan;
+                        option.textContent = kelurahan;
+                        kelurahanSelect.appendChild(option);
+                    });
+                } else {
+                    kelurahanSelect.disabled = true;
+                }
+                updateAlamat();
+            });
+
+            // Update alamat when any field changes
+            [kelurahanSelect, jalanInput].forEach(element => {
+                if (element) {
+                    element.addEventListener('change', updateAlamat);
+                    element.addEventListener('input', updateAlamat);
+                }
+            });
+
+            // Function to update alamat hidden field
+            function updateAlamat() {
+                const parts = [];
+                
+                if (jalanInput.value) parts.push(jalanInput.value);
+                if (kelurahanSelect.value) parts.push('Kel. ' + kelurahanSelect.value);
+                if (kecamatanSelect.value) parts.push('Kec. ' + kecamatanSelect.value);
+                if (kotaSelect.value) parts.push(kotaSelect.value);
+                if (provinsiSelect.value) parts.push(provinsiSelect.value);
+                
+                const alamatLengkap = parts.join(', ');
+                alamatHidden.value = alamatLengkap;
+            }
+
+            // Format phone number
+            const noTeleponInput = document.getElementById('no_telepon');
+            if (noTeleponInput) {
+                noTeleponInput.addEventListener('input', function(e) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            }
+
+            // Payment calculation
             const biayaPendaftaran = document.getElementById('biaya_pendaftaran');
             const biayaAngsuran = document.getElementById('biaya_angsuran');
             const totalBiaya = document.getElementById('total_biaya');
@@ -302,19 +685,24 @@
                 totalBiaya.value = formatRupiah(totalBiaya.value.toString(), 'Rp. ');
             }
 
-            biayaPendaftaran.addEventListener('input', function(e) {
-                e.target.value = formatRupiah(this.value, 'Rp. ');
-                calculateTotal();
-            });
-            biayaAngsuran.addEventListener('input', function(e) {
-                e.target.value = formatRupiah(this.value, 'Rp. ');
-                calculateTotal();
-            });
+            if (biayaPendaftaran && biayaAngsuran && totalBiaya) {
+                biayaPendaftaran.addEventListener('input', function(e) {
+                    e.target.value = formatRupiah(this.value, 'Rp. ');
+                    calculateTotal();
+                });
+                biayaAngsuran.addEventListener('input', function(e) {
+                    e.target.value = formatRupiah(this.value, 'Rp. ');
+                    calculateTotal();
+                });
 
-            // Initial formatting and calculation on page load
-            biayaPendaftaran.value = formatRupiah(biayaPendaftaran.value, 'Rp. ');
-            biayaAngsuran.value = formatRupiah(biayaAngsuran.value, 'Rp. ');
-            calculateTotal();
+                // Initial formatting and calculation on page load
+                biayaPendaftaran.value = formatRupiah(biayaPendaftaran.value, 'Rp. ');
+                biayaAngsuran.value = formatRupiah(biayaAngsuran.value, 'Rp. ');
+                calculateTotal();
+            }
+
+            // Initialize address
+            updateAlamat();
         });
     </script>
     @endif
