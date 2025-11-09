@@ -182,16 +182,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             
             $assignedKelasIds = $kelas->pluck('id')->toArray();
             
-            // Log for debugging
-            \Log::info('Guru Dashboard: Loading classes for guru', [
-                'user_id' => $user->id,
-                'user_email' => $user->email,
-                'total_kelas_count' => $kelas->count(),
-                'kelas_list' => $kelas->pluck('id', 'nama_kelas')->toArray(),
-                'assigned_via_guru_id' => \App\Models\Kelas::where('guru_id', $user->id)->count(),
-                'enrolled_count' => count($enrolledKelasIds),
-            ]);
-
             // Calculate stats
             if (empty($assignedKelasIds)) {
                 $materi_count = 0;
@@ -202,23 +192,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 $pending_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
                 $approved_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
             }
-            
-            // Debug logging
-            \Log::info('Guru Dashboard: Loading ALL classes (NO AUTH CHECK)', [
-                'user_id' => $user->id,
-                'user_email' => $user->email,
-                'user_name' => $user->name,
-                'total_kelas_found' => $kelas->count(),
-                'kelas_details' => $kelas->map(function($k) {
-                    return [
-                        'id' => $k->id, 
-                        'nama' => $k->nama_kelas, 
-                        'guru_id' => $k->guru_id, 
-                        'status' => $k->status,
-                        'students_count' => $k->students_count ?? 0
-                    ];
-                })->toArray(),
-            ]);
             
             $stats = [
                 'total_materi' => $materi_count,

@@ -80,48 +80,6 @@
                             <p class="text-xs text-gray-400 mt-1">Dari materi Anda</p>
                         </div>
                     </div>
-                    
-                    @if(config('app.debug') || !isset($kelas) || !$kelas || !$kelas->id)
-                        <div class="mt-4 p-4 bg-red-50 border border-red-300 rounded text-sm">
-                            <p class="font-semibold text-red-800 mb-2">⚠️ Error: Kelas Tidak Ditemukan!</p>
-                            @if(!isset($kelas) || !$kelas || !$kelas->id)
-                                <p class="text-red-700 mb-2">
-                                    <strong>Masalah:</strong> Kelas tidak ter-load dengan benar. Kemungkinan:
-                                </p>
-                                <ul class="list-disc list-inside text-red-700 mb-2 space-y-1">
-                                    <li>Kelas ID tidak valid di URL</li>
-                                    <li>Kelas tidak ditemukan di database</li>
-                                    <li>Route model binding tidak bekerja</li>
-                                </ul>
-                                <p class="text-red-700 mb-2">
-                                    <strong>Solusi:</strong>
-                                </p>
-                                <ol class="list-decimal list-inside text-red-700 space-y-1">
-                                    <li>Pastikan URL benar: <code>/guru/kelas/{id}</code> (ganti {id} dengan ID kelas yang valid)</li>
-                                    <li>Cek di admin panel apakah kelas ada dan sudah di-assign ke guru ID {{ auth()->id() }}</li>
-                                    <li>Jalankan query: <code>SELECT * FROM kelas WHERE id = {id_dari_url};</code></li>
-                                    <li>Jika kelas ada tapi tidak di-assign, jalankan: <code>UPDATE kelas SET guru_id = {{ auth()->id() }} WHERE id = {id_dari_url};</code></li>
-                                </ol>
-                            @endif
-                            
-                            @if(config('app.debug'))
-                                <div class="mt-4 p-3 bg-yellow-50 border border-yellow-300 rounded">
-                                    <p class="font-semibold text-yellow-800 mb-2">Debug Info:</p>
-                                    <p class="text-yellow-700">Kelas ID: {{ $kelas->id ?? 'NULL' }}</p>
-                                    <p class="text-yellow-700">Kelas Nama: {{ $kelas->nama_kelas ?? 'NULL' }}</p>
-                                    <p class="text-yellow-700">Kelas Guru ID: {{ $kelas->guru_id ?? 'NULL' }}</p>
-                                    <p class="text-yellow-700">Guru ID Anda: {{ auth()->id() }}</p>
-                                    <p class="text-yellow-700">Siswa variable exists: {{ isset($siswa) ? 'Yes' : 'No' }}</p>
-                                    <p class="text-yellow-700">Materi variable exists: {{ isset($materi) ? 'Yes' : 'No' }}</p>
-                                    <p class="text-yellow-700">Siswa count: {{ isset($siswa) && $siswa ? $siswa->count() : 0 }}</p>
-                                    <p class="text-yellow-700">Materi count: {{ isset($materi) && $materi ? $materi->count() : 0 }}</p>
-                                    <p class="text-yellow-700">Is Guru Assigned: {{ isset($isGuruAssigned) && $isGuruAssigned ? 'Yes' : 'No' }}</p>
-                                    <p class="text-yellow-700">Is Guru Enrolled: {{ isset($isGuruEnrolled) && $isGuruEnrolled ? 'Yes' : 'No' }}</p>
-                                    <p class="text-yellow-700 mt-2">Cek log Laravel untuk detail lebih lanjut.</p>
-                                </div>
-                            @endif
-                        </div>
-                    @endif
                 </div>
             </div>
 

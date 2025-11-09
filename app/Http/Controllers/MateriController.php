@@ -191,78 +191,28 @@ class MateriController extends Controller
             abort(403, 'Anda harus login untuk melihat materi.');
         }
         
-        \Log::info('MateriController show: Request received', [
-            'materi_param' => $materi,
-            'materi_type' => gettype($materi),
-            'materi_is_model' => $materi instanceof Materi,
-            'user_id' => $user->id,
-            'user_role' => $user->role,
-            'request_url' => request()->url(),
-            'route_params' => request()->route()->parameters(),
-        ]);
-        
         // Handle route model binding or direct ID
         if ($materi instanceof Materi) {
             $materiModel = $materi;
         } else {
-            // Try to find by ID
             $materiModel = Materi::find($materi);
-            
-            // If not found by ID, try to find by any field (for debugging)
-            if (!$materiModel && is_numeric($materi)) {
-                $materiModel = Materi::where('id', $materi)->first();
-            }
         }
         
         if (!$materiModel) {
-            \Log::error('MateriController show: Materi not found', [
-                'materi_param' => $materi,
-                'user_id' => $user->id,
-                'all_materi_ids' => Materi::pluck('id')->toArray(),
-            ]);
             abort(404, 'Materi tidak ditemukan.');
         }
         
         $materiModel->load(['kelas', 'uploadedBy']);
         
-        \Log::info('MateriController show: Materi found', [
-            'materi_id' => $materiModel->id,
-            'materi_judul' => $materiModel->judul,
-            'materi_kelas_id' => $materiModel->kelas_id,
-            'materi_uploaded_by' => $materiModel->uploaded_by,
-            'user_id' => $user->id,
-            'user_role' => $user->role,
-        ]);
-        
-        // Permission check based on user role - ALLOW ALL for now (for testing)
-        // Admin can view all materials
+        // Permission check based on user role
         if ($user->isAdmin()) {
-            \Log::info('MateriController show: Admin accessing', [
-                'user_id' => $user->id,
-                'materi_id' => $materiModel->id,
-            ]);
             return view('admin.materi.show', ['materi' => $materiModel]);
         } 
         
-        // Guru can view all materials (for testing)
-        // In production, you may want to add permission check
         if ($user->isGuru()) {
-            \Log::info('MateriController show: Guru accessing', [
-                'user_id' => $user->id,
-                'materi_id' => $materiModel->id,
-            ]);
             return view('guru.materi.show', ['materi' => $materiModel]);
         }
         
-        // For other roles, allow access for now (for testing)
-        // In production, redirect to appropriate controller
-        \Log::warning('MateriController show: Non-admin/guru accessing', [
-            'user_id' => $user->id,
-            'user_role' => $user->role,
-            'materi_id' => $materiModel->id,
-        ]);
-        
-        // Temporarily allow access (for testing)
         return view('guru.materi.show', ['materi' => $materiModel]);
     }
 

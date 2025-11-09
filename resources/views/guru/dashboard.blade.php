@@ -52,23 +52,7 @@
                         $kelasCollection = collect();
                     }
                     
-                    // Debug info
-                    $totalKelasDb = \App\Models\Kelas::count();
-                    $kelasCount = $kelasCollection->count();
                 @endphp
-                
-                {{-- Debug display --}}
-                @if(config('app.debug'))
-                    <div class="mb-4 p-4 bg-yellow-50 border border-yellow-300 rounded text-sm">
-                        <p class="font-semibold text-yellow-800">Debug Info:</p>
-                        <p class="text-yellow-700">Total kelas di DB: {{ $totalKelasDb }}</p>
-                        <p class="text-yellow-700">Kelas di collection: {{ $kelasCount }}</p>
-                        <p class="text-yellow-700">Kelas variable exists: {{ isset($kelas) ? 'Yes' : 'No' }}</p>
-                        @if(isset($kelas))
-                            <p class="text-yellow-700">Kelas type: {{ get_class($kelas) }}</p>
-                        @endif
-                    </div>
-                @endif
                 
                 @if($kelasCollection && $kelasCollection->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -129,13 +113,6 @@
                                     <li>Admin dapat assign kelas melalui halaman "Edit Kelas" di panel admin</li>
                                     <li>Pastikan admin memilih nama Anda di dropdown "Guru Pengajar" saat membuat/mengedit kelas</li>
                                 </ol>
-                            </div>
-                            
-                                <div class="mt-3 p-3 bg-yellow-50 border border-yellow-300 rounded">
-                                <p class="font-semibold text-yellow-800 text-xs mb-1">Debug Info:</p>
-                                <p class="text-yellow-700 text-xs mb-2">Total kelas di database: {{ \App\Models\Kelas::count() }}</p>
-                                <p class="text-yellow-700 text-xs mb-2">Kelas yang diterima: {{ isset($kelas) ? $kelas->count() : 0 }}</p>
-                                <p class="text-yellow-700 text-xs">Silakan cek log Laravel (storage/logs/laravel.log) untuk detail lebih lanjut.</p>
                             </div>
                         </div>
                     </div>
