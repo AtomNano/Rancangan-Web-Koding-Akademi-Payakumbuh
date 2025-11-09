@@ -100,12 +100,12 @@
                         <button @click="openTab = 'progress'" 
                                 :class="{ 'border-indigo-500 text-indigo-600': openTab === 'progress', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': openTab !== 'progress' }" 
                                 class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                            Progress Siswa
+                            Progress & Absen Siswa
                         </button>
                         <button @click="openTab = 'kehadiran'" 
                                 :class="{ 'border-indigo-500 text-indigo-600': openTab === 'kehadiran', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': openTab !== 'kehadiran' }" 
                                 class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                            Kehadiran
+                            Log Kehadiran
                         </button>
                     </nav>
                 </div>
@@ -308,6 +308,45 @@
                 <!-- Tab: Progress Siswa -->
                 <div x-show="openTab === 'progress'" class="p-6">
                     @if($siswaCollection->count() > 0 && $materiCollection->count() > 0)
+                        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                                <p class="text-sm font-medium text-indigo-600 mb-1">Total Siswa</p>
+                                <p class="text-2xl font-bold text-indigo-900">{{ $siswaCollection->count() }}</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                <p class="text-sm font-medium text-green-600 mb-1">Siswa Aktif Membaca</p>
+                                <p class="text-2xl font-bold text-green-900">
+                                    @php
+                                        $activeReaders = 0;
+                                        foreach($progressData as $pd) {
+                                            if(($pd['completed_materi'] ?? 0) > 0 || ($pd['presensi_count'] ?? 0) > 0) {
+                                                $activeReaders++;
+                                            }
+                                        }
+                                    @endphp
+                                    {{ $activeReaders }}
+                                </p>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <p class="text-sm font-medium text-blue-600 mb-1">Rata-rata Progress</p>
+                                <p class="text-2xl font-bold text-blue-900">
+                                    @php
+                                        $totalAvg = 0;
+                                        $count = 0;
+                                        foreach($progressData as $pd) {
+                                            if(($pd['total_materi'] ?? 0) > 0) {
+                                                $avg = (($pd['completed_materi'] ?? 0) / $pd['total_materi']) * 100;
+                                                $totalAvg += $avg;
+                                                $count++;
+                                            }
+                                        }
+                                        $overallAvg = $count > 0 ? round($totalAvg / $count, 1) : 0;
+                                    @endphp
+                                    {{ $overallAvg }}%
+                                </p>
+                            </div>
+                        </div>
+                        
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -315,10 +354,14 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
                                         @foreach($materiCollection->where('status', 'approved') as $m)
                                             <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                {{ Str::limit($m->judul, 20) }}
+                                                <div class="max-w-xs">
+                                                    <p class="truncate" title="{{ $m->judul }}">{{ Str::limit($m->judul, 15) }}</p>
+                                                    <p class="text-xs text-gray-400 mt-1">Oleh: {{ Str::limit($m->uploadedBy->name ?? 'N/A', 10) }}</p>
+                                                </div>
                                             </th>
                                         @endforeach
-                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Progress Total</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Absen</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -329,6 +372,15 @@
                                             $progressMap = $progresses->keyBy('materi_id');
                                             $totalProgress = 0;
                                             $totalMateri = $materiCollection->where('status', 'approved')->count();
+                                            
+                                            // Get attendance stats for this student
+                                            $siswaPresensi = \App\Models\Presensi::where('user_id', $s->id)
+                                                ->whereIn('materi_id', $materiCollection->pluck('id'))
+                                                ->get();
+                                            $hadirCount = $siswaPresensi->where('status_kehadiran', 'hadir')->count();
+                                            $izinCount = $siswaPresensi->where('status_kehadiran', 'izin')->count();
+                                            $sakitCount = $siswaPresensi->where('status_kehadiran', 'sakit')->count();
+                                            $alphaCount = $siswaPresensi->where('status_kehadiran', 'alpha')->count();
                                         @endphp
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
@@ -342,22 +394,39 @@
                                                     if($progress && $progress->is_completed) {
                                                         $totalProgress++;
                                                     }
+                                                    
+                                                    // Check if student has accessed this material
+                                                    $hasAccessed = $siswaPresensi->where('materi_id', $m->id)->isNotEmpty();
+                                                    $lastAccess = $siswaPresensi->where('materi_id', $m->id)->sortByDesc('tanggal_akses')->first();
                                                 @endphp
                                                 <td class="px-4 py-4 text-center">
-                                                    @if($progress)
-                                                        <div class="inline-block">
-                                                            <div class="w-16 bg-gray-200 rounded-full h-2">
-                                                                <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
-                                                            </div>
-                                                            <span class="text-xs text-gray-600 block mt-1">{{ number_format($percentage, 0) }}%</span>
+                                                    @if($progress || $hasAccessed)
+                                                        <div class="space-y-1">
+                                                            @if($progress)
+                                                                <div class="inline-block">
+                                                                    <div class="w-16 bg-gray-200 rounded-full h-2">
+                                                                        <div class="bg-indigo-600 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
+                                                                    </div>
+                                                                    <span class="text-xs text-gray-600 block mt-1">{{ number_format($percentage, 0) }}%</span>
+                                                                </div>
+                                                                @if($progress->is_completed)
+                                                                    <svg class="w-4 h-4 text-green-500 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                                    </svg>
+                                                                @endif
+                                                            @endif
+                                                            @if($hasAccessed && $lastAccess)
+                                                                <span class="text-xs px-2 py-0.5 rounded
+                                                                    {{ $lastAccess->status_kehadiran === 'hadir' ? 'bg-green-100 text-green-800' : 
+                                                                       ($lastAccess->status_kehadiran === 'izin' ? 'bg-yellow-100 text-yellow-800' : 
+                                                                       ($lastAccess->status_kehadiran === 'sakit' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800')) }}">
+                                                                    {{ ucfirst($lastAccess->status_kehadiran) }}
+                                                                </span>
+                                                                <p class="text-xs text-gray-400">{{ $lastAccess->tanggal_akses->format('d/m') }}</p>
+                                                            @endif
                                                         </div>
-                                                        @if($progress->is_completed)
-                                                            <svg class="w-5 h-5 text-green-500 mx-auto mt-1" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                                            </svg>
-                                                        @endif
                                                     @else
-                                                        <span class="text-xs text-gray-400">-</span>
+                                                        <span class="text-xs text-gray-400">Belum akses</span>
                                                     @endif
                                                 </td>
                                             @endforeach
@@ -371,6 +440,17 @@
                                                     </div>
                                                     <span class="text-xs font-medium text-gray-900 block mt-1">{{ number_format($avgProgress, 0) }}%</span>
                                                     <span class="text-xs text-gray-500">{{ $totalProgress }}/{{ $totalMateri }} selesai</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 text-center">
+                                                <div class="space-y-1">
+                                                    <div class="flex items-center justify-center space-x-1">
+                                                        <span class="text-xs px-2 py-0.5 rounded bg-green-100 text-green-800">{{ $hadirCount }}H</span>
+                                                        <span class="text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">{{ $izinCount }}I</span>
+                                                        <span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-800">{{ $sakitCount }}S</span>
+                                                        <span class="text-xs px-2 py-0.5 rounded bg-red-100 text-red-800">{{ $alphaCount }}A</span>
+                                                    </div>
+                                                    <p class="text-xs text-gray-500">Total: {{ $siswaPresensi->count() }}</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -418,8 +498,11 @@
                                                                 {{ $tanggalAkses ? $tanggalAkses->format('d M Y H:i') : 'N/A' }}
                                                             </td>
                                                             <td class="px-4 py-2">
-                                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                                    Hadir
+                                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                                    {{ $p->status_kehadiran === 'hadir' ? 'bg-green-100 text-green-800' : 
+                                                                       ($p->status_kehadiran === 'izin' ? 'bg-yellow-100 text-yellow-800' : 
+                                                                       ($p->status_kehadiran === 'sakit' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800')) }}">
+                                                                    {{ ucfirst($p->status_kehadiran) }}
                                                                 </span>
                                                             </td>
                                                         </tr>

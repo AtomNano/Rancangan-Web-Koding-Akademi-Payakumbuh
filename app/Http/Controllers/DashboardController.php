@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Kelas;
 use App\Models\Materi;
 use App\Models\User;
+use App\Models\Presensi;
+use App\Models\MateriProgress;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Import Auth facade
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -34,6 +38,7 @@ class DashboardController extends Controller
                     $pending_verifications = Materi::where('status', 'pending')->with(['uploadedBy', 'kelas'])->latest()->take(5)->get();
 
                     return view('admin.dashboard', compact('stats', 'pending_verifications'));
+                
                 case 'guru':
                     $user = auth()->user();
                     
@@ -121,5 +126,125 @@ class DashboardController extends Controller
         }
 
         return redirect('/login'); // Redirect to login if no user is authenticated
+    }
+
+    /**
+     * Analytics dashboard for admin
+     */
+    public function analytics()
+    {
+        // Overall statistics
+        $totalSiswa = User::where('role', 'siswa')->count();
+        $totalKelas = Kelas::count();
+        $totalMateri = Materi::where('status', 'approved')->count();
+        
+        // Progress statistics
+        $totalProgress = MateriProgress::count();
+        $completedProgress = MateriProgress::where('is_completed', true)->count();
+        $avgProgress = MateriProgress::avg('progress_percentage') ?? 0;
+        
+        // Attendance statistics
+        $totalPresensi = Presensi::count();
+        $hadirCount = Presensi::where('status_kehadiran', 'hadir')->count();
+        $izinCount = Presensi::where('status_kehadiran', 'izin')->count();
+        $sakitCount = Presensi::where('status_kehadiran', 'sakit')->count();
+        $alphaCount = Presensi::where('status_kehadiran', 'alpha')->count();
+        
+        // Progress by class
+        $progressByKelas = [];
+        $kelasList = Kelas::with('materi')->get();
+        foreach ($kelasList as $kelas) {
+            $materiIds = $kelas->materi()->where('status', 'approved')->pluck('id');
+            $siswaIds = $kelas->students()->where('users.role', 'siswa')->pluck('users.id');
+            
+            $totalMateriKelas = $materiIds->count();
+            $completedCount = MateriProgress::whereIn('materi_id', $materiIds)
+                ->whereIn('user_id', $siswaIds)
+                ->where('is_completed', true)
+                ->distinct('materi_id', 'user_id')
+                ->count();
+            
+            $avgProgressKelas = MateriProgress::whereIn('materi_id', $materiIds)
+                ->whereIn('user_id', $siswaIds)
+                ->avg('progress_percentage') ?? 0;
+            
+            $progressByKelas[] = [
+                'kelas' => $kelas,
+                'total_siswa' => $siswaIds->count(),
+                'total_materi' => $totalMateriKelas,
+                'completed_count' => $completedCount,
+                'avg_progress' => round($avgProgressKelas, 1),
+            ];
+        }
+        
+        // Most accessed materials
+        $mostAccessedMateri = Presensi::select('materi_id', DB::raw('count(*) as access_count'))
+            ->with('materi')
+            ->groupBy('materi_id')
+            ->orderBy('access_count', 'desc')
+            ->limit(10)
+            ->get();
+        
+        // Student progress details
+        $studentProgressDetails = [];
+        $siswaList = User::where('role', 'siswa')->with('enrolledClasses')->get();
+        foreach ($siswaList as $siswa) {
+            $enrolledKelasIds = $siswa->enrolledClasses->pluck('id');
+            $materiIds = Materi::whereIn('kelas_id', $enrolledKelasIds)
+                ->where('status', 'approved')
+                ->pluck('id');
+            
+            $totalMateriSiswa = $materiIds->count();
+            $completedMateri = MateriProgress::where('user_id', $siswa->id)
+                ->whereIn('materi_id', $materiIds)
+                ->where('is_completed', true)
+                ->count();
+            
+            $avgProgressSiswa = MateriProgress::where('user_id', $siswa->id)
+                ->whereIn('materi_id', $materiIds)
+                ->avg('progress_percentage') ?? 0;
+            
+            // Attendance stats for this student
+            $presensiSiswa = Presensi::where('user_id', $siswa->id)
+                ->whereIn('materi_id', $materiIds)
+                ->get();
+            
+            $studentProgressDetails[] = [
+                'siswa' => $siswa,
+                'total_materi' => $totalMateriSiswa,
+                'completed_materi' => $completedMateri,
+                'avg_progress' => round($avgProgressSiswa, 1),
+                'total_presensi' => $presensiSiswa->count(),
+                'hadir' => $presensiSiswa->where('status_kehadiran', 'hadir')->count(),
+                'izin' => $presensiSiswa->where('status_kehadiran', 'izin')->count(),
+                'sakit' => $presensiSiswa->where('status_kehadiran', 'sakit')->count(),
+                'alpha' => $presensiSiswa->where('status_kehadiran', 'alpha')->count(),
+            ];
+        }
+        
+        // Recent activity (last 30 days)
+        $recentPresensi = Presensi::with(['user', 'materi'])
+            ->where('tanggal_akses', '>=', now()->subDays(30))
+            ->orderBy('tanggal_akses', 'desc')
+            ->limit(20)
+            ->get();
+        
+        return view('admin.analytics', compact(
+            'totalSiswa',
+            'totalKelas',
+            'totalMateri',
+            'totalProgress',
+            'completedProgress',
+            'avgProgress',
+            'totalPresensi',
+            'hadirCount',
+            'izinCount',
+            'sakitCount',
+            'alphaCount',
+            'progressByKelas',
+            'mostAccessedMateri',
+            'studentProgressDetails',
+            'recentPresensi'
+        ));
     }
 }

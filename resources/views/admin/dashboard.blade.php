@@ -13,9 +13,14 @@
     <!-- Welcome Banner -->
     <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-8 mb-8 shadow-xl border border-slate-700/50">
         <div class="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
-        <div class="relative">
-            <h3 class="text-3xl font-bold text-white mb-2">Selamat Datang Kembali, Admin!</h3>
-            <p class="text-slate-300 text-lg">Kelola platform Coding Academy dengan mudah dan efisien.</p>
+        <div class="relative flex items-center justify-between">
+            <div>
+                <h3 class="text-3xl font-bold text-white mb-2">Selamat Datang Kembali, Admin!</h3>
+                <p class="text-slate-300 text-lg">Kelola platform Coding Academy dengan mudah dan efisien.</p>
+            </div>
+            <a href="{{ route('admin.analytics') }}" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-medium transition-colors backdrop-blur-sm border border-white/20">
+                📊 Lihat Analitik
+            </a>
         </div>
     </div>
 

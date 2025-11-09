@@ -169,26 +169,71 @@ class SiswaController extends Controller
     }
 
     /**
-     * Record attendance for a material
+     * Submit attendance for a material
      */
-    private function recordAttendance($user, $materi)
+    public function submitAbsen(Request $request, $materi)
     {
+        $user = Auth::user();
+        
+        // Handle route model binding or direct ID
+        if ($materi instanceof Materi) {
+            $materiModel = $materi;
+        } else {
+            $materiModel = Materi::find($materi);
+        }
+        
+        if (!$materiModel) {
+            abort(404, 'Materi tidak ditemukan.');
+        }
+        
+        // Check if student is enrolled in the class
+        $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
+            ->where('kelas_id', $materiModel->kelas_id)
+            ->exists();
+        
+        if (!$isEnrolled) {
+            abort(403, 'Anda tidak terdaftar di kelas ini.');
+        }
+
+        $request->validate([
+            'status_kehadiran' => 'required|in:hadir,izin,sakit,alpha',
+        ]);
+
         $today = now()->toDateString();
         
         // Check if attendance already recorded for today
         $existingAttendance = Presensi::where('user_id', $user->id)
-            ->where('materi_id', $materi->id)
-            ->where('tanggal_akses', $today)
+            ->where('materi_id', $materiModel->id)
+            ->whereDate('tanggal_akses', $today)
             ->first();
 
-        if (!$existingAttendance) {
+        if ($existingAttendance) {
+            // Update existing attendance
+            $existingAttendance->update([
+                'status_kehadiran' => $request->status_kehadiran,
+                'tanggal_akses' => now(),
+            ]);
+        } else {
+            // Create new attendance
             Presensi::create([
                 'user_id' => $user->id,
-                'materi_id' => $materi->id,
-                'status_kehadiran' => 'hadir',
-                'tanggal_akses' => $today,
+                'materi_id' => $materiModel->id,
+                'status_kehadiran' => $request->status_kehadiran,
+                'tanggal_akses' => now(),
             ]);
         }
+
+        return redirect()->back()
+            ->with('success', 'Absen berhasil disubmit.');
+    }
+
+    /**
+     * Record attendance for a material (automatic on access - deprecated, now manual)
+     */
+    private function recordAttendance($user, $materi)
+    {
+        // No longer auto-record attendance
+        // Students must submit manually via submitAbsen
     }
 
     /**

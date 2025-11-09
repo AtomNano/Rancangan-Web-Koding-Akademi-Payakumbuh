@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Admin routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/analytics', [DashboardController::class, 'analytics'])->name('analytics');
         Route::get('/dashboard', function () {
             // Student status calculation
             $all_siswa = \App\Models\User::where('role', 'siswa')->get();
@@ -221,6 +222,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/materi/{materi}', [SiswaController::class, 'showMateri'])->name('materi.show');
         Route::get('/materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::post('/materi/{materi}/complete', [SiswaController::class, 'completeMateri'])->name('materi.complete');
+        Route::post('/materi/{materi}/absen', [SiswaController::class, 'submitAbsen'])->name('materi.absen');
         Route::get('/progress', [SiswaController::class, 'progress'])->name('progress');
         
         // PDF Progress routes
