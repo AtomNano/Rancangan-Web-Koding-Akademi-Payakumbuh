@@ -9,6 +9,9 @@ class Materi extends Model
 {
     use HasFactory;
 
+    // Explicitly set table name to match migration
+    protected $table = 'materis';
+
     protected $fillable = [
         'judul',
         'deskripsi',
@@ -21,7 +24,7 @@ class Materi extends Model
 
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
     public function presensi()
@@ -52,5 +55,14 @@ class Materi extends Model
     public function isPending()
     {
         return $this->status === 'pending';
+    }
+
+    /**
+     * Retrieve the model for route model binding.
+     * This ensures route model binding works correctly.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return $this->where($field ?? $this->getRouteKeyName(), $value)->first();
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MateriController;
 use App\Http\Controllers\MateriProgressController;
+use App\Http\Controllers\GuruKelasController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -96,6 +97,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Admin routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/analytics', [DashboardController::class, 'analytics'])->name('analytics');
         Route::get('/dashboard', function () {
             // Student status calculation
             $all_siswa = \App\Models\User::where('role', 'siswa')->get();
@@ -112,8 +114,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'materi_aktif' => \App\Models\Materi::where('status', 'approved')->count(),
             ];
             $pending_verifications = \App\Models\Materi::where('status', 'pending')->with(['uploadedBy', 'kelas'])->latest()->take(5)->get();
+            
+            // Get recent activity logs
+            $recent_activities = \App\Models\ActivityLog::with('user')
+                ->latest()
+                ->take(10)
+                ->get();
 
-            return view('admin.dashboard', compact('stats', 'pending_verifications'));
+            return view('admin.dashboard', compact('stats', 'pending_verifications', 'recent_activities'));
         })->name('dashboard');
         
         Route::resource('users', UserController::class);
@@ -130,6 +138,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Material verification routes
         Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
         Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
+        Route::get('materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::post('materi/{materi}/approve', [MateriController::class, 'approve'])->name('materi.approve');
         Route::post('materi/{materi}/reject', [MateriController::class, 'reject'])->name('materi.reject');
 
@@ -142,21 +151,68 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('guru')->prefix('guru')->name('guru.')->group(function () {
         Route::get('/dashboard', function () {
             $user = auth()->user();
-            $assignedKelasIds = $user->enrolledClasses->pluck('id')->toArray(); // Get IDs of assigned classes
-
-            $materi_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->count();
-            $pending_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
-            $approved_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
+            
+            // Get classes assigned to this guru via guru_id
+            $kelas = \App\Models\Kelas::where('guru_id', $user->id)
+                ->withCount('students')
+                ->with('guru')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            
+            // Also get classes where guru is enrolled (secondary method)
+            $enrolledKelasIds = \App\Models\Enrollment::where('user_id', $user->id)
+                ->pluck('kelas_id')
+                ->toArray();
+            
+            if (!empty($enrolledKelasIds)) {
+                $enrolledKelas = \App\Models\Kelas::whereIn('id', $enrolledKelasIds)
+                    ->where('guru_id', '!=', $user->id) // Don't duplicate classes already in $kelas
+                    ->withCount('students')
+                    ->with('guru')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+                
+                // Merge enrolled classes with assigned classes
+                $kelas = $kelas->merge($enrolledKelas)->unique('id');
+            }
+            
+            // Ensure we have a collection
+            if (!$kelas || !($kelas instanceof \Illuminate\Support\Collection)) {
+                $kelas = collect();
+            }
+            
+            $assignedKelasIds = $kelas->pluck('id')->toArray();
+            
+            // Calculate stats
+            if (empty($assignedKelasIds)) {
+                $materi_count = 0;
+                $pending_count = 0;
+                $approved_count = 0;
+            } else {
+                $materi_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->count();
+                $pending_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
+                $approved_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
+            }
             
             $stats = [
                 'total_materi' => $materi_count,
                 'pending_materi' => $pending_count,
                 'approved_materi' => $approved_count,
             ];
-            return view('guru.dashboard', compact('stats'));
+            return view('guru.dashboard', compact('stats', 'kelas'));
         })->name('dashboard');
         
-        Route::resource('materi', MateriController::class);
+        // Explicit routes for materi to avoid route model binding issues
+        Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
+        Route::get('materi/create', [MateriController::class, 'create'])->name('materi.create');
+        Route::post('materi', [MateriController::class, 'store'])->name('materi.store');
+        Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
+        Route::get('materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
+        Route::get('materi/{materi}/edit', [MateriController::class, 'edit'])->name('materi.edit');
+        Route::put('materi/{materi}', [MateriController::class, 'update'])->name('materi.update');
+        Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
+        
+        Route::resource('kelas', GuruKelasController::class)->only(['index', 'show']);
     });
 
     // Siswa routes
@@ -164,7 +220,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
         Route::get('/kelas/{kelas}', [SiswaController::class, 'showClass'])->name('kelas.show');
         Route::get('/materi/{materi}', [SiswaController::class, 'showMateri'])->name('materi.show');
+        Route::get('/materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::post('/materi/{materi}/complete', [SiswaController::class, 'completeMateri'])->name('materi.complete');
+        Route::post('/materi/{materi}/absen', [SiswaController::class, 'submitAbsen'])->name('materi.absen');
         Route::get('/progress', [SiswaController::class, 'progress'])->name('progress');
         
         // PDF Progress routes
@@ -173,5 +231,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/materi/{materi}/mark-completed', [MateriProgressController::class, 'markCompleted'])->name('materi.mark-completed');
     });
 });
+
+// Helper route to check upload configuration (remove in production)
+Route::get('/check-php-config', function () {
+    if (!app()->environment('local')) {
+        abort(404);
+    }
+    
+    return response()->json([
+        'upload_max_filesize' => ini_get('upload_max_filesize'),
+        'post_max_size' => ini_get('post_max_size'),
+        'max_execution_time' => ini_get('max_execution_time'),
+        'max_input_time' => ini_get('max_input_time'),
+        'memory_limit' => ini_get('memory_limit'),
+        'php_version' => phpversion(),
+        'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+        'php_sapi' => php_sapi_name(),
+    ]);
+})->name('check.php.config');
 
 require __DIR__.'/auth.php';

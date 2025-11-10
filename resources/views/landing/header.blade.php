@@ -9,9 +9,7 @@
             </div>
         </a>
         <div class="hidden md:flex items-center space-x-8">
-            <a href="#fitur" class="text-white/90 hover:text-white font-medium transition-colors duration-200 drop-shadow-sm">Fitur</a>
             <a href="#kelas" class="text-white/90 hover:text-white font-medium transition-colors duration-200 drop-shadow-sm">Kelas</a>
-            <a href="#alur" class="text-white/90 hover:text-white font-medium transition-colors duration-200 drop-shadow-sm">Alur</a>
             <a href="#pricing" class="text-white/90 hover:text-white font-medium transition-colors duration-200 drop-shadow-sm">Biaya</a>
             <a href="#kontak" class="text-white/90 hover:text-white font-medium transition-colors duration-200 drop-shadow-sm">Kontak</a>
         </div>
@@ -27,9 +25,7 @@
     </nav>
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 border-t border-white/20">
-        <a href="#fitur" class="block py-3 text-white/90 hover:text-white font-medium transition-colors">Fitur</a>
         <a href="#kelas" class="block py-3 text-white/90 hover:text-white font-medium transition-colors">Kelas</a>
-        <a href="#alur" class="block py-3 text-white/90 hover:text-white font-medium transition-colors">Alur</a>
         <a href="#pricing" class="block py-3 text-white/90 hover:text-white font-medium transition-colors">Biaya</a>
         <a href="#kontak" class="block py-3 text-white/90 hover:text-white font-medium transition-colors">Kontak</a>
         <div class="pt-4 space-y-2">

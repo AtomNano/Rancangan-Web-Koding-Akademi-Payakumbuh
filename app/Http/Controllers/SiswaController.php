@@ -46,41 +46,74 @@ class SiswaController extends Controller
     /**
      * Display a specific material
      */
-    public function showMateri(Materi $materi)
+    public function showMateri($materi)
     {
         $user = Auth::user();
         
+        // Handle route model binding or direct ID
+        if ($materi instanceof Materi) {
+            $materiModel = $materi;
+        } else {
+            $materiModel = Materi::find($materi);
+        }
+        
+        if (!$materiModel) {
+            abort(404, 'Materi tidak ditemukan.');
+        }
+        
+        $materiModel->load(['kelas', 'uploadedBy']);
+        
         // Check if student is enrolled in the class
-        if (!$user->enrolledClasses->contains($materi->kelas)) {
+        // Use enrollment check instead of relationship
+        $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
+            ->where('kelas_id', $materiModel->kelas_id)
+            ->exists();
+        
+        if (!$isEnrolled) {
             abort(403, 'Anda tidak terdaftar di kelas ini.');
         }
 
         // Check if material is approved
-        if (!$materi->isApproved()) {
+        if (!$materiModel->isApproved()) {
             abort(403, 'Materi belum disetujui oleh admin.');
         }
 
         // Record attendance
-        $this->recordAttendance($user, $materi);
+        $this->recordAttendance($user, $materiModel);
 
-        return view('siswa.materi.show', compact('materi'));
+        return view('siswa.materi.show', ['materi' => $materiModel]);
     }
 
     /**
      * Mark material as completed
      */
-    public function completeMateri(Materi $materi)
+    public function completeMateri($materi)
     {
         $user = Auth::user();
         
+        // Handle route model binding or direct ID
+        if ($materi instanceof Materi) {
+            $materiModel = $materi;
+        } else {
+            $materiModel = Materi::find($materi);
+        }
+        
+        if (!$materiModel) {
+            abort(404, 'Materi tidak ditemukan.');
+        }
+        
         // Check if student is enrolled in the class
-        if (!$user->enrolledClasses->contains($materi->kelas)) {
+        $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
+            ->where('kelas_id', $materiModel->kelas_id)
+            ->exists();
+        
+        if (!$isEnrolled) {
             abort(403, 'Anda tidak terdaftar di kelas ini.');
         }
 
         // Record completion (you might want to create a separate table for this)
         // For now, we'll just record attendance
-        $this->recordAttendance($user, $materi);
+        $this->recordAttendance($user, $materiModel);
 
         return redirect()->back()
             ->with('success', 'Materi berhasil ditandai sebagai selesai.');
@@ -136,26 +169,71 @@ class SiswaController extends Controller
     }
 
     /**
-     * Record attendance for a material
+     * Submit attendance for a material
      */
-    private function recordAttendance($user, $materi)
+    public function submitAbsen(Request $request, $materi)
     {
+        $user = Auth::user();
+        
+        // Handle route model binding or direct ID
+        if ($materi instanceof Materi) {
+            $materiModel = $materi;
+        } else {
+            $materiModel = Materi::find($materi);
+        }
+        
+        if (!$materiModel) {
+            abort(404, 'Materi tidak ditemukan.');
+        }
+        
+        // Check if student is enrolled in the class
+        $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
+            ->where('kelas_id', $materiModel->kelas_id)
+            ->exists();
+        
+        if (!$isEnrolled) {
+            abort(403, 'Anda tidak terdaftar di kelas ini.');
+        }
+
+        $request->validate([
+            'status_kehadiran' => 'required|in:hadir,izin,sakit,alpha',
+        ]);
+
         $today = now()->toDateString();
         
         // Check if attendance already recorded for today
         $existingAttendance = Presensi::where('user_id', $user->id)
-            ->where('materi_id', $materi->id)
-            ->where('tanggal_akses', $today)
+            ->where('materi_id', $materiModel->id)
+            ->whereDate('tanggal_akses', $today)
             ->first();
 
-        if (!$existingAttendance) {
+        if ($existingAttendance) {
+            // Update existing attendance
+            $existingAttendance->update([
+                'status_kehadiran' => $request->status_kehadiran,
+                'tanggal_akses' => now(),
+            ]);
+        } else {
+            // Create new attendance
             Presensi::create([
                 'user_id' => $user->id,
-                'materi_id' => $materi->id,
-                'status_kehadiran' => 'hadir',
-                'tanggal_akses' => $today,
+                'materi_id' => $materiModel->id,
+                'status_kehadiran' => $request->status_kehadiran,
+                'tanggal_akses' => now(),
             ]);
         }
+
+        return redirect()->back()
+            ->with('success', 'Absen berhasil disubmit.');
+    }
+
+    /**
+     * Record attendance for a material (automatic on access - deprecated, now manual)
+     */
+    private function recordAttendance($user, $materi)
+    {
+        // No longer auto-record attendance
+        // Students must submit manually via submitAbsen
     }
 
     /**

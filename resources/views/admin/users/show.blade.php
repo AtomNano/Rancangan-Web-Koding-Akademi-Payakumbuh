@@ -31,7 +31,7 @@
                             <a href="{{ route('admin.users.edit', $user->id) }}" 
                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
                                 <svg class="mr-2 -ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
-                                Edit
+                                Ubah
                             </a>
                             <a href="{{ route('admin.users.index') }}" 
                                class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="p-3 bg-gray-50 rounded-lg">
                                             <dt class="text-sm font-medium text-gray-500">Jenis Kelamin</dt>
-                                            <dd class="text-sm text-gray-900 mt-1">{{ ucfirst($user->jenis_kelamin) ?? '-' }}</dd>
+                                            <dd class="text-sm text-gray-900 mt-1">{{ $user->jenis_kelamin === 'laki-laki' ? 'Laki-laki' : ($user->jenis_kelamin === 'perempuan' ? 'Perempuan' : ($user->jenis_kelamin ?? '-')) }}</dd>
                                         </div>
                                         <div class="p-3 bg-gray-50 rounded-lg md:col-span-2">
                                             <dt class="text-sm font-medium text-gray-500">Alamat</dt>
@@ -125,13 +125,13 @@
                                             <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                                                 <div>
                                                     <h5 class="text-sm font-medium text-gray-900">{{ $kelas->nama_kelas }}</h5>
-                                                    <p class="text-xs text-gray-500">{{ ucfirst($kelas->bidang) }}</p>
+                                                    <p class="text-xs text-gray-500">{{ $kelas->bidang === 'coding' ? 'Coding' : ($kelas->bidang === 'desain' ? 'Desain' : 'Robotik') }}</p>
                                                 </div>
                                                 @php
                                                     $status = $kelas->pivot->status;
                                                 @endphp
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                    {{ ucfirst($status) }}
+                                                    {{ $status == 'active' ? 'Aktif' : 'Tidak Aktif' }}
                                                 </span>
                                             </div>
                                         @empty
@@ -146,8 +146,8 @@
                         <div class="mt-6">
                             <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                                 <div class="p-4 bg-gray-50 rounded-lg">
-                                    <dt class="text-sm font-medium text-gray-500">Role</dt>
-                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ucfirst($user->role) }}</dd>
+                                    <dt class="text-sm font-medium text-gray-500">Peran</dt>
+                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : 'Siswa') }}</dd>
                                 </div>
                                 <div class="p-4 bg-gray-50 rounded-lg">
                                     <dt class="text-sm font-medium text-gray-500">Bergabung Sejak</dt>
@@ -166,7 +166,7 @@
                                                 <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                                                     <div>
                                                         <h5 class="text-sm font-medium text-gray-900">{{ $kelas->nama_kelas }}</h5>
-                                                        <p class="text-xs text-gray-500">{{ ucfirst($kelas->bidang) }}</p>
+                                                        <p class="text-xs text-gray-500">{{ $kelas->bidang === 'coding' ? 'Coding' : ($kelas->bidang === 'desain' ? 'Desain' : 'Robotik') }}</p>
                                                     </div>
                                                 </div>
                                             @empty
