@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use App\Models\User;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -14,15 +15,32 @@ class KelasController extends Controller
     public function index()
     {
         $kelasList = Kelas::with('guru', 'enrollments', 'materi')->latest()->get();
+        
+        // Get unassigned classes (classes without guru_id) for admin notice
+        $unassignedKelas = Kelas::whereNull('guru_id')->get();
 
+        // Count students enrolled in classes (not all students in system)
+        $enrolledStudentIds = \App\Models\Enrollment::select('enrollments.user_id')
+            ->join('users', 'enrollments.user_id', '=', 'users.id')
+            ->where('users.role', 'siswa')
+            ->distinct()
+            ->pluck('user_id')
+            ->toArray();
+        $totalEnrolledSiswa = count($enrolledStudentIds);
+        
         $stats = [
             'total_kelas' => \App\Models\Kelas::count(),
-            'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
+            'total_siswa' => $totalEnrolledSiswa, // Count enrolled students, not all students
             'total_guru' => \App\Models\User::where('role', 'guru')->count(),
             'total_materi' => \App\Models\Materi::count(),
+            'unassigned_kelas_count' => $unassignedKelas->count(),
         ];
 
-        return view('admin.kelas.index', ['kelasList' => $kelasList, 'stats' => $stats]);
+        return view('admin.kelas.index', [
+            'kelasList' => $kelasList, 
+            'stats' => $stats,
+            'unassignedKelas' => $unassignedKelas
+        ]);
     }
 
     /**
@@ -46,13 +64,16 @@ class KelasController extends Controller
             'guru_id' => 'required|exists:users,id',
         ]);
 
-        Kelas::create([
+        $kelas = Kelas::create([
             'nama_kelas' => $validated['nama_kelas'],
             'deskripsi' => $validated['deskripsi'],
             'bidang' => $validated['bidang'],
             'guru_id' => $validated['guru_id'],
             'status' => 'active',
         ]);
+
+        // Log activity
+        ActivityLogger::logClassCreated($kelas);
 
         return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil dibuat.');
@@ -113,7 +134,11 @@ class KelasController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
 
+        // Log activity
+        $oldValues = $kelas->toArray();
         $kelas->update($validated);
+        $newValues = $kelas->fresh()->toArray();
+        ActivityLogger::logClassUpdated($kelas, $oldValues, $newValues);
 
         return redirect()->route('admin.kelas.index')
             ->with('success', 'Kelas berhasil diperbarui.');
@@ -124,6 +149,9 @@ class KelasController extends Controller
      */
     public function destroy(Kelas $kelas)
     {
+        // Log activity
+        ActivityLogger::logClassDeleted($kelas);
+        
         $kelas->delete();
 
         return redirect()->route('admin.kelas.index')
@@ -154,10 +182,15 @@ class KelasController extends Controller
         ]);
 
         foreach ($validated['student_ids'] as $studentId) {
+            $student = User::find($studentId);
             $kelas->enrollments()->create([
                 'user_id' => $studentId,
                 'status' => 'active',
             ]);
+            // Log activity
+            if ($student) {
+                ActivityLogger::logStudentEnrolled($kelas, $student);
+            }
         }
 
         return redirect()->route('admin.kelas.show', $kelas)
@@ -169,6 +202,9 @@ class KelasController extends Controller
      */
     public function unenroll(Kelas $kelas, User $user)
     {
+        // Log activity
+        ActivityLogger::logStudentUnenrolled($kelas, $user);
+        
         $kelas->enrollments()->where('user_id', $user->id)->delete();
 
         return redirect()->route('admin.kelas.show', $kelas)

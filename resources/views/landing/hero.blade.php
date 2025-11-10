@@ -61,26 +61,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                     </svg>
                 </a>
-                <a href="#fitur" class="w-full sm:w-auto glass hover:glass-strong text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300">
+                <a href="#kelas" class="w-full sm:w-auto glass hover:glass-strong text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300">
                     Pelajari Lebih Lanjut
                 </a>
             </div>
             
-            <!-- Quick Login Links -->
-            <div class="mt-8 pt-8 border-t border-white/20">
-                <p class="text-sm text-gray-300 mb-4">Sudah punya akun?</p>
-                <div class="flex flex-wrap justify-center gap-3">
-                    <a href="/login-admin" class="text-sm glass hover:glass-strong text-white px-4 py-2 rounded-lg transition-all">
-                        Login Admin
-                    </a>
-                    <a href="/login-guru" class="text-sm glass hover:glass-strong text-white px-4 py-2 rounded-lg transition-all">
-                        Login Guru
-                    </a>
-                    <a href="/login-siswa" class="text-sm glass hover:glass-strong text-white px-4 py-2 rounded-lg transition-all">
-                        Login Siswa
-                    </a>
-                </div>
-            </div>
+           
         </div>
     </div>
     

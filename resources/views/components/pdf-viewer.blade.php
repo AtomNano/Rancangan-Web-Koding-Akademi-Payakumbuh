@@ -44,7 +44,7 @@
             <button id="zoomIn" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm">
                 Zoom +
             </button>
-            <a href="{{ Storage::url($materi->file_path) }}" download 
+            <a href="{{ route(auth()->user()->isAdmin() ? 'admin.materi.download' : (auth()->user()->isGuru() ? 'guru.materi.download' : 'siswa.materi.download'), $materi->id) }}" download 
                class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm">
                 Unduh PDF
             </a>
@@ -54,7 +54,7 @@
     <!-- PDF Container -->
     <div class="pdf-container border border-gray-300 rounded-lg overflow-hidden">
         <iframe id="pdfViewer" 
-                src="{{ Storage::url($materi->file_path) }}#toolbar=0&navpanes=0&scrollbar=1" 
+                src="{{ route(auth()->user()->isAdmin() ? 'admin.materi.download' : (auth()->user()->isGuru() ? 'guru.materi.download' : 'siswa.materi.download'), $materi->id) }}#toolbar=0&navpanes=0&scrollbar=1" 
                 class="w-full h-96 md:h-[600px]"
                 frameborder="0">
         </iframe>

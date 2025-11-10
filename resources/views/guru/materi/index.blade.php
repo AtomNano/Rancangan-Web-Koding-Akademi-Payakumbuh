@@ -65,9 +65,9 @@
                                                 <a href="{{ route('guru.materi.show', $m) }}" 
                                                    class="text-blue-600 hover:text-blue-900">Lihat</a>
                                                 <a href="{{ route('guru.materi.edit', $m) }}" 
-                                                   class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                                   class="text-indigo-600 hover:text-indigo-900">Ubah</a>
                                                 <a href="{{ Storage::url($m->file_path) }}" target="_blank"
-                                                   class="text-green-600 hover:text-green-900">Download</a>
+                                                   class="text-green-600 hover:text-green-900">Unduh</a>
                                                 <form action="{{ route('guru.materi.destroy', $m) }}" method="POST" class="inline">
                                                     @csrf
                                                     @method('DELETE')

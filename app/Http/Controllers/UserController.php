@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Kelas;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -92,7 +93,8 @@ class UserController extends Controller
 
             $studentValidated = $request->validate([
                 'tanggal_pendaftaran' => 'nullable|date',
-                'sekolah' => 'nullable|string|max:255',
+                'sekolah' => 'required|string|max:255',
+                'kelas_sekolah' => 'required|string|max:50',
                 'bidang_ajar' => 'nullable|array',
                 'bidang_ajar.*' => 'exists:kelas,nama_kelas',
                 'hari_belajar' => 'nullable|array',
@@ -104,10 +106,35 @@ class UserController extends Controller
                 'status_promo' => 'nullable|string|max:255',
                 'no_telepon' => 'nullable|string|max:20',
                 'alamat' => 'nullable|string',
-                'tanggal_lahir' => 'nullable|date',
+                // Address detail fields (optional, will be combined into alamat)
+                'jalan' => 'nullable|string|max:255',
+                'provinsi' => 'nullable|string|max:100',
+                'kota' => 'nullable|string|max:100',
+                'kecamatan' => 'nullable|string|max:100',
+                'kelurahan' => 'nullable|string|max:100',
+                'tanggal_lahir' => 'nullable|date|before_or_equal:today',
                 'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
                 'enrollment_status' => 'required|in:active,inactive',
             ]);
+            
+            // If alamat is not provided but address details are, combine them
+            if (empty($studentValidated['alamat']) && 
+                (!empty($request->jalan) || !empty($request->provinsi) || !empty($request->kota))) {
+                $parts = [];
+                if (!empty($request->jalan)) $parts[] = $request->jalan;
+                if (!empty($request->kelurahan)) $parts[] = 'Kel. ' . $request->kelurahan;
+                if (!empty($request->kecamatan)) $parts[] = 'Kec. ' . $request->kecamatan;
+                if (!empty($request->kota)) $parts[] = $request->kota;
+                if (!empty($request->provinsi)) $parts[] = $request->provinsi;
+                $studentValidated['alamat'] = implode(', ', $parts);
+            }
+            
+            // Store kelas_sekolah in sekolah field or create a new field
+            // For now, we'll append it to sekolah field
+            if (!empty($studentValidated['kelas_sekolah'])) {
+                $studentValidated['sekolah'] = $studentValidated['sekolah'] . ' - ' . $studentValidated['kelas_sekolah'];
+            }
+            
             $studentValidated['bidang_ajar'] = json_encode($studentValidated['bidang_ajar'] ?? []);
             $userData = array_merge($userData, $studentValidated);
 
@@ -135,6 +162,9 @@ class UserController extends Controller
                 }
             }
         }
+
+        // Log activity
+        ActivityLogger::logUserCreated($user);
 
         return redirect()->route('admin.users.index', ['role' => $user->role])
             ->with('success', 'User berhasil dibuat.');
@@ -206,7 +236,7 @@ class UserController extends Controller
                 'status_promo' => 'nullable|string|max:255',
                 'no_telepon' => 'nullable|string|max:20',
                 'alamat' => 'nullable|string',
-                'tanggal_lahir' => 'nullable|date',
+                'tanggal_lahir' => 'nullable|date|before_or_equal:today',
                 'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
                 'enrollment_status' => 'required|in:active,inactive',
             ]);
@@ -223,7 +253,10 @@ class UserController extends Controller
             $userData['no_telepon'] = $guruValidated['no_telepon'] ?? $user->no_telepon;
         }
 
+        // Log activity
+        $oldValues = $user->toArray();
         $user->update($userData);
+        $newValues = $user->fresh()->toArray();
 
         if (($request->role === 'siswa' || $request->role === 'guru')) {
             $selectedKelasIds = [];
@@ -258,6 +291,9 @@ class UserController extends Controller
             }
         }
 
+        // Log activity
+        ActivityLogger::logUserUpdated($user, $oldValues, $newValues);
+
         return redirect()->route('admin.users.index', ['role' => $user->role])
             ->with('success', 'User berhasil diperbarui.');
     }
@@ -267,6 +303,11 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $role = $user->role;
+        $userData = $user->toArray();
+        
+        // Log activity sebelum delete
+        ActivityLogger::logUserDeleted($user);
+        
         $user->delete();
 
         return redirect()->route('admin.users.index', ['role' => $role])
