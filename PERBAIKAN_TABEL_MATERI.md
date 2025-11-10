@@ -77,3 +77,4 @@ php artisan migrate:fresh
 
 
 
+
