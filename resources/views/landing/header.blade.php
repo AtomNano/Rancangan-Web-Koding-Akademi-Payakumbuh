@@ -13,10 +13,10 @@
         </a>
 
         <div class="hidden lg:flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-6 py-2 shadow-lg shadow-slate-950/20 backdrop-blur-lg">
-            <a href="#fitur" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Fitur</a>
-            <a href="#kelas" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Kelas</a>
-            <a href="#alur" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Alur</a>
+            <a href="#profil" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Tentang</a>
+            <a href="#kelas" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Program</a>
             <a href="#pricing" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Biaya</a>
+            <a href="#media" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Media</a>
             <a href="#kontak" class="rounded-full px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white">Kontak</a>
         </div>
 
@@ -42,10 +42,10 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden border-t border-white/10 bg-slate-950/75 px-6 pb-6 backdrop-blur-xl lg:hidden">
         <div class="pt-4 space-y-1">
-            <a href="#fitur" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Fitur</a>
-            <a href="#kelas" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Kelas</a>
-            <a href="#alur" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Alur</a>
+            <a href="#profil" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Tentang</a>
+            <a href="#kelas" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Program</a>
             <a href="#pricing" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Biaya</a>
+            <a href="#media" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Media</a>
             <a href="#kontak" class="block rounded-2xl px-4 py-3 text-sm font-semibold text-white/80 transition-all duration-200 hover:bg-white/10 hover:text-white">Kontak</a>
         </div>
         <div class="mt-5 space-y-3 border-t border-white/10 pt-5">

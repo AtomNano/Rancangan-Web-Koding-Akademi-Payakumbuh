@@ -4,9 +4,9 @@
 
 @section('content')
     @include('landing.hero')
-    @include('landing.fitur')
+    @include('landing.about')
     @include('landing.kelas')
-    @include('landing.alur')
     @include('landing.pricing')
+    @include('landing.media')
     @include('landing.cta')
 @endsection

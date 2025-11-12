@@ -5,7 +5,7 @@
         <div class="absolute -bottom-32 left-[-12rem] h-[26rem] w-[26rem] rounded-full bg-purple-500/25 blur-[140px]"></div>
         <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/10 via-transparent to-transparent"></div>
     </div>
-
+    
     <div class="container relative z-10 mx-auto px-6">
         <div class="grid items-center gap-12 rounded-3xl border border-white/15 bg-white/5 p-10 shadow-2xl shadow-blue-900/30 backdrop-blur-xl md:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)] md:p-16">
             <div>
@@ -16,7 +16,7 @@
                 <p class="mt-6 text-lg leading-relaxed text-white/80">
                     Coding Academy Payakumbuh membuka akses ke kurikulum adaptif, sesi mentoring, dan komunitas supportif. Kami bantu Anda memilih jalur terbaik sesuai target karier.
                 </p>
-
+                
                 <div class="mt-10 flex flex-col gap-4 sm:flex-row">
                     <a href="#kelas" class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-10 py-4 text-sm font-bold text-white shadow-lg shadow-blue-500/30 transition-transform duration-300 hover:scale-[1.02]">
                         Daftar Kelas Sekarang

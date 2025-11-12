@@ -36,54 +36,54 @@
                     </a>
                 </div>
             </div>
-
+            
             <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-1">
-                <div>
+            <div>
                     <h4 class="text-sm font-semibold uppercase tracking-[0.4em] text-white/60">Navigasi</h4>
                     <ul class="mt-6 space-y-3 text-sm">
-                        <li><a href="#fitur" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
+                        <li><a href="#profil" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
                             <span class="flex h-2 w-2 items-center justify-center rounded-full bg-blue-400/80"></span>
-                            Fitur Platform
+                            Tentang Akademi
                         </a></li>
                         <li><a href="#kelas" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
                             <span class="flex h-2 w-2 items-center justify-center rounded-full bg-teal-400/80"></span>
                             Program Kelas
-                        </a></li>
-                        <li><a href="#alur" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
+                    </a></li>
+                        <li><a href="#media" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
                             <span class="flex h-2 w-2 items-center justify-center rounded-full bg-purple-400/80"></span>
-                            Alur Belajar
+                            Media Akademi
                         </a></li>
                         <li><a href="#pricing" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
                             <span class="flex h-2 w-2 items-center justify-center rounded-full bg-rose-400/80"></span>
                             Paket Biaya
-                        </a></li>
-                    </ul>
-                </div>
-                <div>
+                    </a></li>
+                </ul>
+            </div>
+            <div>
                     <h4 class="text-sm font-semibold uppercase tracking-[0.4em] text-white/60">Panel Akses</h4>
                     <ul class="mt-6 space-y-3 text-sm">
                         <li><a href="/login-admin" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
                             <svg class="h-4 w-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
+                        </svg>
                             Panel Admin
-                        </a></li>
+                    </a></li>
                         <li><a href="/login-guru" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
                             <svg class="h-4 w-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
+                        </svg>
                             Panel Guru
-                        </a></li>
+                    </a></li>
                         <li><a href="/login-siswa" class="inline-flex items-center gap-3 text-white/75 transition-all duration-200 hover:text-white hover:translate-x-1">
                             <svg class="h-4 w-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
-                            </svg>
+                        </svg>
                             Panel Siswa
-                        </a></li>
-                    </ul>
+                    </a></li>
+                </ul>
                 </div>
             </div>
-
+            
             <div>
                 <h4 class="text-sm font-semibold uppercase tracking-[0.4em] text-white/60">Hubungi Kami</h4>
                 <ul class="mt-6 space-y-4 text-sm text-white/75">
@@ -114,7 +114,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="mt-12 flex flex-col items-start gap-6 border-t border-white/10 pt-8 text-sm text-white/60 md:flex-row md:items-center md:justify-between">
             <p>&copy; 2025 <span class="font-semibold text-white">Coding Academy Payakumbuh</span>. Semua hak dilindungi.</p>
             <div class="flex items-center gap-6">

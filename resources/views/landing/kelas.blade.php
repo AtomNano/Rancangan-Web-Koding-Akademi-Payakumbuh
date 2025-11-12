@@ -23,7 +23,7 @@
                 Setiap kelas memadukan modul interaktif, sesi mentoring, serta project akhir yang relevan dengan kebutuhan industri. Pilih jalur yang paling sesuai dan nikmati pengalaman belajar yang terukur.
             </p>
         </div>
-
+        
         <div class="mt-16 grid gap-8 lg:grid-cols-3">
             <!-- Kelas Coding -->
             <div class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/15 bg-white/5 p-8 shadow-2xl shadow-blue-900/30 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-2">
@@ -52,7 +52,7 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Fokus Kurikulum</dt>
                             <dd>Programming dasar, versi kontrol Git, dan project mini berbasis API.</dd>
@@ -61,16 +61,16 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Mentor</dt>
                             <dd>2 mentor profesional + sesi klinik kode mingguan.</dd>
                         </div>
-                    </div>
+                        </div>
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Kapasitas</dt>
                             <dd>8 peserta untuk interaksi personal dan review kode mendalam.</dd>
@@ -87,7 +87,7 @@
                     </a>
                 </div>
             </div>
-
+            
             <!-- Kelas Desain -->
             <div class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/15 bg-white/5 p-8 shadow-2xl shadow-purple-900/30 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-2">
                 <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-pink-500/30 via-purple-500/20 to-transparent opacity-70"></div>
@@ -115,7 +115,7 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Fokus Kurikulum</dt>
                             <dd>Brand guideline, UI kit, dan final project portofolio interaktif.</dd>
@@ -124,7 +124,7 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Mentor</dt>
                             <dd>2 visual designer senior dengan sesi portfolio review.</dd>
@@ -133,7 +133,7 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Kapasitas</dt>
                             <dd>8 peserta, fokus kolaborasi dan peer feedback.</dd>
@@ -150,7 +150,7 @@
                     </a>
                 </div>
             </div>
-
+            
             <!-- Kelas Robotik -->
             <div class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/15 bg-white/5 p-8 shadow-2xl shadow-indigo-900/30 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-2">
                 <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-indigo-500/30 via-blue-500/20 to-transparent opacity-70"></div>
@@ -178,7 +178,7 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Fokus Kurikulum</dt>
                             <dd>Pengenalan hardware, sensor, dan logika kontrol robotik.</dd>
@@ -187,7 +187,7 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Mentor</dt>
                             <dd>1 mentor spesialis robotik dengan asistensi teknisi lapangan.</dd>
@@ -196,7 +196,7 @@
                     <div class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         <div>
                             <dt class="font-semibold text-white">Kapasitas</dt>
                             <dd>4 peserta eksklusif untuk eksperimen mendalam.</dd>

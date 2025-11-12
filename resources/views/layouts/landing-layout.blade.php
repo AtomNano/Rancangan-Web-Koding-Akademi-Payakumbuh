@@ -44,7 +44,7 @@
             font-weight: 400;
             line-height: 1.7;
             color: var(--text-white);
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #3b82f6 50%, #6366f1 75%, #7c3aed 100%);
+            background: linear-gradient(135deg, #080d1a 0%, #111827 25%, #1e3a8a 50%, #312e81 75%, #4c1d95 100%);
             background-size: 400% 400%;
             animation: gradientShift 20s ease infinite;
             min-height: 100vh;

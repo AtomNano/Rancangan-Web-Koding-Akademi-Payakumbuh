@@ -7,7 +7,7 @@
         <div class="absolute bottom-0 left-1/2 h-[320px] w-full -translate-x-1/2 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
     </div>
 
-    <div class="container relative z-10 px-6 py-24 md:py-32">
+    <div class="container relative z-10 px-6 py-24 md:py-10">
         <div class="grid items-center gap-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             <div class="text-left">
                 <div class="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-5 py-2 shadow-lg shadow-blue-500/10 backdrop-blur-lg">
@@ -35,8 +35,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                         </svg>
                     </a>
-                    <a href="#fitur" class="inline-flex w-full items-center justify-center rounded-2xl border border-white/30 bg-white/10 px-10 py-4 text-base font-semibold text-white/85 backdrop-blur-lg transition-all duration-300 hover:bg-white/20 hover:text-white sm:w-auto">
-                        Lihat Ekosistem Platform
+                    <a href="#profil" class="inline-flex w-full items-center justify-center rounded-2xl border border-white/30 bg-white/10 px-10 py-4 text-base font-semibold text-white/85 backdrop-blur-lg transition-all duration-300 hover:bg-white/20 hover:text-white sm:w-auto">
+                        Kenali Akademi
                     </a>
                 </div>
 
@@ -91,7 +91,7 @@
     </div>
 
     <div class="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 animate-bounce">
-        <a href="#fitur" class="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/70 transition-all duration-300 hover:bg-white/20 hover:text-white">
+        <a href="#profil" class="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/70 transition-all duration-300 hover:bg-white/20 hover:text-white">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>

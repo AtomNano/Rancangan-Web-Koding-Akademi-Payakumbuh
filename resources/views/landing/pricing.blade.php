@@ -32,34 +32,34 @@
                         Reguler Online
                     </span>
                     <span class="text-white/50">Sesi Virtual</span>
-                </div>
+                        </div>
                 <div class="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
                     <img src="{{ asset('images/pricing/biaya-online.jpeg') }}" alt="Biaya Kursus Reguler Online" class="h-full w-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/10 to-transparent"></div>
                     <span class="absolute bottom-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-white/70">
                         Fleksibel
                     </span>
-                </div>
+                    </div>
                 <ul class="mt-8 space-y-4 text-sm text-white/80">
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Kelas live interaktif + akses rekaman seumur hidup.
-                    </li>
+                        </li>
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Materi digital lengkap, bank latihan, dan forum diskusi.
-                    </li>
+                        </li>
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Sertifikat penyelesaian resmi + laporan progres per modul.
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
                 <div class="mt-8">
                     <a href="{{ asset('images/pricing/biaya-online.jpeg') }}" target="_blank" class="inline-flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/30 transition-transform duration-300 hover:scale-[1.02]">
                         Lihat Rincian Biaya
@@ -84,27 +84,27 @@
                     <span class="absolute bottom-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-white/80">
                         Premium
                     </span>
-                </div>
+                        </div>
                 <ul class="mt-8 space-y-4 text-sm text-white/80">
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Kelas intensif di lab modern dengan perangkat lengkap.
-                    </li>
+                        </li>
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Interaksi langsung dengan mentor, coaching mingguan, dan evaluasi onsite.
-                    </li>
+                        </li>
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Sertifikat fisik dan laporan performa bulanan untuk orang tua.
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
                 <div class="mt-8">
                     <a href="{{ asset('images/pricing/biaya-offline-reguler.jpeg') }}" target="_blank" class="inline-flex w-full items-center justify-center rounded-2xl border border-white/20 bg-white/15 px-6 py-3 text-sm font-bold text-white backdrop-blur-xl transition-all duration-300 hover:bg-white/25">
                         Buka Detail Reguler Offline
@@ -119,34 +119,34 @@
                         Privat Offline
                     </span>
                     <span class="text-white/50">Eksklusif</span>
-                </div>
+                        </div>
                 <div class="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
                     <img src="{{ asset('images/pricing/biaya-offline-privat.jpeg') }}" alt="Biaya Kursus Privat Offline" class="h-full w-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/15 to-transparent"></div>
                     <span class="absolute bottom-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-white/70">
                         Personal
                     </span>
-                </div>
+                    </div>
                 <ul class="mt-8 space-y-4 text-sm text-white/80">
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Sesi 1-on-1 dengan kurikulum disesuaikan tujuan peserta.
-                    </li>
+                        </li>
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Jadwal fleksibel, bisa onsite di akademi atau lokasi pilihan.
-                    </li>
+                        </li>
                     <li class="flex items-start gap-3">
                         <svg class="mt-1 h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                        </svg>
+                            </svg>
                         Laporan personal mingguan dan konsultasi karier.
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
                 <div class="mt-8">
                     <a href="{{ asset('images/pricing/biaya-offline-privat.jpeg') }}" target="_blank" class="inline-flex w-full items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur-xl transition-all duration-300 hover:bg-white/20">
                         Minta Proposal Privat

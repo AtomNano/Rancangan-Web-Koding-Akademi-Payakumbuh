@@ -16,16 +16,16 @@
                         </svg>
                     </span>
                     Ekosistem Pembelajaran Terhubung
-                </div>
+            </div>
 
                 <div>
                     <h2 class="text-3xl font-extrabold leading-tight text-white text-high-contrast md:text-4xl">
                         Semua peran bekerja serempak di satu platform terpadu
-                    </h2>
+            </h2>
                     <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
                         Coding Academy Payakumbuh dirancang agar Admin, Guru, dan Siswa bergerak selaras. Otomatisasi administrasi, publikasi materi yang terkurasi, serta pengalaman belajar yang interaktif hadir dalam satu sistem yang responsif.
-                    </p>
-                </div>
+            </p>
+        </div>
 
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="rounded-2xl border border-white/15 bg-white/5 p-5 text-left shadow-lg shadow-blue-900/20 backdrop-blur-xl">
@@ -72,7 +72,7 @@
                             <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/15 text-teal-100">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 3v4h.582M19 21v-4h-.586M5 7v7a4 4 0 004 4h6a4 4 0 004-4V7M12 3v4"></path>
-                                </svg>
+                    </svg>
                             </span>
                             <div>
                                 <p class="text-sm font-semibold text-white">Workflow Terkurasi</p>
@@ -90,7 +90,7 @@
                             <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-100">
                                 <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h4m4 0h-4m0 0V7a4 4 0 10-8 0v4m0 0H5"></path>
-                                </svg>
+                        </svg>
                             </span>
                             <div>
                                 <p class="text-sm font-semibold uppercase tracking-[0.2em] text-blue-200">Panel Admin</p>
@@ -103,22 +103,22 @@
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Manajemen pengguna, kelas, dan penjadwalan hanya dengan beberapa klik.
-                        </li>
+                    </li>
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Verifikasi materi otomatis beserta log audit untuk menjaga kualitas konten.
-                        </li>
+                    </li>
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Backup data berkala dengan notifikasi ke email admin setiap minggu.
-                        </li>
-                    </ul>
+                    </li>
+                </ul>
                 </div>
 
                 <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-purple-900/30 backdrop-blur-xl">
@@ -126,7 +126,7 @@
                         <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-100">
                             <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
+                        </svg>
                         </span>
                         <div>
                             <p class="text-sm font-semibold uppercase tracking-[0.2em] text-purple-200">Panel Guru</p>
@@ -137,22 +137,22 @@
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Unggah modul, video, dan tugas dalam format yang konsisten.
-                        </li>
+                    </li>
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Dashboard progres untuk menilai performa per siswa dan per kelas.
-                        </li>
+                    </li>
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Integrasi chat diskusi agar feedback berjalan real time.
-                        </li>
-                    </ul>
+                    </li>
+                </ul>
                 </div>
 
                 <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-indigo-900/30 backdrop-blur-xl">
@@ -160,7 +160,7 @@
                         <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-500/20 text-teal-100">
                             <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
-                            </svg>
+                        </svg>
                         </span>
                         <div>
                             <p class="text-sm font-semibold uppercase tracking-[0.2em] text-teal-200">Panel Siswa</p>
@@ -171,22 +171,22 @@
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Agenda belajar dinamis lengkap dengan checklist tugas dan materi.
-                        </li>
+                    </li>
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Progress bar adaptif agar siswa memantau capaian minggu ini.
-                        </li>
+                    </li>
                         <li class="flex items-start gap-3">
                             <svg class="mt-1 h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        </svg>
                             Resume portofolio otomatis setelah menyelesaikan modul.
-                        </li>
-                    </ul>
+                    </li>
+                </ul>
                 </div>
             </div>
         </div>
