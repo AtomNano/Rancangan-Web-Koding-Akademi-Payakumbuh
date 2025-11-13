@@ -81,9 +81,3 @@ php artisan migrate:fresh
 
 
 
-
-
-
-
-
-

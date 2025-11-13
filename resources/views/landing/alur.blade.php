@@ -1,90 +1,83 @@
 <!-- Alur Kerja Platform -->
-<section id="alur" class="relative overflow-hidden py-24">
-    <div class="pointer-events-none absolute inset-0 opacity-70">
-        <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/10 via-transparent to-transparent"></div>
-        <div class="absolute left-1/2 top-1/3 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-blue-500/20 blur-[140px]"></div>
-        <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/10 via-transparent to-transparent"></div>
-    </div>
-
-    <div class="container relative z-10 mx-auto px-6">
-        <div class="max-w-3xl text-left">
-            <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white/80 shadow-lg shadow-blue-500/20 backdrop-blur-lg">
-                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white">
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 6v6l4 2"></path>
-                    </svg>
-                </span>
-                Proses Pembelajaran
-            </div>
-            <h2 class="mt-8 text-3xl font-extrabold leading-tight text-white text-high-contrast md:text-4xl">
-                Alur terstruktur dari onboarding hingga monitoring hasil belajar
-            </h2>
-            <p class="mt-6 text-lg leading-relaxed text-white/80">
-                Kami merancang siklus belajar yang mulus dengan kolaborasi lintas role. Setiap langkah dilengkapi otomatisasi dan insight sehingga tim pengajar bisa fokus pada pengembangan kompetensi.
-            </p>
+<section id="alur" class="py-20 section-glass">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+             <h2 class="text-3xl md:text-4xl font-bold text-white drop-shadow-lg mb-4">Alur Kerja Platform</h2>
+             <p class="mt-2 text-white/90 drop-shadow-sm">Proses pembelajaran yang terstruktur dan terintegrasi</p>
         </div>
-
-        <div class="relative mt-16">
-            <div class="hidden lg:block absolute left-0 right-0 top-14 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div class="grid gap-8 lg:grid-cols-5">
-                <div class="relative flex h-full flex-col rounded-3xl border border-white/15 bg-white/5 p-6 shadow-lg shadow-blue-900/20 backdrop-blur-xl">
-                    <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20 text-white text-sm font-bold">01</span>
-                        Registrasi
+        <div class="max-w-3xl mx-auto">
+            <div class="relative">
+                <!-- Connecting line -->
+                <div class="hidden md:block absolute left-1/2 h-full w-0.5 bg-white/30 transform -translate-x-1/2"></div>
+                
+                <!-- Item 1 -->
+                <div class="md:flex items-center w-full mb-8">
+                    <div class="md:w-1/2 md:pr-8">
+                        <div class="p-6 glass-card rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <div class="w-10 h-10 flex items-center justify-center glass-strong text-white rounded-full font-bold text-lg mr-4">1</div>
+                                <h3 class="text-lg font-bold text-white drop-shadow-lg">Pendaftaran Pengguna</h3>
+                            </div>
+                            <p class="text-white/90">Admin mendaftarkan Guru dan Siswa, menempatkan siswa pada kelas tertentu.</p>
+                        </div>
                     </div>
-                    <h3 class="mt-6 text-lg font-bold text-white text-high-contrast">Pendaftaran Pengguna</h3>
-                    <p class="mt-4 text-sm leading-relaxed text-white/75">
-                        Admin menambahkan guru dan siswa, menentukan kelas, dan mengatur hak akses melalui panel onboarding cepat.
-                    </p>
-                    <span class="mt-auto pt-6 text-xs uppercase tracking-[0.3em] text-white/50">Admin</span>
+                    <div class="hidden md:block md:w-1/2 md:pl-8"></div>
                 </div>
 
-                <div class="relative flex h-full flex-col rounded-3xl border border-white/15 bg-white/5 p-6 shadow-lg shadow-blue-900/20 backdrop-blur-xl">
-                    <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20 text-white text-sm font-bold">02</span>
-                        Kurasi
+                <!-- Item 2 -->
+                 <div class="md:flex flex-row-reverse items-center w-full mb-8">
+                    <div class="md:w-1/2 md:pl-8">
+                        <div class="p-6 glass-card rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <div class="w-10 h-10 flex items-center justify-center glass-strong text-white rounded-full font-bold text-lg mr-4">2</div>
+                                <h3 class="text-lg font-bold text-white drop-shadow-lg">Upload Materi</h3>
+                            </div>
+                            <p class="text-white/90">Guru mengunggah konten pembelajaran sesuai kelas yang diampu.</p>
+                        </div>
                     </div>
-                    <h3 class="mt-6 text-lg font-bold text-white text-high-contrast">Upload Materi Guru</h3>
-                    <p class="mt-4 text-sm leading-relaxed text-white/75">
-                        Guru menyiapkan modul, video, dan evaluasi. Template kurikulum otomatis memastikan kualitas konten tetap seragam.
-                    </p>
-                    <span class="mt-auto pt-6 text-xs uppercase tracking-[0.3em] text-white/50">Guru</span>
+                    <div class="hidden md:block md:w-1/2 md:pr-8"></div>
                 </div>
 
-                <div class="relative flex h-full flex-col rounded-3xl border border-white/15 bg-white/5 p-6 shadow-lg shadow-blue-900/20 backdrop-blur-xl">
-                    <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20 text-white text-sm font-bold">03</span>
-                        Validasi
+                <!-- Item 3 -->
+                <div class="md:flex items-center w-full mb-8">
+                    <div class="md:w-1/2 md:pr-8">
+                        <div class="p-6 glass-card rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <div class="w-10 h-10 flex items-center justify-center glass-strong text-white rounded-full font-bold text-lg mr-4">3</div>
+                                <h3 class="text-lg font-bold text-white drop-shadow-lg">Verifikasi Admin</h3>
+                            </div>
+                            <p class="text-white/90">Admin memverifikasi materi agar layak digunakan dalam pembelajaran.</p>
+                        </div>
                     </div>
-                    <h3 class="mt-6 text-lg font-bold text-white text-high-contrast">Verifikasi Admin</h3>
-                    <p class="mt-4 text-sm leading-relaxed text-white/75">
-                        Materi melewati quality check otomatis dan manual. Admin menyetujui, mengatur jadwal rilis, dan menyalakan notifikasi.
-                    </p>
-                    <span class="mt-auto pt-6 text-xs uppercase tracking-[0.3em] text-white/50">Governance</span>
+                    <div class="hidden md:block md:w-1/2 md:pl-8"></div>
                 </div>
 
-                <div class="relative flex h-full flex-col rounded-3xl border border-white/15 bg-white/5 p-6 shadow-lg shadow-blue-900/20 backdrop-blur-xl">
-                    <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20 text-white text-sm font-bold">04</span>
-                        Pelaksanaan
+                <!-- Item 4 -->
+                 <div class="md:flex flex-row-reverse items-center w-full mb-8">
+                    <div class="md:w-1/2 md:pl-8">
+                        <div class="p-6 glass-card rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <div class="w-10 h-10 flex items-center justify-center glass-strong text-white rounded-full font-bold text-lg mr-4">4</div>
+                                <h3 class="text-lg font-bold text-white drop-shadow-lg">Akses Pembelajaran</h3>
+                            </div>
+                            <p class="text-white/90">Siswa mengakses kelas, mempelajari materi, dan menyelesaikan unit pembelajaran.</p>
+                        </div>
                     </div>
-                    <h3 class="mt-6 text-lg font-bold text-white text-high-contrast">Akses & Interaksi</h3>
-                    <p class="mt-4 text-sm leading-relaxed text-white/75">
-                        Siswa memulai pembelajaran, mengikuti sesi langsung, menyelesaikan tugas, dan berdiskusi melalui forum terpadu.
-                    </p>
-                    <span class="mt-auto pt-6 text-xs uppercase tracking-[0.3em] text-white/50">Siswa</span>
+                     <div class="hidden md:block md:w-1/2 md:pr-8"></div>
                 </div>
 
-                <div class="relative flex h-full flex-col rounded-3xl border border-white/15 bg-white/5 p-6 shadow-lg shadow-blue-900/20 backdrop-blur-xl">
-                    <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20 text-white text-sm font-bold">05</span>
-                        Monitoring
+                <!-- Item 5 -->
+                <div class="md:flex items-center w-full">
+                    <div class="md:w-1/2 md:pr-8">
+                       <div class="p-6 glass-card rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <div class="w-10 h-10 flex items-center justify-center glass-strong text-white rounded-full font-bold text-lg mr-4">5</div>
+                                <h3 class="text-lg font-bold text-white drop-shadow-lg">Pemantauan Progres</h3>
+                            </div>
+                            <p class="text-white/90">Sistem mencatat progres siswa. Guru memantau perkembangan melalui dashboard.</p>
+                        </div>
                     </div>
-                    <h3 class="mt-6 text-lg font-bold text-white text-high-contrast">Pemantauan Progres</h3>
-                    <p class="mt-4 text-sm leading-relaxed text-white/75">
-                        Dashboard analitik menghadirkan ringkasan progres, rekomendasi tindak lanjut, dan laporan rutin untuk semua pihak.
-                    </p>
-                    <span class="mt-auto pt-6 text-xs uppercase tracking-[0.3em] text-white/50">Insight</span>
+                    <div class="hidden md:block md:w-1/2 md:pl-8"></div>
                 </div>
             </div>
         </div>
