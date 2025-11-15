@@ -1,4 +1,4 @@
-# Panduan Deploy Laravel ke Hosting Gratis
+# Panduan Deploy Laravel ke Hosting Gratis v1
 
 Panduan lengkap untuk deploy aplikasi Laravel ke platform hosting gratis untuk testing development.
 
