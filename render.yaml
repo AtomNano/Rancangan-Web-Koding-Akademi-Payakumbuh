@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: materi-online
+    env: php
+    buildCommand: composer install --no-dev --optimize-autoloader && npm ci && npm run build
+    startCommand: php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_LEVEL
+        value: error
+      - key: APP_URL
+        sync: false
+
+databases:
+  - name: materi-online-db
+    plan: free
+    databaseName: materi_online
+    databaseUser: materi_online_user
+

@@ -7,9 +7,6 @@
                 <span class="text-lg font-bold leading-tight text-white text-high-contrast sm:text-xl">Coding Academy</span>
                 <span class="text-[0.7rem] font-medium leading-tight text-white/70 sm:text-xs">Payakumbuh</span>
             </div>
-            <span class="hidden items-center rounded-full border border-blue-400/40 bg-blue-500/15 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-blue-100 shadow-sm shadow-blue-500/30 sm:flex">
-                New look
-            </span>
         </a>
 
         <div class="hidden lg:flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-6 py-2 shadow-lg shadow-slate-950/20 backdrop-blur-lg">

@@ -7,17 +7,17 @@
         <div class="absolute bottom-0 left-1/2 h-[320px] w-full -translate-x-1/2 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
     </div>
 
-    <div class="container relative z-10 px-6 py-24 md:py-10">
-        <div class="grid items-center gap-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+    <div class="container relative z-10 px-6 py-12 md:py-4">
+        <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             <div class="text-left">
-                <div class="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-5 py-2 shadow-lg shadow-blue-500/10 backdrop-blur-lg">
+                <!-- <div class="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-5 py-2 shadow-lg shadow-blue-500/10 backdrop-blur-lg">
                     <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/30 text-white">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16m-7 5h7"></path>
                         </svg>
                     </span>
                     <span class="text-sm font-semibold uppercase tracking-wide text-white/80">Belajar Teknologi Masa Depan</span>
-                </div>
+                </div> -->
 
                 <h1 class="mt-10 space-y-4 text-4xl font-extrabold leading-tight text-white text-high-contrast sm:text-5xl md:text-6xl xl:text-7xl">
                     <span class="block text-white/90">Platform Pembelajaran</span>

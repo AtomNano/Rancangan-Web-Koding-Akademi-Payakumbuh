@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Helpers\TurnstileHelper;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -26,10 +27,36 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
+
+        // Add Turnstile validation if configured
+        if (config('services.turnstile.site_key')) {
+            $rules['cf-turnstile-response'] = ['required', 'string'];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Contracts\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator): void
+    {
+        if (config('services.turnstile.site_key')) {
+            $validator->after(function ($validator) {
+                $token = $this->input('cf-turnstile-response');
+                
+                if ($token && !TurnstileHelper::verify($token, $this->ip())) {
+                    $validator->errors()->add('cf-turnstile-response', 'Verifikasi CAPTCHA gagal. Silakan coba lagi.');
+                }
+            });
+        }
     }
 
     /**
