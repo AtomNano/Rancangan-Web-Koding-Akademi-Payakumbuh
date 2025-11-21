@@ -7,9 +7,9 @@
         <div class="absolute bottom-0 left-1/2 h-[320px] w-full -translate-x-1/2 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
     </div>
 
-    <div class="container relative z-10 px-6 py-12 md:py-4">
-        <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-            <div class="text-left">
+    <div class="container relative z-10 mx-auto max-w-[1600px] px-6 py-12 md:py-4 2xl:px-12">
+        <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:gap-16 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div class="mx-auto max-w-2xl text-left lg:mx-0 lg:max-w-none xl:pr-8 2xl:pr-12">
                 <!-- <div class="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-5 py-2 shadow-lg shadow-blue-500/10 backdrop-blur-lg">
                     <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/30 text-white">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
