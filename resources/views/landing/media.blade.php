@@ -1,14 +1,16 @@
 <!-- Media Akademi -->
-<section id="media" class="relative overflow-hidden py-24">
+<section id="media" class="relative overflow-hidden py-24 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div class="section-transition-top"></div>
     <div class="pointer-events-none absolute inset-0 opacity-70">
         <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/10 via-transparent to-transparent"></div>
         <div class="absolute -right-16 bottom-10 h-[24rem] w-[24rem] rounded-full bg-blue-500/20 blur-[140px]"></div>
         <div class="absolute -left-20 top-16 h-[22rem] w-[22rem] rounded-full bg-purple-500/20 blur-[140px]"></div>
     </div>
+    <div class="section-transition-bottom"></div>
 
     <div class="container relative z-10 mx-auto px-6">
         <!-- Header Section -->
-        <div class="mx-auto mb-16 max-w-4xl text-center">
+        <div class="mx-auto mb-16 max-w-4xl text-center scroll-fade-in">
             <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white/80 shadow-lg shadow-blue-500/20 backdrop-blur-lg">
                 <span class="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +85,7 @@
         @endphp
 
         <!-- Video Promosi Section -->
-        <div class="mb-16">
+        <div class="mb-16 scroll-fade-in scroll-fade-in-delay-1">
             <div class="mx-auto max-w-5xl">
                 <div class="relative overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-4 shadow-2xl shadow-blue-900/50 backdrop-blur-xl">
                     <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-black/60">
@@ -132,7 +134,7 @@
         </div>
 
         <!-- Fokus Dokumentasi Section -->
-        <div class="mb-16">
+        <div class="mb-16 scroll-fade-in scroll-fade-in-delay-2">
             <div class="mx-auto max-w-5xl rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-8 shadow-2xl shadow-blue-900/30 backdrop-blur-xl md:p-10">
                 <div class="mb-6 flex items-center gap-3">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-300">
@@ -182,7 +184,7 @@
 
         <!-- Class Photos Gallery Section -->
         @if (count($classPhotos) > 0)
-            <div class="mb-16">
+            <div class="mb-16 scroll-fade-in scroll-fade-in-delay-3">
                 <div class="mb-8 text-center">
                     <h3 class="text-3xl font-bold text-white md:text-4xl">Galeri Dokumentasi</h3>
                     <p class="mt-3 text-white/70">Momen-momen berharga dari aktivitas pembelajaran di Coding Academy</p>

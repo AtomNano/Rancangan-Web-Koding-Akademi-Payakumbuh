@@ -1,13 +1,15 @@
 <!-- Call to Action -->
-<section class="relative overflow-hidden py-24">
+<section class="relative overflow-hidden py-24 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div class="section-transition-top"></div>
     <div class="pointer-events-none absolute inset-0 opacity-80">
         <div class="absolute -top-32 right-[-10rem] h-[24rem] w-[24rem] rounded-full bg-blue-500/25 blur-[140px]"></div>
         <div class="absolute -bottom-32 left-[-12rem] h-[26rem] w-[26rem] rounded-full bg-purple-500/25 blur-[140px]"></div>
         <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/10 via-transparent to-transparent"></div>
     </div>
+    <div class="section-transition-bottom"></div>
     
     <div class="container relative z-10 mx-auto px-6">
-        <div class="grid items-center gap-12 rounded-3xl border border-white/15 bg-white/5 p-10 shadow-2xl shadow-blue-900/30 backdrop-blur-xl md:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)] md:p-16">
+        <div class="grid items-center gap-12 rounded-3xl border border-white/15 bg-white/5 p-10 shadow-2xl shadow-blue-900/30 backdrop-blur-xl md:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)] md:p-16 scroll-fade-in">
             <div>
                 <p class="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">Mulai langkah pertama</p>
                 <h2 class="mt-6 text-3xl font-extrabold leading-tight text-white text-high-contrast md:text-4xl">

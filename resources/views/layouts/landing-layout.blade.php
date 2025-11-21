@@ -348,6 +348,69 @@
             h3 { font-size: 1.5rem; }
         }
 
+        /* Scroll Animation Styles */
+        .scroll-fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .scroll-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-fade-in-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .scroll-fade-in-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .scroll-fade-in-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* Smooth Section Transitions */
+        section {
+            position: relative;
+        }
+
+        .section-transition-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to bottom, 
+                rgba(15, 23, 42, 1) 0%,
+                rgba(15, 23, 42, 0.9) 20%,
+                rgba(15, 23, 42, 0.7) 40%,
+                rgba(15, 23, 42, 0.4) 60%,
+                rgba(15, 23, 42, 0.2) 80%,
+                transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .section-transition-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to top, 
+                rgba(15, 23, 42, 1) 0%,
+                rgba(15, 23, 42, 0.9) 20%,
+                rgba(15, 23, 42, 0.7) 40%,
+                rgba(15, 23, 42, 0.4) 60%,
+                rgba(15, 23, 42, 0.2) 80%,
+                transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
     </style>
     @yield('styles')
 </head>
@@ -379,6 +442,36 @@
                 link.addEventListener('click', () => {
                     mobileMenu.classList.add('hidden');
                 });
+            });
+
+            // Scroll Animation dengan Intersection Observer
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Optional: Unobserve setelah animasi untuk performa
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe semua elemen dengan class scroll-fade-in
+            document.querySelectorAll('.scroll-fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Animate child elements dengan delay
+            document.querySelectorAll('.scroll-fade-in-children > *').forEach((child, index) => {
+                child.classList.add('scroll-fade-in');
+                if (index > 0) {
+                    child.classList.add(`scroll-fade-in-delay-${Math.min(index, 3)}`);
+                }
+                observer.observe(child);
             });
         });
     </script>

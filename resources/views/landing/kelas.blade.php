@@ -1,13 +1,15 @@
 <!-- Kelas yang Tersedia -->
-<section id="kelas" class="relative overflow-hidden py-24">
+<section id="kelas" class="relative overflow-hidden py-24 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div class="section-transition-top"></div>
     <div class="pointer-events-none absolute inset-0 opacity-80">
         <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/10 via-white/5 to-transparent"></div>
         <div class="absolute -right-16 top-32 h-[26rem] w-[26rem] rounded-full bg-purple-500/20 blur-[140px]"></div>
         <div class="absolute -left-20 bottom-0 h-[24rem] w-[24rem] rounded-full bg-blue-500/20 blur-[140px]"></div>
     </div>
+    <div class="section-transition-bottom"></div>
 
     <div class="container relative z-10 mx-auto px-6">
-        <div class="max-w-4xl">
+        <div class="max-w-4xl scroll-fade-in">
             <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white/80 shadow-lg shadow-blue-500/20 backdrop-blur-lg">
                 <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/25 text-white">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +26,7 @@
             </p>
         </div>
         
-        <div class="mt-16 grid gap-8 lg:grid-cols-3">
+        <div class="mt-16 grid gap-8 lg:grid-cols-3 scroll-fade-in-children">
             <!-- Kelas Coding -->
             <div class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/15 bg-white/5 p-8 shadow-2xl shadow-blue-900/30 backdrop-blur-xl transition-transform duration-300 hover:-translate-y-2">
                 <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-blue-500/30 via-indigo-500/20 to-transparent opacity-70"></div>

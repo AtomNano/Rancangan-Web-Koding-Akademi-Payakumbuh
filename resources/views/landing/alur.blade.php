@@ -1,13 +1,15 @@
 <!-- Alur Kerja Platform -->
-<section id="alur" class="relative overflow-hidden py-24">
+<section id="alur" class="relative overflow-hidden py-24 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div class="section-transition-top"></div>
     <div class="pointer-events-none absolute inset-0 opacity-70">
         <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/10 via-transparent to-transparent"></div>
         <div class="absolute left-1/2 top-1/3 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-blue-500/20 blur-[140px]"></div>
         <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/10 via-transparent to-transparent"></div>
     </div>
+    <div class="section-transition-bottom"></div>
 
     <div class="container relative z-10 mx-auto px-6">
-        <div class="max-w-3xl text-left">
+        <div class="max-w-3xl text-left scroll-fade-in">
             <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white/80 shadow-lg shadow-blue-500/20 backdrop-blur-lg">
                 <span class="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,9 +26,9 @@
             </p>
         </div>
 
-        <div class="relative mt-16">
+        <div class="relative mt-16 scroll-fade-in scroll-fade-in-delay-1">
             <div class="hidden lg:block absolute left-0 right-0 top-14 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div class="grid gap-8 lg:grid-cols-5">
+            <div class="grid gap-8 lg:grid-cols-5 scroll-fade-in-children">
                 <div class="relative flex h-full flex-col rounded-3xl border border-white/15 bg-white/5 p-6 shadow-lg shadow-blue-900/20 backdrop-blur-xl">
                     <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
                         <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20 text-white text-sm font-bold">01</span>

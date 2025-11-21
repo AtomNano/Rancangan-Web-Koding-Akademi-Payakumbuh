@@ -1,14 +1,16 @@
 <!-- Fitur Utama Platform -->
-<section id="fitur" class="relative overflow-hidden py-24">
+<section id="fitur" class="relative overflow-hidden py-24 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div class="section-transition-top"></div>
     <div class="pointer-events-none absolute inset-0 opacity-70">
         <div class="absolute -top-32 right-[-12rem] h-[28rem] w-[28rem] rounded-full bg-blue-500/20 blur-3xl"></div>
         <div class="absolute -bottom-24 left-[-10rem] h-[26rem] w-[26rem] rounded-full bg-purple-500/20 blur-3xl"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-white/5"></div>
     </div>
+    <div class="section-transition-bottom"></div>
 
     <div class="container relative z-10 mx-auto px-6">
         <div class="grid items-start gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-            <div class="space-y-10">
+            <div class="space-y-10 scroll-fade-in">
                 <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white/80 shadow-lg shadow-blue-500/20 backdrop-blur-lg">
                     <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/25 text-white">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +85,7 @@
                 </div>
             </div>
 
-            <div class="grid gap-6 lg:grid-cols-2">
+            <div class="grid gap-6 lg:grid-cols-2 scroll-fade-in scroll-fade-in-delay-1">
                 <div class="lg:col-span-2 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-blue-900/30 backdrop-blur-xl">
                     <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                         <div class="flex items-center gap-4">

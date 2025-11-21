@@ -1,15 +1,16 @@
 <!-- Hero Section -->
-<section class="relative min-h-screen overflow-hidden flex items-center">
+<section class="relative min-h-screen overflow-hidden flex items-start pt-15 md:pt-15">
     <div class="absolute inset-0">
         <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/95 to-blue-900/90"></div>
         <div class="absolute -top-40 -left-24 w-[32rem] h-[32rem] rounded-full bg-blue-500/30 blur-[140px] opacity-60"></div>
         <div class="absolute top-1/3 -right-24 w-[28rem] h-[28rem] rounded-full bg-purple-500/30 blur-[140px] opacity-60"></div>
         <div class="absolute bottom-0 left-1/2 h-[320px] w-full -translate-x-1/2 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
     </div>
+    <div class="section-transition-bottom"></div>
 
-    <div class="container relative z-10 mx-auto max-w-[1600px] px-6 py-12 md:py-4 2xl:px-12">
+    <div class="container relative z-10 mx-auto max-w-[1600px] px-6 pt-8 md:pt-4 pb-12 md:pb-4 2xl:px-12">
         <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:gap-16 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <div class="mx-auto max-w-2xl text-left lg:mx-0 lg:max-w-none xl:pr-8 2xl:pr-12">
+            <div class="mx-auto max-w-2xl text-left lg:mx-0 lg:max-w-none xl:pr-8 2xl:pr-12 scroll-fade-in">
                 <!-- <div class="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-5 py-2 shadow-lg shadow-blue-500/10 backdrop-blur-lg">
                     <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/30 text-white">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,7 +20,7 @@
                     <span class="text-sm font-semibold uppercase tracking-wide text-white/80">Belajar Teknologi Masa Depan</span>
                 </div> -->
 
-                <h1 class="mt-10 space-y-4 text-4xl font-extrabold leading-tight text-white text-high-contrast sm:text-5xl md:text-6xl xl:text-7xl">
+                <h1 class="mt-4 space-y-4 text-4xl font-extrabold leading-tight text-white text-high-contrast sm:text-5xl md:text-6xl xl:text-7xl">
                     <span class="block text-white/90">Platform Pembelajaran</span>
                     <span class="block text-gradient">Coding Academy Payakumbuh</span>
                 </h1>
@@ -60,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="relative">
+            <div class="relative scroll-fade-in scroll-fade-in-delay-1">
                 <div class="relative rounded-3xl border border-white/15 bg-white/5 p-4 shadow-[0_40px_80px_-40px_rgba(59,130,246,0.45)] backdrop-blur-xl">
                     <div class="overflow-hidden rounded-2xl">
                         <img src="{{ asset('images/Photo Halaman Depan.JPG') }}" alt="Aktivitas belajar di Coding Academy Payakumbuh" class="h-full w-full object-cover">
@@ -81,7 +82,7 @@
                             </div>
                             <div>
                                 <p class="text-sm font-semibold text-white">Dashboard Progres Adaptif</p>
-                                <span class="text-xs text-white/60">Analitik otomatis untuk guru & admin</span>
+                                <span class="text-xs text-white/60">Pantau kemajuan belajar Anda secara real-time</span>
                             </div>
                         </div>
                     </div>

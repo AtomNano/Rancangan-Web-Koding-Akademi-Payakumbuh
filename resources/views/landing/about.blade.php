@@ -1,14 +1,16 @@
 <!-- Profil Coding Academy Payakumbuh -->
-<section id="profil" class="relative overflow-hidden py-24">
+<section id="profil" class="relative overflow-hidden py-24 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div class="section-transition-top"></div>
     <div class="pointer-events-none absolute inset-0 opacity-80">
         <div class="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/10 via-transparent to-transparent"></div>
         <div class="absolute -right-24 top-24 h-[26rem] w-[26rem] rounded-full bg-blue-500/20 blur-[140px]"></div>
         <div class="absolute -left-20 bottom-0 h-[24rem] w-[24rem] rounded-full bg-purple-500/20 blur-[140px]"></div>
     </div>
+    <div class="section-transition-bottom"></div>
 
     <div class="container relative z-10 mx-auto px-6">
         <div class="grid gap-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-            <div>
+            <div class="scroll-fade-in">
                 <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-5 py-2 text-sm font-semibold text-white/80 shadow-lg shadow-blue-500/20 backdrop-blur-lg">
                     <span class="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,7 +79,7 @@
                 </div>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-6 scroll-fade-in scroll-fade-in-delay-1">
                 <div class="rounded-3xl border border-white/15 bg-white/5 p-8 shadow-2xl shadow-blue-900/30 backdrop-blur-xl">
                     <p class="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">Highlight Utama</p>
                     <ul class="mt-4 space-y-4 text-sm text-white/80">
@@ -124,7 +126,7 @@
                 <div class="rounded-3xl border border-white/15 bg-white/5 p-7 shadow-2xl shadow-blue-900/30 backdrop-blur-xl">
                     <p class="text-sm font-semibold uppercase tracking-[0.35em] text-white/60">Lokasi Akademi</p>
                     <p class="mt-3 text-sm leading-relaxed text-white/75">
-                        Payakumbuh, Sumatera Barat — akses mudah, fasilitas nyaman, dan lingkungan belajar yang kondusif bagi pelajar SMP hingga SMA.
+                        Komplek Perumahan Sultan Madani Residence Ruko R6 Jl. Pahlawan, Kel. Sawah Padang, Kec. Payakumbuh Selatan, Payakumbuh — akses mudah, fasilitas nyaman, dan lingkungan belajar yang kondusif bagi pelajar SMP hingga SMA.
                     </p>
                 </div>
             </div>
