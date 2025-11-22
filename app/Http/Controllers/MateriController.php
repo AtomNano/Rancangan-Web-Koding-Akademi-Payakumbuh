@@ -7,6 +7,7 @@ use App\Models\Kelas;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class MateriController extends Controller
 {
@@ -146,13 +147,22 @@ class MateriController extends Controller
             }
         }
         
-        $validated = $request->validate([
+        $fileType = $request->input('file_type');
+
+        $rules = [
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'file' => 'required|file|mimes:pdf,mp4,doc,docx|max:102400', // 100MB max (102400 KB)
             'kelas_id' => 'required|exists:kelas,id',
-            'file_type' => 'required|in:pdf,video,document,link',
-        ]);
+            'file_type' => ['required', Rule::in(['pdf', 'video', 'document', 'link'])],
+        ];
+
+        if ($fileType === 'video') {
+            $rules['youtube_url'] = ['required', 'url', 'regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i'];
+        } else {
+            $rules['file'] = 'required|file|mimes:pdf,mp4,doc,docx|max:102400';
+        }
+
+        $validated = $request->validate($rules);
 
         $user = auth()->user();
 
@@ -162,9 +172,13 @@ class MateriController extends Controller
         //     abort(403, 'Anda tidak diizinkan mengunggah materi ke kelas ini.');
         // }
 
-        $file = $request->file('file');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('materi', $fileName, 'public');
+        if ($validated['file_type'] === 'video') {
+            $filePath = $validated['youtube_url'];
+        } else {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('materi', $fileName, 'public');
+        }
 
         Materi::create([
             'judul' => $validated['judul'],
@@ -254,32 +268,46 @@ class MateriController extends Controller
         // Authorization check: Ensure the guru is assigned to this material's class
         abort_if(!$this->hasAccessToClass($user, $materi->kelas_id), 403, 'Anda tidak diizinkan memperbarui materi di kelas ini.');
 
-        $validated = $request->validate([
+        $rules = [
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'file' => 'nullable|file|mimes:pdf,mp4,doc,docx|max:102400', // 100MB max (102400 KB)
             'kelas_id' => 'required|exists:kelas,id',
-            'file_type' => 'required|in:pdf,video,document,link',
-        ]);
+            'file_type' => ['required', Rule::in(['pdf', 'video', 'document', 'link'])],
+            'file' => 'nullable|file|mimes:pdf,mp4,doc,docx|max:102400',
+        ];
+
+        if ($request->input('file_type') === 'video') {
+            $rules['youtube_url'] = ['required', 'url', 'regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i'];
+        }
+
+        $validated = $request->validate($rules);
 
         // Authorization check: Ensure the selected new kelas_id is assigned to the guru
         if (!$this->hasAccessToClass($user, $validated['kelas_id'])) {
             abort(403, 'Anda tidak diizinkan memindahkan materi ke kelas ini.');
         }
 
+        $originalFilePath = $materi->file_path;
+        $originalFileType = $materi->file_type;
+
         $materi->update([
             'judul' => $validated['judul'],
             'deskripsi' => $validated['deskripsi'],
             'kelas_id' => $validated['kelas_id'],
             'file_type' => $validated['file_type'],
-            'status' => 'pending', // Reset to pending when updated
+            'status' => 'pending',
         ]);
 
-        if ($request->hasFile('file')) {
-            // Delete old file
-            Storage::disk('public')->delete($materi->file_path);
-            
-            // Upload new file
+        if ($validated['file_type'] === 'video') {
+            if ($originalFileType !== 'video' && $originalFilePath && Storage::disk('public')->exists($originalFilePath)) {
+                Storage::disk('public')->delete($originalFilePath);
+            }
+            $materi->update(['file_path' => $validated['youtube_url']]);
+        } elseif ($request->hasFile('file')) {
+            if ($originalFilePath && Storage::disk('public')->exists($originalFilePath)) {
+                Storage::disk('public')->delete($originalFilePath);
+            }
+
             $file = $request->file('file');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = $file->storeAs('materi', $fileName, 'public');
@@ -313,6 +341,10 @@ class MateriController extends Controller
             abort(404, 'Materi tidak ditemukan.');
         }
         
+        if ($materiModel->isVideoLink()) {
+            return redirect()->away($materiModel->file_path);
+        }
+
         // Check if file exists
         if (!Storage::disk('public')->exists($materiModel->file_path)) {
             abort(404, 'File tidak ditemukan.');
@@ -363,7 +395,9 @@ class MateriController extends Controller
         // Authorization check: Ensure the guru is assigned to this material's class
         abort_if(!$this->hasAccessToClass($user, $materi->kelas_id), 403, 'Anda tidak diizinkan menghapus materi di kelas ini.');
 
-        Storage::disk('public')->delete($materi->file_path);
+        if (!$materi->isVideoLink() && Storage::disk('public')->exists($materi->file_path)) {
+            Storage::disk('public')->delete($materi->file_path);
+        }
         $materi->delete();
 
         return redirect()->route('guru.materi.index')

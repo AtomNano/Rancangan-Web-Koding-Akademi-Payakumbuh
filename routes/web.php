@@ -9,7 +9,47 @@ use App\Http\Controllers\MateriController;
 use App\Http\Controllers\MateriProgressController;
 use App\Http\Controllers\GuruKelasController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+
+if (!function_exists('quick_login_or_create')) {
+    function quick_login_or_create(string $role, string $redirectPath)
+    {
+        $defaults = [
+            'admin' => [
+                'name' => 'Admin Demo',
+                'email' => 'admin@example.com',
+            ],
+            'guru' => [
+                'name' => 'Guru Demo',
+                'email' => 'guru@example.com',
+            ],
+            'siswa' => [
+                'name' => 'Siswa Demo',
+                'email' => 'siswa@example.com',
+            ],
+        ];
+
+        if (!isset($defaults[$role])) {
+            abort(404, 'Role tidak dikenali.');
+        }
+
+        $user = User::firstOrCreate(
+            [
+                'role' => $role,
+                'email' => $defaults[$role]['email'],
+            ],
+            [
+                'name' => $defaults[$role]['name'],
+                'password' => Hash::make('password'),
+            ]
+        );
+
+        auth()->login($user);
+
+        return redirect($redirectPath);
+    }
+}
 
 Route::get('/login-siswa', function () {
     return redirect('/login');
@@ -27,32 +67,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/quick-login/admin', function () {
-    $admin = App\Models\User::where('role', 'admin')->first();
-    if ($admin) {
-        auth()->login($admin);
-        return redirect('/admin/dashboard');
-    }
-    return 'No admin user found.';
-});
+Route::get('/quick-login/admin', fn () => quick_login_or_create('admin', '/admin/dashboard'));
 
-Route::get('/quick-login/guru', function () {
-    $guru = App\Models\User::where('role', 'guru')->first();
-    if ($guru) {
-        auth()->login($guru);
-        return redirect('/guru/dashboard');
-    }
-    return 'No guru user found.';
-});
+Route::get('/quick-login/guru', fn () => quick_login_or_create('guru', '/guru/dashboard'));
 
-Route::get('/quick-login/siswa', function () {
-    $siswa = App\Models\User::where('role', 'siswa')->first();
-    if ($siswa) {
-        auth()->login($siswa);
-        return redirect('/siswa/dashboard');
-    }
-    return 'No siswa user found.';
-});
+Route::get('/quick-login/siswa', fn () => quick_login_or_create('siswa', '/siswa/dashboard'));
 
 // Quick login routes for development
 Route::middleware(['web'])->group(function () {
@@ -72,14 +91,7 @@ Route::middleware(['web'])->group(function () {
             return redirect('/login');
         }
 
-        $user = App\Models\User::where('email', $email)->where('role', $role)->first();
-
-        if ($user) {
-            auth()->login($user);
-            return redirect('/' . $role . '/dashboard');
-        }
-
-        return 'No ' . $role . ' user found with email ' . $email . '.';
+        return quick_login_or_create($role, '/' . $role . '/dashboard');
 
 
     })->where('role', 'admin|guru|siswa');

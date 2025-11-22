@@ -289,13 +289,24 @@
                         </div>
 
                         @if($materi->file_type === 'video')
+                            @php $embedUrl = $materi->youtube_embed_url; @endphp
                             <div class="mb-8">
-                                <div class="border border-gray-200 rounded-lg overflow-hidden">
-                                    <video controls class="w-full">
-                                        <source src="{{ route('siswa.materi.download', $materi->id) }}" type="video/mp4">
-                                        Browser Anda tidak mendukung video player.
-                                    </video>
+                                <div class="border border-gray-200 rounded-lg overflow-hidden bg-black">
+                                    @if($embedUrl)
+                                        <div class="relative w-full" style="padding-top: 56.25%;">
+                                            <iframe
+                                                src="{{ $embedUrl }}"
+                                                class="absolute inset-0 w-full h-full"
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                    @else
+                                        <p class="p-6 text-center text-sm text-gray-500">Link video tidak valid atau tidak dapat ditampilkan.</p>
+                                    @endif
                                 </div>
+                                <p class="mt-4 text-sm text-gray-500 break-all">Link sumber: <a href="{{ $materi->file_path }}" target="_blank" class="text-indigo-600 hover:text-indigo-800">{{ $materi->file_path }}</a></p>
                             </div>
                         @endif
 

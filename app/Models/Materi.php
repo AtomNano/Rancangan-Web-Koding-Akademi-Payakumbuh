@@ -57,6 +57,52 @@ class Materi extends Model
         return $this->status === 'pending';
     }
 
+    public function isVideoLink()
+    {
+        return $this->file_type === 'video' && filter_var($this->file_path, FILTER_VALIDATE_URL);
+    }
+
+    public function getYoutubeVideoIdAttribute()
+    {
+        if (!$this->isVideoLink() || empty($this->file_path)) {
+            return null;
+        }
+
+        $url = $this->file_path;
+
+        if (preg_match('/youtu\.be\/([^?]+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        if (preg_match('/youtube\.com\/(?:embed|shorts)\/([^?]+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        $query = parse_url($url, PHP_URL_QUERY);
+        if ($query) {
+            parse_str($query, $params);
+            if (!empty($params['v'])) {
+                return $params['v'];
+            }
+        }
+
+        return null;
+    }
+
+    public function getYoutubeEmbedUrlAttribute()
+    {
+        if (!$this->isVideoLink()) {
+            return null;
+        }
+
+        $videoId = $this->youtube_video_id;
+        if ($videoId) {
+            return 'https://www.youtube.com/embed/' . $videoId;
+        }
+
+        return $this->file_path;
+    }
+
     /**
      * Retrieve the model for route model binding.
      * This ensures route model binding works correctly.

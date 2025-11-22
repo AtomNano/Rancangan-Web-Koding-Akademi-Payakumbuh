@@ -72,19 +72,31 @@
                                 <x-input-error :messages="$errors->get('file_type')" class="mt-2" />
                             </div>
 
-                            <div>
+                            <div id="youtube_link_wrapper" class="{{ old('file_type', $materi->file_type) === 'video' ? '' : 'hidden' }}">
+                                <x-input-label for="youtube_url" :value="__('Link YouTube')" />
+                                <x-text-input id="youtube_url" class="block mt-1 w-full" type="url" name="youtube_url" :value="old('youtube_url', $materi->file_type === 'video' ? $materi->file_path : '')" placeholder="https://www.youtube.com/watch?v=..." />
+                                <p class="mt-1 text-sm text-gray-500">Tempelkan tautan video YouTube yang akan dipelajari siswa.</p>
+                                <x-input-error :messages="$errors->get('youtube_url')" class="mt-2" />
+                            </div>
+
+                            <div id="file_input_wrapper" class="{{ old('file_type', $materi->file_type) === 'video' ? 'hidden' : '' }}">
                                 <x-input-label for="file" :value="__('File Baru (kosongkan jika tidak ingin mengubah)')" />
                                 <input id="file" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" type="file" name="file" />
                                 <p class="mt-1 text-sm text-gray-500">Maksimal 100MB. Format yang didukung: PDF, MP4, DOC, DOCX</p>
                                 <x-input-error :messages="$errors->get('file')" class="mt-2" />
                                 
-                                @if($materi->file_path)
+                                @if($materi->file_type !== 'video' && $materi->file_path)
                                     <div class="mt-2">
                                         <p class="text-sm text-gray-600">File saat ini:</p>
                                         <a href="{{ Storage::url($materi->file_path) }}" target="_blank" 
                                            class="text-blue-600 hover:text-blue-800 text-sm">
                                             {{ basename($materi->file_path) }}
                                         </a>
+                                    </div>
+                                @elseif($materi->file_type === 'video' && $materi->file_path)
+                                    <div class="mt-2 text-sm text-gray-600">
+                                        <p>Link saat ini:</p>
+                                        <a href="{{ $materi->file_path }}" target="_blank" class="text-blue-600 hover:text-blue-800 break-all">{{ $materi->file_path }}</a>
                                     </div>
                                 @endif
                             </div>
@@ -120,6 +132,30 @@
             const buttonText = document.getElementById('buttonText');
             const buttonSpinner = document.getElementById('buttonSpinner');
             const progressBar = document.getElementById('progressBar');
+            const fileTypeSelect = document.getElementById('file_type');
+            const fileInputWrapper = document.getElementById('file_input_wrapper');
+            const youtubeWrapper = document.getElementById('youtube_link_wrapper');
+            const youtubeInput = document.getElementById('youtube_url');
+
+            function toggleMediaInputs() {
+                if (!fileTypeSelect) {
+                    return;
+                }
+
+                const isVideo = fileTypeSelect.value === 'video';
+                if (isVideo) {
+                    fileInputWrapper?.classList.add('hidden');
+                    youtubeWrapper?.classList.remove('hidden');
+                    youtubeInput?.setAttribute('required', 'required');
+                } else {
+                    fileInputWrapper?.classList.remove('hidden');
+                    youtubeWrapper?.classList.add('hidden');
+                    youtubeInput?.removeAttribute('required');
+                }
+            }
+
+            toggleMediaInputs();
+            fileTypeSelect?.addEventListener('change', toggleMediaInputs);
             
             // Hide loading on page load (in case of validation errors)
             loadingOverlay.classList.add('hidden');
