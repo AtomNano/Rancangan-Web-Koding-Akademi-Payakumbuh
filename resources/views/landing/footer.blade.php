@@ -9,12 +9,8 @@
     <div class="container relative z-10 mx-auto px-6 py-16 scroll-fade-in">
         <div class="grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,1fr)]">
             <div>
-                <a href="{{ url('/') }}" class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo/logo-transparent.png') }}" alt="Coding Academy Payakumbuh" class="h-14 w-auto object-contain">
-                    <div class="flex flex-col">
-                        <span class="text-xl font-bold leading-tight text-white text-high-contrast">Coding Academy</span>
-                        <span class="text-xs font-medium uppercase tracking-[0.3em] text-white/70">Payakumbuh</span>
-                    </div>
+                <a href="{{ url('/') }}" class="flex items-center">
+                    <img src="{{ asset('images/logo/logoputih.png') }}" alt="Coding Academy Payakumbuh" class="h-16 w-auto object-contain">
                 </a>
                 <p class="mt-6 max-w-md text-sm leading-relaxed text-white/75">
                     Platform e-learning terpadu untuk Admin, Guru, dan Siswa. Satu dashboard untuk kurikulum digital, manajemen kelas, dan pemantauan progres real time.
