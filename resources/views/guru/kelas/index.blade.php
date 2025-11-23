@@ -3,8 +3,8 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-                    {{ __('Kelas yang Saya Ajar') }}
-                </h2>
+            {{ __('Kelas yang Saya Ajar') }}
+        </h2>
                 <p class="text-sm text-gray-600 mt-1">Kelola semua kelas yang Anda ajar</p>
             </div>
             <a href="{{ route('guru.dashboard') }}" 
@@ -36,10 +36,10 @@
                                             {{ $k->nama_kelas }}
                                         </h4>
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                            {{ $k->bidang === 'coding' ? 'bg-blue-100 text-blue-800' : 
-                                               ($k->bidang === 'desain' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
-                                            {{ ucfirst($k->bidang) }}
-                                        </span>
+                                        {{ $k->bidang === 'coding' ? 'bg-blue-100 text-blue-800' : 
+                                           ($k->bidang === 'desain' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800') }}">
+                                        {{ ucfirst($k->bidang) }}
+                                    </span>
                                     </div>
                                 </div>
                                 
@@ -49,15 +49,15 @@
                                     <div class="flex items-center justify-between text-sm">
                                         <div class="flex items-center text-gray-600">
                                             <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                            </svg>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
                                             <span class="font-semibold text-gray-900">{{ $k->students_count ?? 0 }}</span>
                                             <span class="ml-1 text-gray-600">Siswa</span>
                                         </div>
                                         @if($k->status)
                                             <span class="px-2.5 py-1 text-xs font-semibold rounded-full {{ $k->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
                                                 {{ $k->status === 'active' ? 'Aktif' : 'Tidak Aktif' }}
-                                            </span>
+                                    </span>
                                         @endif
                                     </div>
                                 </div>
@@ -77,8 +77,8 @@
                 <div class="bg-white rounded-xl shadow-lg p-12 text-center">
                     <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
                         <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-2">Belum Ada Kelas</h3>
                     <p class="text-gray-600 mb-6">Anda belum ditugaskan ke kelas manapun. Silakan hubungi admin untuk penugasan kelas.</p>

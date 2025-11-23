@@ -10,7 +10,7 @@
         <!-- Modern PDF Reading Experience for Guru -->
         <div class="pdf-reading-mode" id="pdfReadingMode">
             <!-- Right Sidebar - All Info -->
-            <div class="fixed right-0 top-0 bottom-0 w-80 bg-white border-l border-gray-200 shadow-2xl z-50 overflow-y-auto" id="rightSidebar" style="transform: translateX(0);">
+            <div class="fixed right-0 top-0 bottom-0 w-80 bg-white border-l border-gray-200 shadow-lg z-60 overflow-y-auto" id="rightSidebar" style="transform: translateX(100%);">
                 <div class="p-6">
                     <!-- Header with Actions -->
                     <div class="mb-6 pb-6 border-b border-gray-200">
@@ -343,30 +343,54 @@
             const pdfControlsBar = document.getElementById('pdfControlsBar');
             const toggleFullscreen = document.getElementById('toggleFullscreen');
             
+            console.log('DOM loaded, elements:', {
+                rightSidebar: !!rightSidebar,
+                toggleRightSidebarBtn: !!toggleRightSidebarBtn,
+                floatingSidebarToggle: !!floatingSidebarToggle
+            });
+            
             let rightSidebarOpen = true;
             let controlsBarTimeout;
             let lastMouseMove = Date.now();
 
-            // Initialize - Sidebar default open
+            // Initialize right sidebar - closed by default on mobile, open on desktop
             if (rightSidebar) {
-                rightSidebarOpen = true;
-                rightSidebar.classList.remove('closed');
-                if (floatingSidebarToggle) {
-                    floatingSidebarToggle.classList.add('hidden');
+                const isMobile = window.innerWidth < 768;
+                if (isMobile) {
+                    // Mobile: closed by default
+                    rightSidebarOpen = false;
+                    rightSidebar.classList.remove('open');
+                    rightSidebar.style.transform = 'translateX(100%)';
+                    if (floatingSidebarToggle) {
+                        floatingSidebarToggle.classList.remove('hidden');
+                    }
+                } else {
+                    // Desktop: open by default
+                    rightSidebarOpen = true;
+                    rightSidebar.classList.add('open');
+                    rightSidebar.style.transform = 'translateX(0)';
+                    if (floatingSidebarToggle) {
+                        floatingSidebarToggle.classList.add('hidden');
+                    }
                 }
             }
 
             // Right Sidebar Toggle
             function toggleSidebar() {
                 rightSidebarOpen = !rightSidebarOpen;
-                if (rightSidebarOpen) {
-                    rightSidebar.classList.remove('closed');
-                    if (floatingSidebarToggle) {
-                        floatingSidebarToggle.classList.add('hidden');
+                if (rightSidebar) {
+                    if (rightSidebarOpen) {
+                        rightSidebar.classList.add('open');
+                        rightSidebar.style.transform = 'translateX(0)';
+                    } else {
+                        rightSidebar.classList.remove('open');
+                        rightSidebar.style.transform = 'translateX(100%)';
                     }
-                } else {
-                    rightSidebar.classList.add('closed');
-                    if (floatingSidebarToggle) {
+                }
+                if (floatingSidebarToggle) {
+                    if (rightSidebarOpen) {
+                        floatingSidebarToggle.classList.add('hidden');
+                    } else {
                         floatingSidebarToggle.classList.remove('hidden');
                     }
                 }
@@ -376,9 +400,40 @@
                 toggleRightSidebarBtn.addEventListener('click', toggleSidebar);
             }
             
-            if (floatingSidebarToggle && rightSidebar) {
-                floatingSidebarToggle.addEventListener('click', toggleSidebar);
+            if (floatingSidebarToggle) {
+                console.log('Setting up floating sidebar toggle button');
+                floatingSidebarToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Floating toggle button clicked!');
+                    toggleSidebar();
+                });
+                
+                // Ensure button is clickable
+                floatingSidebarToggle.style.pointerEvents = 'auto';
+                floatingSidebarToggle.style.cursor = 'pointer';
+            } else {
+                console.error('floatingSidebarToggle element not found!');
             }
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    if (rightSidebarOpen && rightSidebar &&
+                        !rightSidebar.contains(e.target) && 
+                        toggleRightSidebarBtn &&
+                        !toggleRightSidebarBtn.contains(e.target) &&
+                        floatingSidebarToggle &&
+                        !floatingSidebarToggle.contains(e.target)) {
+                        rightSidebarOpen = false;
+                        rightSidebar.classList.remove('open');
+                        rightSidebar.style.transform = 'translateX(100%)';
+                        if (floatingSidebarToggle) {
+                            floatingSidebarToggle.classList.remove('hidden');
+                        }
+                    }
+                }
+            });
 
             // Auto-hide controls bar
             function showControlsBar() {
@@ -473,27 +528,60 @@
             }
 
             #rightSidebar {
-                transform: translateX(0) !important;
-                z-index: 60;
+                transform: translateX(100%);
                 transition: transform 0.3s ease-in-out;
+                z-index: 60;
             }
-
-            #rightSidebar.closed {
-                transform: translateX(100%) !important;
+            
+            #rightSidebar.open {
+                transform: translateX(0) !important;
             }
-
+            
+            /* Sidebar tidak push content, hanya overlay */
             #mainContent.right-sidebar-open {
                 margin-right: 0;
             }
-
+            
+            /* Floating Sidebar Toggle Button */
             #floatingSidebarToggle {
                 opacity: 1;
                 transition: opacity 0.3s ease;
+                z-index: 70;
             }
-
+            
             #floatingSidebarToggle.hidden {
                 opacity: 0;
                 pointer-events: none;
+                display: none;
+            }
+            
+            @media (max-width: 768px) {
+                #rightSidebar {
+                    width: 100%;
+                }
+                
+                #pdfControlsBar {
+                    left: 1rem;
+                    right: 1rem;
+                    transform: translateX(0);
+                    width: auto;
+                    font-size: 0.75rem;
+                }
+                
+                #pdfControlsBar button {
+                    padding: 0.375rem;
+                }
+                
+                #pdfControlsBar .text-sm {
+                    font-size: 0.7rem;
+                }
+                
+                /* Ensure PDF iframe scales properly on mobile */
+                #pdfViewer {
+                    width: 100% !important;
+                    height: 100% !important;
+                    -webkit-overflow-scrolling: touch;
+                }
             }
         </style>
         @endpush

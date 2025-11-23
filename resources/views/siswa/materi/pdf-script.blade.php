@@ -46,11 +46,12 @@
     /* Right Sidebar - Overlay */
     #rightSidebar {
         transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
         z-index: 60;
     }
     
     #rightSidebar.open {
-        transform: translateX(0);
+        transform: translateX(0) !important;
     }
     
     /* Sidebar tidak push content, hanya overlay */
@@ -62,11 +63,13 @@
     #floatingSidebarToggle {
         opacity: 1;
         transition: opacity 0.3s ease;
+        z-index: 70;
     }
     
     #floatingSidebarToggle.hidden {
         opacity: 0;
         pointer-events: none;
+        display: none;
     }
     
     
@@ -80,6 +83,29 @@
             right: 1rem;
             transform: translateX(0);
             width: auto;
+            font-size: 0.75rem;
+        }
+        
+        #pdfControlsBar button {
+            padding: 0.375rem;
+        }
+        
+        #pdfControlsBar .text-sm {
+            font-size: 0.7rem;
+        }
+        
+        /* Ensure PDF iframe scales properly on mobile */
+        #pdfViewer {
+            width: 100% !important;
+            height: 100% !important;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+    
+    /* Tablet optimizations */
+    @media (min-width: 640px) and (max-width: 1024px) {
+        #pdfControlsBar {
+            font-size: 0.875rem;
         }
     }
     
@@ -155,24 +181,87 @@ document.addEventListener('DOMContentLoaded', function() {
     let isFullscreen = false;
     let rightSidebarOpen = true; // Default open
     let progressUpdateTimeout;
-
-    // Initialize
-    updatePageInfo();
-    updateZoom();
+    let autoFitMode = 'auto'; // 'auto', 'width', 'page', 'manual'
     
-    // Open right sidebar by default
+    // Function to detect device type and set appropriate zoom
+    function detectDeviceAndSetZoom() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        // Mobile devices (phones)
+        if (width < 640) {
+            return 'page-width'; // Fit to width on mobile
+        }
+        // Tablets
+        else if (width < 1024) {
+            return 'page-fit'; // Fit page on tablets
+        }
+        // Desktop
+        else {
+            return 'page-fit'; // Fit page on desktop
+        }
+    }
+    
+    // Function to get initial zoom based on device
+    function getInitialZoom() {
+        const deviceZoom = detectDeviceAndSetZoom();
+        if (deviceZoom === 'page-width' || deviceZoom === 'page-fit') {
+            autoFitMode = deviceZoom;
+            return deviceZoom;
+        }
+        return 100;
+    }
+
+    // Initialize with device-appropriate zoom
+    const initialZoom = getInitialZoom();
+    if (initialZoom === 'page-width' || initialZoom === 'page-fit') {
+        currentZoom = initialZoom;
+        autoFitMode = initialZoom;
+        // Update PDF view with auto-fit
+        const deviceZoom = detectDeviceAndSetZoom();
+        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=${deviceZoom}`;
+        pdfViewer.src = pdfUrl;
+        zoomLevel.textContent = deviceZoom === 'page-width' ? 'Fit Width' : 'Fit Page';
+    } else {
+        currentZoom = initialZoom;
+        updateZoom();
+    }
+    updatePageInfo();
+    
+    // Initialize right sidebar - closed by default on mobile, open on desktop
     if (rightSidebar) {
-        rightSidebarOpen = true;
-        rightSidebar.classList.add('open');
-        if (floatingSidebarToggle) {
-            floatingSidebarToggle.classList.add('hidden');
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+            // Mobile: closed by default
+            rightSidebarOpen = false;
+            rightSidebar.classList.remove('open');
+            rightSidebar.style.transform = 'translateX(100%)';
+            if (floatingSidebarToggle) {
+                floatingSidebarToggle.classList.remove('hidden');
+            }
+        } else {
+            // Desktop: open by default
+            rightSidebarOpen = true;
+            rightSidebar.classList.add('open');
+            rightSidebar.style.transform = 'translateX(0)';
+            if (floatingSidebarToggle) {
+                floatingSidebarToggle.classList.add('hidden');
+            }
         }
     }
 
     // Right Sidebar Toggle
     function toggleSidebar() {
         rightSidebarOpen = !rightSidebarOpen;
-        rightSidebar.classList.toggle('open', rightSidebarOpen);
+        if (rightSidebar) {
+            if (rightSidebarOpen) {
+                rightSidebar.classList.add('open');
+                rightSidebar.style.transform = 'translateX(0)';
+            } else {
+                rightSidebar.classList.remove('open');
+                rightSidebar.style.transform = 'translateX(100%)';
+            }
+        }
         if (floatingSidebarToggle) {
             if (rightSidebarOpen) {
                 floatingSidebarToggle.classList.add('hidden');
@@ -292,22 +381,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Zoom Controls
     zoomInBtn.addEventListener('click', () => {
+        // If in auto-fit mode, switch to manual zoom
+        if (typeof currentZoom === 'string') {
+            currentZoom = 100; // Start from 100% when switching from auto-fit
+        }
+        autoFitMode = 'manual';
         currentZoom = Math.min(currentZoom + 25, 200);
         updateZoom();
     });
 
     zoomOutBtn.addEventListener('click', () => {
+        // If in auto-fit mode, switch to manual zoom
+        if (typeof currentZoom === 'string') {
+            currentZoom = 100; // Start from 100% when switching from auto-fit
+        }
+        autoFitMode = 'manual';
         currentZoom = Math.max(currentZoom - 25, 50);
         updateZoom();
     });
 
     fitWidthBtn.addEventListener('click', () => {
+        autoFitMode = 'width';
+        currentZoom = 'page-width';
         const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=page-width`;
         pdfViewer.src = pdfUrl;
         zoomLevel.textContent = 'Fit Width';
     });
 
     fitPageBtn.addEventListener('click', () => {
+        autoFitMode = 'page';
+        currentZoom = 'page-fit';
         const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit`;
         pdfViewer.src = pdfUrl;
         zoomLevel.textContent = 'Fit Page';
@@ -355,13 +458,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updatePDFView() {
-        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=${currentZoom}`;
+        let zoomParam = currentZoom;
+        if (typeof currentZoom === 'string' && (currentZoom === 'page-width' || currentZoom === 'page-fit')) {
+            zoomParam = currentZoom;
+        } else {
+            zoomParam = `${currentZoom}%`;
+        }
+        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=${zoomParam}`;
         pdfViewer.src = pdfUrl;
+        updatePageInfo();
+    }
+    
+    function updatePDFViewWithAutoFit() {
+        const deviceZoom = detectDeviceAndSetZoom();
+        autoFitMode = deviceZoom;
+        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=${deviceZoom}`;
+        pdfViewer.src = pdfUrl;
+        zoomLevel.textContent = deviceZoom === 'page-width' ? 'Fit Width' : 'Fit Page';
         updatePageInfo();
     }
 
     function updateZoom() {
-        zoomLevel.textContent = `${currentZoom}%`;
+        if (typeof currentZoom === 'string' && (currentZoom === 'page-width' || currentZoom === 'page-fit')) {
+            zoomLevel.textContent = currentZoom === 'page-width' ? 'Fit Width' : 'Fit Page';
+        } else {
+            zoomLevel.textContent = `${currentZoom}%`;
+        }
         updatePDFView();
     }
 
@@ -470,9 +592,21 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading progress:', error);
         });
 
-    // Handle window resize
+    // Handle window resize - auto-adjust zoom based on new screen size
+    let resizeTimeout;
     window.addEventListener('resize', () => {
-        // PDF viewer akan otomatis resize karena menggunakan 100% width/height
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Only auto-adjust if in auto-fit mode
+            if (autoFitMode === 'auto' || autoFitMode === 'page-width' || autoFitMode === 'page-fit') {
+                const newDeviceZoom = detectDeviceAndSetZoom();
+                if (newDeviceZoom !== autoFitMode) {
+                    autoFitMode = newDeviceZoom;
+                    currentZoom = newDeviceZoom;
+                    updatePDFViewWithAutoFit();
+                }
+            }
+        }, 250); // Debounce resize events
     });
 
     // Close sidebar when clicking outside on mobile

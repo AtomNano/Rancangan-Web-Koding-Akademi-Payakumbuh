@@ -3,7 +3,7 @@
         <!-- Modern PDF Reading Experience -->
         <div class="pdf-reading-mode" id="pdfReadingMode">
             <!-- Right Sidebar - All Info -->
-            <div class="fixed right-0 top-0 bottom-0 w-80 bg-white border-l border-gray-200 shadow-lg z-40 overflow-y-auto" id="rightSidebar">
+            <div class="fixed right-0 top-0 bottom-0 w-80 bg-white border-l border-gray-200 shadow-lg z-60 overflow-y-auto" id="rightSidebar" style="transform: translateX(100%);">
                 <div class="p-6">
                     <!-- Header with Actions -->
                     <div class="mb-6 pb-6 border-b border-gray-200">
@@ -239,9 +239,10 @@
                 <!-- PDF Viewer Container - Full Canvas -->
                 <div class="w-full h-full bg-gray-900" id="pdfViewerContainer">
                     <iframe id="pdfViewer" 
-                            src="{{ route('siswa.materi.download', $materi->id) }}?view=1#toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit" 
+                            src="{{ route('siswa.materi.download', $materi->id) }}?view=1#toolbar=0&navpanes=0&scrollbar=1" 
                             class="w-full h-full"
-                            frameborder="0">
+                            frameborder="0"
+                            allowfullscreen>
                     </iframe>
                 </div>
                 
