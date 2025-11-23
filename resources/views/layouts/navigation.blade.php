@@ -1,7 +1,7 @@
 <nav x-data="{ open: false }" class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-20">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
+    <div class="max-w-full mx-auto px-3 sm:px-4 lg:px-8">
+        <div class="flex justify-between items-center h-14 sm:h-16">
             <div class="flex items-center">
                 <!-- Hamburger -->
                 <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none transition-colors">
