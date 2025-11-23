@@ -395,13 +395,12 @@ class MateriController extends Controller
         // Authorization check: Ensure the guru is assigned to this material's class
         abort_if(!$this->hasAccessToClass($user, $materi->kelas_id), 403, 'Anda tidak diizinkan menghapus materi di kelas ini.');
 
-        if (!$materi->isVideoLink() && Storage::disk('public')->exists($materi->file_path)) {
-            Storage::disk('public')->delete($materi->file_path);
-        }
+        // Soft delete - data tidak dihapus permanen, hanya ditandai sebagai tidak aktif
+        // File tidak dihapus untuk memungkinkan restore di masa depan
         $materi->delete();
 
         return redirect()->route('guru.materi.index')
-            ->with('success', 'Materi berhasil dihapus.');
+            ->with('success', 'Materi berhasil dinonaktifkan. Data masih tersimpan di database.');
     }
 
     /**

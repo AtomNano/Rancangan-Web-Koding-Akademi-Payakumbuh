@@ -215,6 +215,10 @@
                                             <option value="11 SMA" {{ old('kelas_sekolah', $kelasSekolahValue) == '11 SMA' ? 'selected' : '' }}>Kelas 11 SMA</option>
                                             <option value="12 SMA" {{ old('kelas_sekolah', $kelasSekolahValue) == '12 SMA' ? 'selected' : '' }}>Kelas 12 SMA</option>
                                         </optgroup>
+                                        <optgroup label="Lainnya">
+                                            <option value="Umum" {{ old('kelas_sekolah', $kelasSekolahValue) == 'Umum' ? 'selected' : '' }}>Umum</option>
+                                            <option value="Mahasiswa" {{ old('kelas_sekolah', $kelasSekolahValue) == 'Mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
+                                        </optgroup>
                                     </select>
                                     <p class="mt-1 text-xs text-gray-500">Pilih kelas saat ini di sekolah</p>
                                 </div>
@@ -234,7 +238,7 @@
                                         </label>
                                         @endforeach
                                     </div>
-                                    <p class="mt-2 text-sm text-gray-500">Pilih satu atau lebih kelas untuk siswa.</p>
+                                    <p class="mt-2 text-sm text-gray-500">Pilih satu atau lebih kelas untuk siswa. Semua jenis kelas tersedia (Dasar, Umum, Mahasiswa, dll).</p>
                                 </div>
                                 <div>
                                     <x-input-label for="durasi" :value="__('Durasi Program')" />

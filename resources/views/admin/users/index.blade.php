@@ -16,6 +16,16 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.15a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.029a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.15 2.758 3.15a1.2 1.2 0 0 1 0 1.697z"/></svg>
+            </span>
+        </div>
+    @endif
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class="bg-white p-5 rounded-lg shadow-sm flex justify-between items-center">
@@ -166,13 +176,30 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center space-x-2">
-                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="p-2 rounded-md text-gray-400 hover:bg-indigo-100 hover:text-indigo-600">
+                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="p-2 rounded-md text-gray-400 hover:bg-indigo-100 hover:text-indigo-600" title="Edit">
                                         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
                                     </a>
-                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus pengguna ini?');">
+                                    @if($user->role === 'siswa')
+                                        @if($user->is_active)
+                                            <form action="{{ route('admin.users.deactivate', $user->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menonaktifkan siswa ini? Siswa tidak dapat mengakses sistem lagi.');" class="inline">
+                                                @csrf
+                                                <button type="submit" class="p-2 rounded-md text-gray-400 hover:bg-yellow-100 hover:text-yellow-600" title="Nonaktifkan">
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('admin.users.activate', $user->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin mengaktifkan siswa ini? Siswa dapat mengakses sistem lagi.');" class="inline">
+                                                @csrf
+                                                <button type="submit" class="p-2 rounded-md text-gray-400 hover:bg-green-100 hover:text-green-600" title="Aktifkan">
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @endif
+                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus pengguna ini? Data akan dihapus dari sistem.');" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 rounded-md text-gray-400 hover:bg-red-100 hover:text-red-600">
+                                        <button type="submit" class="p-2 rounded-md text-gray-400 hover:bg-red-100 hover:text-red-600" title="Hapus">
                                             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                         </button>
                                     </form>

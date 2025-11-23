@@ -50,6 +50,8 @@
                                 <option value="coding" {{ old('bidang') == 'coding' ? 'selected' : '' }}>Coding</option>
                                 <option value="desain" {{ old('bidang') == 'desain' ? 'selected' : '' }}>Desain</option>
                                 <option value="robotik" {{ old('bidang') == 'robotik' ? 'selected' : '' }}>Robotik</option>
+                                <option value="umum" {{ old('bidang') == 'umum' ? 'selected' : '' }}>Umum</option>
+                                <option value="mahasiswa" {{ old('bidang') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
                             </select>
                             <x-input-error :messages="$errors->get('bidang')" class="mt-2" />
                         </div>

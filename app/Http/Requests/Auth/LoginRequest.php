@@ -76,6 +76,17 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if student is active
+        $user = Auth::user();
+        if ($user && $user->role === 'siswa' && !$user->is_active) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+            
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda tidak aktif. Silakan hubungi admin untuk mengaktifkan kembali.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

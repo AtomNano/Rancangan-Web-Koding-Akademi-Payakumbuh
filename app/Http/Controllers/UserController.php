@@ -62,7 +62,8 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $role = $request->get('role', 'guru');
-        $kelas = Kelas::all();
+        // Get all active classes - siswa can enroll in any class (dasar, umum, mahasiswa, etc.)
+        $kelas = Kelas::where('status', 'active')->orderBy('nama_kelas')->get();
         
         return view('admin.users.create', compact('role', 'kelas'));
     }
@@ -183,7 +184,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $kelas = Kelas::all();
+        // Get all active classes - siswa can enroll in any class (dasar, umum, mahasiswa, etc.)
+        $kelas = Kelas::where('status', 'active')->orderBy('nama_kelas')->get();
         $enrolledClassIds = $user->enrolledClasses->pluck('id')->toArray();
         
         return view('admin.users.edit', compact('user', 'kelas', 'enrolledClassIds'));
@@ -300,6 +302,46 @@ class UserController extends Controller
 
 
 
+    public function deactivate(User $user)
+    {
+        $role = $user->role;
+        
+        // Hanya bisa menonaktifkan siswa
+        if (!$user->isSiswa()) {
+            return redirect()->route('admin.users.index', ['role' => $role])
+                ->with('error', 'Hanya siswa yang dapat dinonaktifkan.');
+        }
+        
+        // Ubah semua enrollment status menjadi 'inactive'
+        $user->enrollments()->update(['status' => 'inactive']);
+        
+        // Log activity
+        ActivityLogger::logUserDeleted($user);
+
+        return redirect()->route('admin.users.index', ['role' => $role])
+            ->with('success', 'Siswa berhasil dinonaktifkan. Siswa tidak dapat mengakses sistem lagi.');
+    }
+
+    public function activate(User $user)
+    {
+        $role = $user->role;
+        
+        // Hanya bisa mengaktifkan siswa
+        if (!$user->isSiswa()) {
+            return redirect()->route('admin.users.index', ['role' => $role])
+                ->with('error', 'Hanya siswa yang dapat diaktifkan.');
+        }
+        
+        // Ubah semua enrollment status menjadi 'active'
+        $user->enrollments()->update(['status' => 'active']);
+        
+        // Log activity
+        ActivityLogger::logUserUpdated($user, [], []);
+
+        return redirect()->route('admin.users.index', ['role' => $role])
+            ->with('success', 'Siswa berhasil diaktifkan kembali. Siswa dapat mengakses sistem.');
+    }
+
     public function destroy(User $user)
     {
         $role = $user->role;
@@ -308,10 +350,11 @@ class UserController extends Controller
         // Log activity sebelum delete
         ActivityLogger::logUserDeleted($user);
         
+        // Soft delete - data tidak dihapus permanen, hanya ditandai sebagai tidak aktif
         $user->delete();
 
         return redirect()->route('admin.users.index', ['role' => $role])
-            ->with('success', 'User berhasil dihapus.');
+            ->with('success', 'User berhasil dinonaktifkan. Data masih tersimpan di database.');
     }
 
 
