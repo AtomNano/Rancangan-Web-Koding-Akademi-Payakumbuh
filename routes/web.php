@@ -215,6 +215,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
         
         Route::resource('kelas', GuruKelasController::class)->only(['index', 'show']);
+        
+        // Pertemuan routes
+        Route::get('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Guru\PertemuanController::class, 'index'])->name('pertemuan.index');
+        Route::get('kelas/{kelas}/pertemuan/create', [\App\Http\Controllers\Guru\PertemuanController::class, 'create'])->name('pertemuan.create');
+        Route::post('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Guru\PertemuanController::class, 'store'])->name('pertemuan.store');
+        Route::get('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'show'])->name('pertemuan.show');
+        Route::post('kelas/{kelas}/pertemuan/{pertemuan}/absen', [\App\Http\Controllers\Guru\PertemuanController::class, 'storeAbsen'])->name('pertemuan.absen');
+        Route::get('kelas/{kelas}/pertemuan/{pertemuan}/edit', [\App\Http\Controllers\Guru\PertemuanController::class, 'edit'])->name('pertemuan.edit');
+        Route::put('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'update'])->name('pertemuan.update');
+        Route::delete('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'destroy'])->name('pertemuan.destroy');
     });
 
     // Siswa routes
@@ -251,5 +261,25 @@ Route::get('/check-php-config', function () {
         'php_sapi' => php_sapi_name(),
     ]);
 })->name('check.php.config');
+
+// Helper route to check Google OAuth configuration (remove in production)
+Route::get('/check-google-oauth', function () {
+    if (!app()->environment('local')) {
+        abort(404);
+    }
+    
+    $clientId = config('services.google.client_id');
+    $clientSecret = config('services.google.client_secret');
+    $redirectUri = config('services.google.redirect');
+    
+    return response()->json([
+        'google_oauth_configured' => !empty($clientId) && !empty($clientSecret),
+        'client_id_set' => !empty($clientId),
+        'client_secret_set' => !empty($clientSecret),
+        'redirect_uri' => $redirectUri,
+        'app_url' => env('APP_URL'),
+        'note' => 'Pastikan GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET sudah di-set di .env file',
+    ]);
+})->name('check.google.oauth');
 
 require __DIR__.'/auth.php';

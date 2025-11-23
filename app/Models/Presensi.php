@@ -12,6 +12,7 @@ class Presensi extends Model
     protected $fillable = [
         'user_id',
         'materi_id',
+        'pertemuan_id',
         'status_kehadiran',
         'tanggal_akses',
     ];
@@ -28,6 +29,11 @@ class Presensi extends Model
     public function materi()
     {
         return $this->belongsTo(Materi::class);
+    }
+
+    public function pertemuan()
+    {
+        return $this->belongsTo(Pertemuan::class);
     }
 
     public function isPresent()

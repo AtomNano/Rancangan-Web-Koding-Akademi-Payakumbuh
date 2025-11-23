@@ -85,7 +85,12 @@ class MateriController extends Controller
             if (empty($assignedKelasIds)) {
                 $assignedKelasIds = [0]; // Return empty results
             }
-            $materi = Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->with('kelas')->latest()->paginate(10);
+            // Optimize query: eager load relationships to avoid N+1
+            $materi = Materi::whereIn('kelas_id', $assignedKelasIds)
+                ->where('uploaded_by', $user->id)
+                ->with(['kelas', 'uploadedBy']) // Eager load both relationships
+                ->latest()
+                ->paginate(10);
         }
         
         return view('guru.materi.index', compact('materi'));
@@ -158,8 +163,19 @@ class MateriController extends Controller
 
         if ($fileType === 'video') {
             $rules['youtube_url'] = ['required', 'url', 'regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i'];
+            // Ensure no file is uploaded for video type
+            if ($request->hasFile('file')) {
+                return back()->withErrors([
+                    'file' => 'Untuk tipe video, gunakan link YouTube. Jangan upload file.'
+                ])->withInput();
+            }
         } else {
-            $rules['file'] = 'required|file|mimes:pdf,mp4,doc,docx|max:102400';
+            // Different max sizes based on file type
+            if ($fileType === 'pdf') {
+                $rules['file'] = 'required|file|mimes:pdf|max:5120'; // 5MB for PDF
+            } else {
+                $rules['file'] = 'required|file|mimes:mp4,doc,docx|max:102400'; // 100MB for other types
+            }
         }
 
         $validated = $request->validate($rules);
@@ -268,16 +284,30 @@ class MateriController extends Controller
         // Authorization check: Ensure the guru is assigned to this material's class
         abort_if(!$this->hasAccessToClass($user, $materi->kelas_id), 403, 'Anda tidak diizinkan memperbarui materi di kelas ini.');
 
+        $fileType = $request->input('file_type');
+        
         $rules = [
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'kelas_id' => 'required|exists:kelas,id',
             'file_type' => ['required', Rule::in(['pdf', 'video', 'document', 'link'])],
-            'file' => 'nullable|file|mimes:pdf,mp4,doc,docx|max:102400',
         ];
 
-        if ($request->input('file_type') === 'video') {
+        if ($fileType === 'video') {
             $rules['youtube_url'] = ['required', 'url', 'regex:/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i'];
+            // Ensure no file is uploaded for video type
+            if ($request->hasFile('file')) {
+                return back()->withErrors([
+                    'file' => 'Untuk tipe video, gunakan link YouTube. Jangan upload file.'
+                ])->withInput();
+            }
+        } else {
+            // Different max sizes based on file type
+            if ($fileType === 'pdf') {
+                $rules['file'] = 'nullable|file|mimes:pdf|max:5120'; // 5MB for PDF
+            } else {
+                $rules['file'] = 'nullable|file|mimes:mp4,doc,docx|max:102400'; // 100MB for other types
+            }
         }
 
         $validated = $request->validate($rules);

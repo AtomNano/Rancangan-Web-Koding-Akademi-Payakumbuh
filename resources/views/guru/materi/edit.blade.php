@@ -81,8 +81,10 @@
 
                             <div id="file_input_wrapper" class="{{ old('file_type', $materi->file_type) === 'video' ? 'hidden' : '' }}">
                                 <x-input-label for="file" :value="__('File Baru (kosongkan jika tidak ingin mengubah)')" />
-                                <input id="file" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" type="file" name="file" />
-                                <p class="mt-1 text-sm text-gray-500">Maksimal 100MB. Format yang didukung: PDF, MP4, DOC, DOCX</p>
+                                <input id="file" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" type="file" name="file" accept=".pdf,.mp4,.doc,.docx" />
+                                <p class="mt-1 text-sm text-gray-500">
+                                    <span id="file_size_info">Maksimal: PDF 5MB, Dokumen/Video 100MB</span>
+                                </p>
                                 <x-input-error :messages="$errors->get('file')" class="mt-2" />
                                 
                                 @if($materi->file_type !== 'video' && $materi->file_path)
@@ -156,6 +158,52 @@
 
             toggleMediaInputs();
             fileTypeSelect?.addEventListener('change', toggleMediaInputs);
+            
+            // File size validation and popup warning
+            const fileInput = document.getElementById('file');
+            const fileSizeInfo = document.getElementById('file_size_info');
+            const maxSizes = {
+                'pdf': 5 * 1024 * 1024, // 5MB
+                'document': 100 * 1024 * 1024, // 100MB
+                'link': 0
+            };
+            
+            fileInput?.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const fileType = fileTypeSelect?.value;
+                const maxSize = maxSizes[fileType] || (100 * 1024 * 1024); // Default 100MB
+                
+                if (file.size > maxSize) {
+                    const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(0);
+                    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    
+                    alert(`⚠️ File terlalu besar!\n\nUkuran file: ${fileSizeMB} MB\nMaksimal yang diizinkan: ${maxSizeMB} MB\n\nSilakan pilih file yang lebih kecil.`);
+                    
+                    // Clear the file input
+                    e.target.value = '';
+                    return false;
+                }
+                
+                // Show file size info
+                const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                fileSizeInfo.textContent = `Ukuran file: ${fileSizeMB} MB (Maksimal: ${(maxSize / (1024 * 1024)).toFixed(0)} MB)`;
+            });
+            
+            // Update file size info when file type changes
+            fileTypeSelect?.addEventListener('change', function() {
+                const fileType = this.value;
+                if (fileType === 'pdf') {
+                    fileSizeInfo.textContent = 'Maksimal: 5 MB untuk PDF';
+                } else if (fileType === 'document') {
+                    fileSizeInfo.textContent = 'Maksimal: 100 MB untuk Dokumen';
+                } else if (fileType === 'video') {
+                    fileSizeInfo.textContent = 'Untuk video, gunakan link YouTube';
+                } else {
+                    fileSizeInfo.textContent = 'Maksimal: PDF 5MB, Dokumen/Video 100MB';
+                }
+            });
             
             // Hide loading on page load (in case of validation errors)
             loadingOverlay.classList.add('hidden');
