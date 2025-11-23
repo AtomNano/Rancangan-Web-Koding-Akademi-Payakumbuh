@@ -7,6 +7,43 @@
 
     <div class="min-h-screen bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <!-- Notifikasi Kelas Akan Berakhir -->
+            @if(isset($expiringClasses) && count($expiringClasses) > 0)
+                <div class="mb-6 space-y-3">
+                    @foreach($expiringClasses as $expiring)
+                        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-lg shadow-md p-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <h3 class="text-sm font-semibold text-amber-900">
+                                        Kelas Akan Berakhir
+                                    </h3>
+                                    <div class="mt-2 text-sm text-amber-800">
+                                        <p class="font-medium">
+                                            Kelas <strong>{{ $expiring['kelas']->nama_kelas }}</strong> akan berakhir pada 
+                                            <strong>{{ $expiring['expiration_date']->format('d F Y') }}</strong>
+                                        </p>
+                                        <p class="mt-1">
+                                            @if($expiring['days_until'] == 0)
+                                                <span class="font-semibold text-amber-900">Berakhir hari ini!</span>
+                                            @elseif($expiring['days_until'] == 1)
+                                                <span class="font-semibold text-amber-900">Berakhir besok!</span>
+                                            @else
+                                                Tersisa <span class="font-semibold text-amber-900">{{ $expiring['days_until'] }} hari</span> lagi
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             <!-- Hero Section -->
             <div class="mb-8">
                 <div class="bg-slate-800 rounded-2xl shadow-xl overflow-hidden">

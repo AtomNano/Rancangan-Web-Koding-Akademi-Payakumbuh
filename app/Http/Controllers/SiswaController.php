@@ -18,7 +18,30 @@ class SiswaController extends Controller
         $user = Auth::user();
         $enrolledClasses = $user->enrolledClasses()->withCount('materi')->get();
         
-        return view('siswa.dashboard', compact('enrolledClasses'));
+        // Get classes that are expiring soon (within 7 days)
+        $expiringClasses = [];
+        $daysBeforeNotification = 7; // Notifikasi muncul 7 hari sebelum berakhir
+        
+        foreach ($user->enrollments()->where('status', 'active')->with('kelas')->get() as $enrollment) {
+            $expirationDate = $enrollment->getExpirationDate();
+            $daysUntil = $enrollment->getDaysUntilExpiration();
+            
+            // Only show notification if:
+            // 1. Expiration date exists
+            // 2. Days until expiration is valid (not null)
+            // 3. Class hasn't expired yet (daysUntil >= 0)
+            // 4. Class is expiring within the notification period (daysUntil <= daysBeforeNotification)
+            if ($expirationDate && $daysUntil !== null && $daysUntil >= 0 && $daysUntil <= $daysBeforeNotification) {
+                $expiringClasses[] = [
+                    'enrollment' => $enrollment,
+                    'kelas' => $enrollment->kelas,
+                    'expiration_date' => $expirationDate,
+                    'days_until' => $daysUntil,
+                ];
+            }
+        }
+        
+        return view('siswa.dashboard', compact('enrolledClasses', 'expiringClasses'));
     }
 
     /**
