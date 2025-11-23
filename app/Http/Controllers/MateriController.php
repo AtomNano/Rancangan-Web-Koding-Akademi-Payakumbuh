@@ -392,7 +392,7 @@ class MateriController extends Controller
             return Storage::disk('public')->response($materiModel->file_path);
         }
         
-        // Siswa can access approved materials in their enrolled classes
+        // Siswa can view approved materials in their enrolled classes (but cannot download)
         if ($user->isSiswa()) {
             // Check if student is enrolled in the class
             $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
@@ -408,7 +408,25 @@ class MateriController extends Controller
                 abort(403, 'Materi belum disetujui oleh admin.');
             }
             
-            return Storage::disk('public')->response($materiModel->file_path);
+            // Check if request is for viewing (iframe) or direct download attempt
+            $isViewRequest = request()->has('view') || request()->query('view') === '1';
+            $referer = request()->headers->get('referer');
+            $isFromSameDomain = $referer && (
+                str_contains($referer, route('siswa.materi.show', $materiModel->id)) ||
+                str_contains($referer, url('/'))
+            );
+            
+            // Allow viewing in iframe, but prevent direct downloads
+            if ($isViewRequest || $isFromSameDomain) {
+                // Return response for iframe viewing with headers that discourage downloading
+                $response = Storage::disk('public')->response($materiModel->file_path);
+                $response->headers->set('Content-Disposition', 'inline; filename="' . basename($materiModel->file_path) . '"');
+                $response->headers->set('X-Content-Type-Options', 'nosniff');
+                return $response;
+            } else {
+                // Direct download attempt - deny for students
+                abort(403, 'Download materi tidak diizinkan. Anda hanya dapat melihat materi melalui sistem.');
+            }
         }
         
         // For other roles, deny access

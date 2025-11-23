@@ -302,13 +302,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     fitWidthBtn.addEventListener('click', () => {
-        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=page-width`;
+        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=page-width`;
         pdfViewer.src = pdfUrl;
         zoomLevel.textContent = 'Fit Width';
     });
 
     fitPageBtn.addEventListener('click', () => {
-        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit`;
+        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit`;
         pdfViewer.src = pdfUrl;
         zoomLevel.textContent = 'Fit Page';
     });
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updatePDFView() {
-        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=${currentZoom}`;
+        const pdfUrl = `{{ route('siswa.materi.download', $materi->id) }}?view=1#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&zoom=${currentZoom}`;
         pdfViewer.src = pdfUrl;
         updatePageInfo();
     }

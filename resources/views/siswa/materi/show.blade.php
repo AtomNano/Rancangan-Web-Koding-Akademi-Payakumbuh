@@ -38,22 +38,15 @@
                         </div>
                         
                         <!-- Quick Actions -->
-                        <div class="grid grid-cols-2 gap-2 mt-4">
+                        <div class="grid grid-cols-1 gap-2 mt-4">
                             <button id="toggleFullscreen" class="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
                                 </svg>
                                 Fullscreen
                             </button>
-                            <a href="{{ route('siswa.materi.download', $materi->id) }}" download 
-                               class="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                </svg>
-                                Download
-                            </a>
                             <a href="{{ route('siswa.kelas.show', $materi->kelas) }}" 
-                               class="col-span-2 flex items-center justify-center px-3 py-2 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition-colors text-sm font-medium text-indigo-700">
+                               class="flex items-center justify-center px-3 py-2 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition-colors text-sm font-medium text-indigo-700">
                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
@@ -246,7 +239,7 @@
                 <!-- PDF Viewer Container - Full Canvas -->
                 <div class="w-full h-full bg-gray-900" id="pdfViewerContainer">
                     <iframe id="pdfViewer" 
-                            src="{{ route('siswa.materi.download', $materi->id) }}#toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit" 
+                            src="{{ route('siswa.materi.download', $materi->id) }}?view=1#toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit" 
                             class="w-full h-full"
                             frameborder="0">
                     </iframe>
