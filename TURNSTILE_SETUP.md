@@ -30,9 +30,12 @@ Setelah membuat site, Anda akan mendapatkan:
 Tambahkan kunci-kunci berikut ke file `.env` Anda:
 
 ```env
+TURNSTILE_ENABLED=true
 TURNSTILE_SITE_KEY=your_site_key_here
 TURNSTILE_SECRET_KEY=your_secret_key_here
 ```
+
+Set `TURNSTILE_ENABLED=false` bila Anda ingin menonaktifkan Turnstile secara sementara (misalnya saat mengembangkan di localhost tanpa akses internet). Nilai default-nya adalah `true`.
 
 ### 5. Verifikasi Instalasi
 
@@ -53,11 +56,18 @@ TURNSTILE_SECRET_KEY=your_secret_key_here
 ## Troubleshooting
 
 ### CAPTCHA tidak muncul
+- Pastikan `TURNSTILE_ENABLED` diset ke `true`
 - Pastikan `TURNSTILE_SITE_KEY` sudah diisi di file `.env`
 - Clear config cache: `php artisan config:clear`
 - Periksa console browser untuk error JavaScript
 
 ### Verifikasi selalu gagal
+- Jika di development, Anda bisa memakai demo keys dari Cloudflare:
+  ```env
+  TURNSTILE_ENABLED=true
+  TURNSTILE_SITE_KEY=1x00000000000000000000AA
+  TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+  ```
 - Pastikan `TURNSTILE_SECRET_KEY` sudah benar
 - Pastikan domain yang digunakan sudah terdaftar di Turnstile dashboard
 - Periksa log Laravel untuk detail error

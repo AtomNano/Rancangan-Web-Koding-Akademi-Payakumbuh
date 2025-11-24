@@ -2,6 +2,10 @@
 
 @section('title', 'Login - Coding Academy Payakumbuh')
 
+@php
+    $turnstileEnabled = config('services.turnstile.enabled') && config('services.turnstile.site_key');
+@endphp
+
 @section('body-class', 'login-page')
 
 @section('styles')
@@ -178,10 +182,9 @@
                 </div>
 
                 <!-- Cloudflare Turnstile Widget -->
-                <div class="flex justify-center" id="cloudflare-widget">
-                    <!-- Cloudflare Turnstile widget akan dimuat di sini -->
-                    <!-- Pastikan untuk menambahkan script Cloudflare Turnstile di bagian head atau sebelum closing body tag -->
-                </div>
+                @if ($turnstileEnabled)
+                    <div class="flex justify-center" id="cloudflare-widget"></div>
+                @endif
 
                 <!-- Submit Button -->
                 <div>
@@ -270,45 +273,75 @@
     </div>
 </div>
 
-<!-- Cloudflare Turnstile Script -->
-<!-- Uncomment dan isi dengan Site Key Anda saat siap menggunakan Cloudflare Turnstile -->
-{{-- 
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script>
-    window.addEventListener('DOMContentLoaded', function() {
-        const widgetContainer = document.getElementById('cloudflare-widget');
-        const form = document.getElementById('loginForm');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        // Render Cloudflare Turnstile widget
-        turnstile.render(widgetContainer, {
-            sitekey: 'YOUR_SITE_KEY_HERE', // Ganti dengan Site Key dari Cloudflare
-            theme: 'light',
-            size: 'normal',
-            callback: function(token) {
-                // Widget berhasil divalidasi
-                submitBtn.disabled = false;
-            },
-            'error-callback': function() {
-                // Error saat validasi
-                submitBtn.disabled = true;
-            }
-        });
+@if ($turnstileEnabled)
+    @section('scripts')
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const widgetContainer = document.getElementById('cloudflare-widget');
+                const form = document.getElementById('loginForm');
+                const submitBtn = document.getElementById('submitBtn');
+                const siteKey = "{{ config('services.turnstile.site_key') }}";
 
-        // Disable submit button sampai Turnstile divalidasi
-        submitBtn.disabled = true;
-        
-        // Validasi form sebelum submit
-        form.addEventListener('submit', function(e) {
-            const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
-            if (!turnstileResponse || !turnstileResponse.value) {
-                e.preventDefault();
-                alert('Harap selesaikan verifikasi keamanan terlebih dahulu.');
-                return false;
-            }
-        });
-    });
-</script>
---}}
+                if (!widgetContainer || !window.turnstile) {
+                    // Re-check until Turnstile script is ready
+                    let retries = 0;
+                    const interval = setInterval(() => {
+                        if (window.turnstile && widgetContainer) {
+                            clearInterval(interval);
+                            renderWidget();
+                        } else if (retries > 10) {
+                            clearInterval(interval);
+                            console.error('Turnstile gagal dimuat.');
+                        }
+                        retries++;
+                    }, 300);
+                } else {
+                    renderWidget();
+                }
 
+                function renderWidget() {
+                    if (!widgetContainer || widgetContainer.dataset.initialized === 'true') {
+                        return;
+                    }
+
+                    widgetContainer.dataset.initialized = 'true';
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                    }
+
+                    window.turnstile.render(widgetContainer, {
+                        sitekey: siteKey,
+                        theme: 'light',
+                        callback: function () {
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                            }
+                        },
+                        'error-callback': function () {
+                            if (submitBtn) {
+                                submitBtn.disabled = true;
+                            }
+                        },
+                        'expired-callback': function () {
+                            if (submitBtn) {
+                                submitBtn.disabled = true;
+                            }
+                        }
+                    });
+                }
+
+                if (form) {
+                    form.addEventListener('submit', function (e) {
+                        const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+                        if (!turnstileResponse || !turnstileResponse.value) {
+                            e.preventDefault();
+                            alert('Harap selesaikan verifikasi keamanan terlebih dahulu.');
+                        }
+                    });
+                }
+            });
+        </script>
+    @endsection
+@endif
 @endsection

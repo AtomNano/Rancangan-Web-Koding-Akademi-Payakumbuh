@@ -32,8 +32,7 @@ class LoginRequest extends FormRequest
             'password' => ['required', 'string'],
         ];
 
-        // Add Turnstile validation if configured
-        if (config('services.turnstile.site_key')) {
+        if ($this->shouldValidateTurnstile()) {
             $rules['cf-turnstile-response'] = ['required', 'string'];
         }
 
@@ -48,7 +47,7 @@ class LoginRequest extends FormRequest
      */
     public function withValidator($validator): void
     {
-        if (config('services.turnstile.site_key')) {
+        if ($this->shouldValidateTurnstile()) {
             $validator->after(function ($validator) {
                 $token = $this->input('cf-turnstile-response');
                 
@@ -76,6 +75,7 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        /*
         // Check if student is active
         $user = Auth::user();
         if ($user && $user->role === 'siswa' && !$user->is_active) {
@@ -86,6 +86,7 @@ class LoginRequest extends FormRequest
                 'email' => 'Akun Anda tidak aktif. Silakan hubungi admin untuk mengaktifkan kembali.',
             ]);
         }
+        */
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -119,5 +120,20 @@ class LoginRequest extends FormRequest
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+    }
+
+    /**
+     * Determine if Turnstile validation should run.
+     */
+    protected function shouldValidateTurnstile(): bool
+    {
+        // Only enable Turnstile in production environment
+        if (! app()->isProduction()) {
+            return false;
+        }
+
+        return (bool) config('services.turnstile.enabled')
+            && ! empty(config('services.turnstile.site_key'))
+            && ! empty(config('services.turnstile.secret_key'));
     }
 }
