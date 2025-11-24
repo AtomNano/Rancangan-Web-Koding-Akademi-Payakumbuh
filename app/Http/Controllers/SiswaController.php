@@ -134,9 +134,22 @@ class SiswaController extends Controller
             abort(403, 'Anda tidak terdaftar di kelas ini.');
         }
 
-        // Record completion (you might want to create a separate table for this)
-        // For now, we'll just record attendance
-        $this->recordAttendance($user, $materiModel);
+        // Get or create progress record
+        $progress = \App\Models\MateriProgress::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'materi_id' => $materiModel->id,
+            ],
+            [
+                'current_page' => 1,
+                'total_pages' => 1, // Default for non-PDFs
+                'progress_percentage' => 0.00,
+                'is_completed' => false,
+            ]
+        );
+
+        // Mark as completed
+        $progress->markAsCompleted();
 
         return redirect()->back()
             ->with('success', 'Materi berhasil ditandai sebagai selesai.');
