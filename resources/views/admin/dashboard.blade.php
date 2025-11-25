@@ -18,7 +18,10 @@
                 <h3 class="text-3xl font-bold text-white mb-2">Selamat Datang Kembali, Admin!</h3>
                 <p class="text-slate-300 text-lg">Kelola platform Coding Academy dengan mudah dan efisien.</p>
             </div>
-            
+            <div class="hidden md:block text-white text-right">
+                <div x-data="liveClock()" x-init="init()" class="text-3xl font-bold" x-text="time"></div>
+                <p class="text-slate-300 text-sm mt-1">Zona Waktu: Asia/Jakarta</p>
+            </div>
         </div>
     </div>
 
@@ -308,5 +311,26 @@
 
 </x-app-layout>
 
-
+<script>
+function liveClock() {
+    return {
+        time: new Date().toLocaleString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            timeZone: 'Asia/Jakarta'
+        }),
+        init() {
+            setInterval(() => {
+                this.time = new Date().toLocaleString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'Asia/Jakarta'
+                });
+            }, 1000);
+        }
+    }
+}
+</script>
 

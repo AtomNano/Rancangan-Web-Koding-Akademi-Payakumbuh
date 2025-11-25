@@ -139,8 +139,7 @@
                             @forelse($accessLogs as $log)
                                 <div class="flex items-center justify-between text-xs p-2 bg-gray-50 rounded">
                                     <div>
-                                        <p class="font-medium text-gray-700">{{ $log->tanggal_akses->format('d M Y') }}</p>
-                                        <p class="text-gray-500">{{ $log->tanggal_akses->format('H:i') }}</p>
+                                        <p class="font-medium text-gray-700">{{ $log->tanggal_akses->format('d M Y H:i:s') }}</p>
                                     </div>
                                     <span class="px-2 py-1 rounded text-xs font-medium
                                         {{ $log->status_kehadiran === 'hadir' ? 'bg-green-100 text-green-800' : 

@@ -7,7 +7,8 @@
                 </h2>
                 <p class="text-sm text-gray-600 mt-1">Selamat datang kembali, {{ auth()->user()->name }}</p>
             </div>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-6">
+                <x-live-clock />
                 <a href="{{ route('guru.materi.create') }}" 
                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all duration-200">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
