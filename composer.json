@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
+        "laravel/pail": "*",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
         "spatie/laravel-backup": "^9.3"
@@ -18,7 +19,6 @@
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.3",
-        "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
