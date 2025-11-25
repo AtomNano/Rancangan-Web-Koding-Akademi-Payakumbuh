@@ -15,7 +15,7 @@
 
         <div class="hidden items-center gap-4 lg:flex">
             <a href="/login" class="rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white/75 transition-all duration-200 hover:border-white/40 hover:text-white">
-                Masuk
+                Masuk Akun
             </a>
             <a href="https://wa.me/6282379601227?text=Halo%20Coding%20Academy%20Payakumbuh%2C%20saya%20tertarik%20untuk%20mendiskusikan%20kelas%20dan%20ingin%20mendapatkan%20informasi%20lebih%20lanjut." target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/30 transition-transform duration-200 hover:scale-[1.02]">
                 <span>Diskusikan Kelas</span>
