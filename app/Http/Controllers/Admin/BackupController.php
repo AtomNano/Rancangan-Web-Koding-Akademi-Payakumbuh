@@ -70,40 +70,44 @@ class BackupController extends Controller
             return redirect()->back()->with('error', 'Tidak ada file materi yang ditemukan untuk di-backup.');
         }
 
+        // Create a temporary path for the zip file in the storage/app directory
+        $zipFileName = 'semua-materi-' . now()->format('Y-m-d-His') . '.zip';
+        $tempZipPath = storage_path('app/' . $zipFileName);
+
         try {
-            $zipFileName = 'semua-materi-' . now()->format('Y-m-d-His') . '.zip';
-
-            // Set headers for direct streaming
-            header('Content-Type: application/zip');
-            header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
-            header('Pragma: no-cache');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('X-Accel-Buffering: no'); // For Nginx
-
-            // Ensure no output buffering is active
-            while (ob_get_level()) {
-                ob_end_clean();
+            // Check if the zip extension is loaded
+            if (!extension_loaded('zip')) {
+                throw new Exception('PHP extension "zip" tidak aktif. Harap aktifkan di panel hosting Anda.');
             }
 
-            $zip = new ZipStream($zipFileName, ['send_http_headers' => false]);
-            
+            $zip = new \ZipArchive();
+
+            if ($zip->open($tempZipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
+                throw new Exception('Tidak dapat membuat atau menimpa file zip sementara.');
+            }
+
             foreach ($files as $file) {
                 if (Storage::disk('public')->exists($file)) {
-                    // Use an in-memory approach to get contents
-                    $contents = Storage::disk('public')->get($file);
-                    // Use basename() to get just the filename. This is the critical fix.
+                    $filePath = Storage::disk('public')->path($file);
                     $filenameInZip = basename($file);
-                    $zip->addFile($filenameInZip, $contents);
+                    
+                    if (is_readable($filePath)) {
+                        $zip->addFile($filePath, $filenameInZip);
+                    } else {
+                        // Log a warning if a file is not readable
+                        \Log::warning('File materi tidak dapat dibaca dan dilewati saat backup: ' . $filePath);
+                    }
                 }
             }
 
-            $zip->finish();
+            $zip->close();
+
+            // If the file was created successfully, return it for download and delete it after sending.
+            return response()->download($tempZipPath)->deleteFileAfterSend(true);
 
         } catch (Exception $e) {
-            \Log::error('Error creating zip stream for material download: ' . $e->getMessage());
-        } finally {
-            exit();
+            \Log::error('Gagal membuat file zip materi: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal membuat file zip: ' . $e->getMessage());
         }
     }
 }
