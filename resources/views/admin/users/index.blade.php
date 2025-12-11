@@ -70,12 +70,14 @@
     <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
         <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center space-x-2 mb-4 md:mb-0">
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                    </span>
-                    <input type="text" class="w-full md:w-64 py-2 pl-10 pr-4 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="Cari pengguna...">
-                </div>
+                <form action="{{ route('admin.users.index') }}" method="GET">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        </span>
+                        <input type="text" name="search" class="w-full md:w-64 py-2 pl-10 pr-4 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="Cari pengguna..." value="{{ request('search') }}">
+                    </div>
+                </form>
                 <div class="flex border border-gray-300 rounded-md">
                     <a href="{{ route('admin.users.index') }}" class="px-4 py-2 text-sm font-medium {{ !$role ? 'bg-indigo-500 text-white' : 'text-gray-700' }} rounded-l-md hover:bg-indigo-400 hover:text-white transition-colors">Semua</a>
                     <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'admin' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-l border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">Admin</a>

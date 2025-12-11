@@ -114,6 +114,10 @@
                                             <dt class="text-sm font-medium text-blue-700">Status Promo</dt>
                                             <dd class="text-sm text-blue-900 mt-1">{{ $user->status_promo ?? '-' }}</dd>
                                         </div>
+                                        <div class="p-3 bg-green-50 rounded-lg">
+                                            <dt class="text-sm font-medium text-green-700">Total Setelah Diskon</dt>
+                                            <dd class="text-sm font-bold text-green-900 mt-1">Rp {{ number_format($user->total_setelah_diskon ?? 0, 0, ',', '.') }}</dd>
+                                        </div>
                                     </dl>
                                 </div>
 

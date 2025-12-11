@@ -147,6 +147,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Backup Routes
         Route::get('backup', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backup.index');
         Route::get('backup/create', [\App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backup.create');
+        Route::get('backup/download/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backup.download');
+        Route::delete('backup/delete/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'delete'])->name('backup.delete');
     });
 
     // Guru routes
@@ -283,3 +285,5 @@ Route::get('/check-google-oauth', function () {
 })->name('check.google.oauth');
 
 require __DIR__.'/auth.php';
+
+Route::get('/admin/backup/debug-list-files', [App\Http\Controllers\Admin\BackupController::class, 'debugListFiles']);

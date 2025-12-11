@@ -78,7 +78,13 @@ class MateriController extends Controller
         $user = auth()->user();
         
         if ($user->isAdmin()) {
-            $materi = Materi::with(['kelas', 'uploadedBy'])->latest()->paginate(10);
+            $query = Materi::with(['kelas', 'uploadedBy']);
+
+            if ($request->has('status') && in_array($request->status, ['pending', 'approved', 'rejected'])) {
+                $query->where('status', $request->status);
+            }
+
+            $materi = $query->latest()->paginate(10);
             return view('admin.materi.index', compact('materi'));
         } else {
             $assignedKelasIds = $this->getAssignedKelasIds($user);
@@ -352,7 +358,7 @@ class MateriController extends Controller
     /**
      * Download or view material file
      */
-    public function download($materi)
+    public function download(Materi $materi)
     {
         $user = auth()->user();
         
@@ -360,43 +366,32 @@ class MateriController extends Controller
             abort(403, 'Anda harus login untuk mengakses file.');
         }
         
-        // Handle route model binding or direct ID
-        if ($materi instanceof Materi) {
-            $materiModel = $materi;
-        } else {
-            $materiModel = Materi::find($materi);
-        }
-        
-        if (!$materiModel) {
-            abort(404, 'Materi tidak ditemukan.');
-        }
-        
-        if ($materiModel->isVideoLink()) {
-            return redirect()->away($materiModel->file_path);
+        if ($materi->isVideoLink()) {
+            return redirect()->away($materi->file_path);
         }
 
         // Check if file exists
-        if (!Storage::disk('public')->exists($materiModel->file_path)) {
+        if (!Storage::disk('public')->exists($materi->file_path)) {
             abort(404, 'File tidak ditemukan.');
         }
         
         // Permission check - allow all authenticated users for now (for testing)
         // Admin can access all files
         if ($user->isAdmin()) {
-            return Storage::disk('public')->response($materiModel->file_path);
+            return Storage::disk('public')->response($materi->file_path);
         }
         
         // Guru can access files they uploaded or files in their classes
         if ($user->isGuru()) {
             // Allow all gurus for now (for testing)
-            return Storage::disk('public')->response($materiModel->file_path);
+            return Storage::disk('public')->response($materi->file_path);
         }
         
         // Siswa can view approved materials in their enrolled classes (but cannot download)
         if ($user->isSiswa()) {
             // Check if student is enrolled in the class
             $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
-                ->where('kelas_id', $materiModel->kelas_id)
+                ->where('kelas_id', $materi->kelas_id)
                 ->exists();
             
             if (!$isEnrolled) {
@@ -404,7 +399,7 @@ class MateriController extends Controller
             }
             
             // Check if material is approved
-            if (!$materiModel->isApproved()) {
+            if (!$materi->isApproved()) {
                 abort(403, 'Materi belum disetujui oleh admin.');
             }
             
@@ -412,15 +407,15 @@ class MateriController extends Controller
             $isViewRequest = request()->has('view') || request()->query('view') === '1';
             $referer = request()->headers->get('referer');
             $isFromSameDomain = $referer && (
-                str_contains($referer, route('siswa.materi.show', $materiModel->id)) ||
+                str_contains($referer, route('siswa.materi.show', $materi->id)) ||
                 str_contains($referer, url('/'))
             );
             
             // Allow viewing in iframe, but prevent direct downloads
             if ($isViewRequest || $isFromSameDomain) {
                 // Return response for iframe viewing with headers that discourage downloading
-                $response = Storage::disk('public')->response($materiModel->file_path);
-                $response->headers->set('Content-Disposition', 'inline; filename="' . basename($materiModel->file_path) . '"');
+                $response = Storage::disk('public')->response($materi->file_path);
+                $response->headers->set('Content-Disposition', 'inline; filename="' . basename($materi->file_path) . '"');
                 $response->headers->set('X-Content-Type-Options', 'nosniff');
                 return $response;
             } else {

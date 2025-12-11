@@ -15,7 +15,12 @@ return [
                  * The list of directories and files that will be included in the backup.
                  */
                 'include' => [
+                    // File materi yang diupload
                     storage_path('app/public/materi'),
+                    // Log aktivitas dan error
+                    storage_path('logs'),
+                    // File upload lainnya (jika ada)
+                    storage_path('app/public'),
                 ],
 
                 /*
@@ -23,7 +28,10 @@ return [
                  *
                  * Directories used by the backup process will automatically be excluded.
                  */
-                'exclude' => [],
+                'exclude' => [
+                    storage_path('app/backup-temp'),
+                    storage_path('app/private'),
+                ],
 
                 /*
                  * Determines if symlinks should be followed.

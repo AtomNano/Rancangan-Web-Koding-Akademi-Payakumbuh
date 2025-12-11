@@ -19,11 +19,19 @@ class UserController extends Controller
     {
         $role = $request->get('role');
         $status = $request->get('status');
+        $search = $request->get('search');
 
         $query = User::query();
 
         if ($role) {
             $query->where('role', $role);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
         }
 
         // Handle status filtering for students, which requires accessor-based logic
@@ -84,7 +92,7 @@ class UserController extends Controller
         $userData['password'] = Hash::make($baseValidated['password']);
 
         if ($request->role === 'siswa') {
-            $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya'];
+            $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya', 'discount_value'];
             foreach ($payment_fields as $field) {
                 if ($request->has($field)) {
                     $cleaned_value = preg_replace('/[^\d]/', '', $request->input($field));
@@ -105,6 +113,8 @@ class UserController extends Controller
                 'biaya_angsuran' => 'nullable|numeric|min:0',
                 'total_biaya' => 'nullable|numeric|min:0',
                 'status_promo' => 'nullable|string|max:255',
+                'discount_type' => 'nullable|in:percentage,fixed',
+                'discount_value' => 'nullable|numeric|min:0',
                 'no_telepon' => 'nullable|string|max:20',
                 'alamat' => 'nullable|string',
                 // Address detail fields (optional, will be combined into alamat)
@@ -117,6 +127,22 @@ class UserController extends Controller
                 'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
                 'enrollment_status' => 'required|in:active,inactive',
             ]);
+
+            $total_biaya = $studentValidated['total_biaya'] ?? 0;
+            $discount_type = $studentValidated['discount_type'] ?? null;
+            $discount_value = $studentValidated['discount_value'] ?? 0;
+
+            if (isset($studentValidated['status_promo']) && $studentValidated['status_promo'] === 'Beasiswa') {
+                $studentValidated['total_setelah_diskon'] = 0;
+            } elseif ($total_biaya && $discount_type && $discount_value) {
+                if ($discount_type === 'percentage') {
+                    $studentValidated['total_setelah_diskon'] = $total_biaya - ($total_biaya * ($discount_value / 100));
+                } else {
+                    $studentValidated['total_setelah_diskon'] = $total_biaya - $discount_value;
+                }
+            } else {
+                $studentValidated['total_setelah_diskon'] = $total_biaya;
+            }
             
             // If alamat is not provided but address details are, combine them
             if (empty($studentValidated['alamat']) && 
@@ -136,7 +162,6 @@ class UserController extends Controller
                 $studentValidated['sekolah'] = $studentValidated['sekolah'] . ' - ' . $studentValidated['kelas_sekolah'];
             }
             
-            $studentValidated['bidang_ajar'] = json_encode($studentValidated['bidang_ajar'] ?? []);
             $userData = array_merge($userData, $studentValidated);
 
         } elseif ($request->role === 'guru') {
@@ -145,7 +170,7 @@ class UserController extends Controller
                 'bidang_ajar.*' => 'exists:kelas,nama_kelas',
                 'no_telepon' => 'nullable|string|max:20',
             ]);
-            $userData['bidang_ajar'] = json_encode($guruValidated['bidang_ajar'] ?? []);
+            $userData['bidang_ajar'] = $guruValidated['bidang_ajar'] ?? [];
             $userData['no_telepon'] = $guruValidated['no_telepon'] ?? null;
         }
 
@@ -197,7 +222,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         // Sanitize currency fields before validation
-        $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya'];
+        $payment_fields = ['biaya_pendaftaran', 'biaya_angsuran', 'total_biaya', 'discount_value'];
         foreach ($payment_fields as $field) {
             if ($request->has($field)) {
                 $cleaned_value = preg_replace('/[^\d]/', '', $request->input($field));
@@ -227,6 +252,7 @@ class UserController extends Controller
             $studentValidated = $request->validate([
                 'tanggal_pendaftaran' => 'nullable|date',
                 'sekolah' => 'nullable|string|max:255',
+                'kelas_sekolah' => 'nullable|string|max:50',
                 'bidang_ajar' => 'nullable|array',
                 'bidang_ajar.*' => 'exists:kelas,nama_kelas',
                 'hari_belajar' => 'nullable|array',
@@ -236,13 +262,36 @@ class UserController extends Controller
                 'biaya_angsuran' => 'nullable|numeric|min:0',
                 'total_biaya' => 'nullable|numeric|min:0',
                 'status_promo' => 'nullable|string|max:255',
+                'discount_type' => 'nullable|in:percentage,fixed',
+                'discount_value' => 'nullable|numeric|min:0',
                 'no_telepon' => 'nullable|string|max:20',
                 'alamat' => 'nullable|string',
                 'tanggal_lahir' => 'nullable|date|before_or_equal:today',
                 'jenis_kelamin' => 'nullable|in:laki-laki,perempuan',
                 'enrollment_status' => 'required|in:active,inactive',
             ]);
-            $studentValidated['bidang_ajar'] = json_encode($studentValidated['bidang_ajar'] ?? []);
+
+            // Combine school name and class level
+            if (!empty($studentValidated['kelas_sekolah'])) {
+                $studentValidated['sekolah'] = $studentValidated['sekolah'] . ' - ' . $studentValidated['kelas_sekolah'];
+            }
+
+            $total_biaya = $studentValidated['total_biaya'] ?? 0;
+            $discount_type = $studentValidated['discount_type'] ?? null;
+            $discount_value = $studentValidated['discount_value'] ?? 0;
+
+            if (isset($studentValidated['status_promo']) && $studentValidated['status_promo'] === 'Beasiswa') {
+                $studentValidated['total_setelah_diskon'] = 0;
+            } elseif ($total_biaya && $discount_type && $discount_value) {
+                if ($discount_type === 'percentage') {
+                    $studentValidated['total_setelah_diskon'] = $total_biaya - ($total_biaya * ($discount_value / 100));
+                } else {
+                    $studentValidated['total_setelah_diskon'] = $total_biaya - $discount_value;
+                }
+            } else {
+                $studentValidated['total_setelah_diskon'] = $total_biaya;
+            }
+            
             $userData = array_merge($userData, $studentValidated);
 
         } elseif ($request->role === 'guru') {
@@ -251,7 +300,7 @@ class UserController extends Controller
                 'bidang_ajar.*' => 'exists:kelas,nama_kelas',
                 'no_telepon' => 'nullable|string|max:20',
             ]);
-            $userData['bidang_ajar'] = json_encode($guruValidated['bidang_ajar'] ?? []);
+            $userData['bidang_ajar'] = $guruValidated['bidang_ajar'] ?? [];
             $userData['no_telepon'] = $guruValidated['no_telepon'] ?? $user->no_telepon;
         }
 

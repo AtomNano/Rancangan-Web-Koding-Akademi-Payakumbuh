@@ -33,6 +33,9 @@ class User extends Authenticatable
         'biaya_angsuran',
         'total_biaya',
         'status_promo',
+        'discount_type',
+        'discount_value',
+        'total_setelah_diskon',
         'no_telepon',
         'alamat',
         'tanggal_lahir',
@@ -62,9 +65,12 @@ class User extends Authenticatable
             'tanggal_pendaftaran' => 'date',
             'tanggal_lahir' => 'date',
             'hari_belajar' => 'array',
+            'bidang_ajar' => 'array',
             'biaya_pendaftaran' => 'decimal:2',
             'biaya_angsuran' => 'decimal:2',
             'total_biaya' => 'decimal:2',
+            'discount_value' => 'decimal:2',
+            'total_setelah_diskon' => 'decimal:2',
         ];
     }
 

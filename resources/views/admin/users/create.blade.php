@@ -277,9 +277,29 @@
                                     <x-input-label for="biaya_angsuran" :value="__('Biaya Angsuran')" />
                                     <x-text-input id="biaya_angsuran" class="block mt-1 w-full" type="text" name="biaya_angsuran" :value="old('biaya_angsuran', '1250000')" />
                                 </div>
-                                <div class="md:col-span-2">
-                                    <x-input-label for="total_biaya" :value="__('Total Biaya')" />
-                                    <x-text-input id="total_biaya" class="block mt-1 w-full bg-gray-200" type="text" name="total_biaya" :value="old('total_biaya')" readonly />
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <x-input-label for="total_biaya" :value="__('Total Biaya')" />
+                                        <x-text-input id="total_biaya" class="block mt-1 w-full bg-gray-200" type="text" name="total_biaya" :value="old('total_biaya')" readonly />
+                                    </div>
+                                    <div>
+                                        <x-input-label for="discount_type" :value="__('Tipe Diskon')" />
+                                        <select id="discount_type" name="discount_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                            <option value="">Tidak Ada Diskon</option>
+                                            <option value="percentage" {{ old('discount_type') == 'percentage' ? 'selected' : '' }}>Persentase (%)</option>
+                                            <option value="fixed" {{ old('discount_type') == 'fixed' ? 'selected' : '' }}>Potongan Tetap (Rp)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <x-input-label for="discount_value" :value="__('Nilai Diskon')" />
+                                        <x-text-input id="discount_value" class="block mt-1 w-full" type="text" name="discount_value" :value="old('discount_value')" />
+                                    </div>
+                                    <div>
+                                        <x-input-label for="total_setelah_diskon" :value="__('Total Setelah Diskon')" />
+                                        <x-text-input id="total_setelah_diskon" class="block mt-1 w-full bg-gray-200" type="text" name="total_setelah_diskon" :value="old('total_setelah_diskon')" readonly />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -612,6 +632,39 @@
 
             // Initialize address
             updateAlamat();
+
+            // Discount calculation
+            const discountType = document.getElementById('discount_type');
+            const discountValue = document.getElementById('discount_value');
+            const totalSetelahDiskon = document.getElementById('total_setelah_diskon');
+
+            function calculateDiscount() {
+                const total = parseFloat(totalBiaya.value.replace(/[^,\d]/g, '')) || 0;
+                const discount = parseFloat(discountValue.value.replace(/[^,\d]/g, '')) || 0;
+                const type = discountType.value;
+                let finalTotal = total;
+
+                if (type === 'percentage' && discount > 0) {
+                    finalTotal = total - (total * (discount / 100));
+                } else if (type === 'fixed' && discount > 0) {
+                    finalTotal = total - discount;
+                }
+
+                totalSetelahDiskon.value = formatRupiah(finalTotal.toString(), 'Rp. ');
+            }
+
+            if (discountType && discountValue && totalSetelahDiskon) {
+                biayaPendaftaran.addEventListener('input', calculateDiscount);
+                biayaAngsuran.addEventListener('input', calculateDiscount);
+                discountType.addEventListener('change', calculateDiscount);
+                discountValue.addEventListener('input', function(e) {
+                    e.target.value = formatRupiah(this.value, 'Rp. ');
+                    calculateDiscount();
+                });
+
+                // Initial calculation on page load
+                calculateDiscount();
+            }
         });
     </script>
     @endif

@@ -86,3 +86,6 @@ php artisan config:cache
 
 **Lihat panduan lengkap:** `HOSTINGER_ENV_CONFIG.md`
 
+
+
+

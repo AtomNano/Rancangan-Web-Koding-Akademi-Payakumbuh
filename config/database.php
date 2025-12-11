@@ -61,6 +61,16 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            'dump' => [
+                // Path ke folder bin MySQL (untuk Windows)
+                // Jika menggunakan XAMPP: 'C:\xampp\mysql\bin'
+                // Jika menggunakan Laragon: 'C:\laragon\bin\mysql\mysql-8.x.x\bin'
+                // Jika menggunakan MySQL standalone: 'C:\Program Files\MySQL\MySQL Server 8.0\bin'
+                // Jika sudah di PATH, bisa dikosongkan atau set null
+                'dump_binary_path' => env('MYSQL_DUMP_PATH', null),
+                'use_single_transaction' => true,
+                'timeout' => 60 * 5, // 5 menit
+            ],
         ],
 
         'mariadb' => [
@@ -101,7 +111,7 @@ return [
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
-            'host' => env('DB_HOST', 'localhost'),
+            'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '1433'),
             'database' => env('DB_DATABASE', 'laravel'),
             'username' => env('DB_USERNAME', 'root'),
