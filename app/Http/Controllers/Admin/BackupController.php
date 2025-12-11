@@ -11,9 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipStream\ZipStream;
-use ZipStream\Option\Archive as ArchiveOptions;
 use Exception;
 
 class BackupController extends Controller
@@ -66,26 +64,41 @@ class BackupController extends Controller
      */
     public function downloadAllMaterials()
     {
+        $files = Storage::disk('public')->allFiles('materi');
+
+        if (empty($files)) {
+            return redirect()->back()->with('error', 'Tidak ada file materi yang ditemukan untuk di-backup.');
+        }
+
+        // Create a temporary path for the zip file
         $zipFileName = 'semua-materi-' . now()->format('Y-m-d-His') . '.zip';
+        $tempZipPath = storage_path('app/' . $zipFileName);
 
-        $options = new ArchiveOptions();
-        $options->setSendHttpHeaders(true);
+        try {
+            $zip = new \ZipArchive();
 
-        return new StreamedResponse(function () use ($zipFileName) {
-            $zip = new ZipStream($zipFileName, new ArchiveOptions());
-            
-            $files = Storage::disk('public')->allFiles('materi');
+            if ($zip->open($tempZipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
+                throw new Exception('Tidak dapat membuat file zip sementara.');
+            }
 
             foreach ($files as $file) {
                 if (Storage::disk('public')->exists($file)) {
-                    $zip->addFileFromStream($file, Storage::disk('public')->readStream($file));
+                    // Get absolute path to the file in storage
+                    $filePath = Storage::disk('public')->path($file);
+                    // Use basename() to get just the filename for the entry in the zip
+                    $filenameInZip = basename($file);
+                    $zip->addFile($filePath, $filenameInZip);
                 }
             }
 
-            $zip->finish();
-        }, 200, [
-            'Content-Type' => 'application/zip',
-            'Content-Disposition' => 'attachment; filename="' . $zipFileName . '"',
-        ]);
+            $zip->close();
+
+            // Return the created zip file for download and delete it afterwards
+            return response()->download($tempZipPath)->deleteFileAfterSend(true);
+
+        } catch (Exception $e) {
+            \Log::error('Gagal membuat file zip materi: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal membuat file zip: ' . $e->getMessage());
+        }
     }
 }
