@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use ZipStream\ZipStream;
+use ZipStream\ZipStream; // Use ZipStream
 use Exception;
 
 class BackupController extends Controller
@@ -70,35 +70,40 @@ class BackupController extends Controller
             return redirect()->back()->with('error', 'Tidak ada file materi yang ditemukan untuk di-backup.');
         }
 
-        // Create a temporary path for the zip file
-        $zipFileName = 'semua-materi-' . now()->format('Y-m-d-His') . '.zip';
-        $tempZipPath = storage_path('app/' . $zipFileName);
-
         try {
-            $zip = new \ZipArchive();
+            $zipFileName = 'semua-materi-' . now()->format('Y-m-d-His') . '.zip';
 
-            if ($zip->open($tempZipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
-                throw new Exception('Tidak dapat membuat file zip sementara.');
+            // Set headers for direct streaming
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('X-Accel-Buffering: no'); // For Nginx
+
+            // Ensure no output buffering is active
+            while (ob_get_level()) {
+                ob_end_clean();
             }
 
+            $zip = new ZipStream($zipFileName, ['send_http_headers' => false]);
+            
             foreach ($files as $file) {
                 if (Storage::disk('public')->exists($file)) {
-                    // Get absolute path to the file in storage
-                    $filePath = Storage::disk('public')->path($file);
-                    // Use basename() to get just the filename for the entry in the zip
+                    // Use an in-memory approach to get contents
+                    $contents = Storage::disk('public')->get($file);
+                    // Use basename() to get just the filename. This is the critical fix.
                     $filenameInZip = basename($file);
-                    $zip->addFile($filePath, $filenameInZip);
+                    $zip->addFile($filenameInZip, $contents);
                 }
             }
 
-            $zip->close();
-
-            // Return the created zip file for download and delete it afterwards
-            return response()->download($tempZipPath)->deleteFileAfterSend(true);
+            $zip->finish();
 
         } catch (Exception $e) {
-            \Log::error('Gagal membuat file zip materi: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal membuat file zip: ' . $e->getMessage());
+            \Log::error('Error creating zip stream for material download: ' . $e->getMessage());
+        } finally {
+            exit();
         }
     }
 }
