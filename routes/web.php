@@ -146,9 +146,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Backup Routes
         Route::get('backup', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backup.index');
-        Route::get('backup/create', [\App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backup.create');
-        Route::get('backup/download/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backup.download');
-        Route::delete('backup/delete/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'delete'])->name('backup.delete');
+        Route::get('backup/export/users', [\App\Http\Controllers\Admin\BackupController::class, 'exportUsers'])->name('backup.export.users');
+        Route::get('backup/export/logs', [\App\Http\Controllers\Admin\BackupController::class, 'exportLogs'])->name('backup.export.logs');
+        Route::get('backup/download/materials', [\App\Http\Controllers\Admin\BackupController::class, 'downloadAllMaterials'])->name('backup.download.materials');
+        Route::post('backup/database', [\App\Http\Controllers\Admin\BackupController::class, 'backupDatabase'])->name('backup.database');
+        
+        // Old Spatie Backup Routes (can be removed or kept for CLI)
+        Route::get('backup/create', [\App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backup.create')->middleware('obsolete');
+        Route::get('backup/download/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backup.download')->middleware('obsolete');
+        Route::delete('backup/delete/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'delete'])->name('backup.delete')->middleware('obsolete');
     });
 
     // Guru routes
