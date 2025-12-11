@@ -143,6 +143,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('materi/{materi}/download', [MateriController::class, 'download'])->name('materi.download');
         Route::post('materi/{materi}/approve', [MateriController::class, 'approve'])->name('materi.approve');
         Route::post('materi/{materi}/reject', [MateriController::class, 'reject'])->name('materi.reject');
+        Route::post('materi/{materi}/remind', [MateriController::class, 'remind'])->name('materi.remind');
 
         // Backup Routes
         Route::get('backup', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backup.index');

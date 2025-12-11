@@ -472,7 +472,35 @@ class MateriController extends Controller
         // Log activity
         ActivityLogger::logMaterialRejected($materi);
         
-        return redirect()->back()
-            ->with('success', 'Materi ditolak.');
-    }
-}
+                    return redirect()->back()
+                        ->with('success', 'Materi ditolak.');
+                }
+            
+                /**
+                 * Send a reminder notification to the material uploader (guru).
+                 */
+                public function remind(Materi $materi)
+                {
+                    // Ensure only admin can send reminders
+                    if (!auth()->user()->isAdmin()) {
+                        abort(403, 'Hanya admin yang dapat mengirim pengingat verifikasi materi.');
+                    }
+            
+                    // Only send reminder if material is pending
+                    if ($materi->status !== 'pending') {
+                        return redirect()->back()->with('error', 'Pengingat hanya dapat dikirim untuk materi yang masih menunggu verifikasi.');
+                    }
+            
+                    $teacher = $materi->uploadedBy; // Assuming uploadedBy relationship is defined and returns a User model
+            
+                    if ($teacher) {
+                        $teacher->notify(new \App\Notifications\MaterialVerificationReminder($materi));
+                        // Log activity
+                        \App\Helpers\ActivityLogger::logMaterialReminderSent($materi, auth()->user());
+            
+                        return redirect()->back()->with('success', 'Pengingat verifikasi materi berhasil dikirim kepada ' . $teacher->name . '.');
+                    }
+            
+                    return redirect()->back()->with('error', 'Guru pengunggah materi tidak ditemukan.');
+                }
+            }

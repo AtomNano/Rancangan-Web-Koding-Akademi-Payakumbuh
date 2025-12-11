@@ -169,5 +169,18 @@ class ActivityLogger
             null
         );
     }
+
+    /**
+     * Log material reminder sent
+     */
+    public static function logMaterialReminderSent($materi, $adminUser): ?ActivityLog
+    {
+        $uploaderName = $materi->uploadedBy ? $materi->uploadedBy->name : 'N/A';
+        return self::log(
+            'reminder',
+            "Admin ({$adminUser->name}) mengirim pengingat verifikasi untuk materi: {$materi->judul} kepada {$uploaderName}",
+            $materi
+        );
+    }
 }
 

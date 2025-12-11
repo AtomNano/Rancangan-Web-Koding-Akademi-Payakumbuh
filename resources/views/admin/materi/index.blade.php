@@ -87,6 +87,10 @@
                                                         @csrf
                                                         <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-600 dark:hover:text-red-800 font-semibold text-sm">Tolak</button>
                                                     </form>
+                                                    <form action="{{ route('admin.materi.remind', $item->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin mengirim pengingat kepada guru ini?');">
+                                                        @csrf
+                                                        <button type="submit" class="text-blue-600 hover:text-blue-800 dark:text-blue-600 dark:hover:text-blue-800 font-semibold text-sm">Kirim Pengingat</button>
+                                                    </form>
                                                 </div>
                                             @else
                                                 <a href="{{ route('admin.materi.show', $item->id) }}" class="text-indigo-600 dark:text-indigo-600 hover:underline text-sm font-semibold">Lihat Detail</a>
