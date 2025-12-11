@@ -29,7 +29,7 @@ class MaterialVerificationReminder extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail']; // For now, only mail. Database notification can be added later if needed.
+        return ['mail', 'database']; // Store in the database and send email
     }
 
     /**

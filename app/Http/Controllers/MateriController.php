@@ -212,6 +212,10 @@ class MateriController extends Controller
             'status' => 'pending',
         ]);
 
+        // Notify all admins about the new material
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewMaterialForVerification($materi));
+
         return redirect()->route('guru.materi.index')
             ->with('success', 'Materi berhasil diunggah dan menunggu verifikasi admin.');
     }

@@ -18,30 +18,28 @@ class SiswaController extends Controller
         $user = Auth::user();
         $enrolledClasses = $user->enrolledClasses()->withCount('materi')->get();
         
-        // Get classes that are expiring soon (within 7 days)
-        $expiringClasses = [];
-        $daysBeforeNotification = 7; // Notifikasi muncul 7 hari sebelum berakhir
+        // --- Logic to dispatch expiring class notifications ---
+        $daysBeforeNotification = 7; // Notify 7 days before expiration
         
         foreach ($user->enrollments()->where('status', 'active')->with('kelas')->get() as $enrollment) {
             $expirationDate = $enrollment->getExpirationDate();
             $daysUntil = $enrollment->getDaysUntilExpiration();
             
-            // Only show notification if:
-            // 1. Expiration date exists
-            // 2. Days until expiration is valid (not null)
-            // 3. Class hasn't expired yet (daysUntil >= 0)
-            // 4. Class is expiring within the notification period (daysUntil <= daysBeforeNotification)
             if ($expirationDate && $daysUntil !== null && $daysUntil >= 0 && $daysUntil <= $daysBeforeNotification) {
-                $expiringClasses[] = [
-                    'enrollment' => $enrollment,
-                    'kelas' => $enrollment->kelas,
-                    'expiration_date' => $expirationDate,
-                    'days_until' => $daysUntil,
-                ];
+                // Check if a similar notification already exists and is unread
+                $notificationExists = $user->unreadNotifications()
+                    ->where('type', 'App\Notifications\ClassExpirationReminder')
+                    ->where('data->expiration_date', $expirationDate->format('d F Y'))
+                    ->where('data->message', 'like', '%' . $enrollment->kelas->nama_kelas . '%')
+                    ->exists();
+
+                if (!$notificationExists) {
+                    $user->notify(new \App\Notifications\ClassExpirationReminder($enrollment, $daysUntil));
+                }
             }
         }
         
-        return view('siswa.dashboard', compact('enrolledClasses', 'expiringClasses'));
+        return view('siswa.dashboard', compact('enrolledClasses'));
     }
 
     /**
