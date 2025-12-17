@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\Enrollment;
 use App\Models\Kelas;
 use App\Models\User;
+use App\Models\Materi;
+use App\Models\Pertemuan;
+use App\Models\ActivityLog;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -80,23 +83,6 @@ class DatabaseSeeder extends Seeder
             return [$guru['key'] => $user];
         });
 
-        // Seed Students
-        $siswaUsers = collect();
-        for ($i = 1; $i <= 10; $i++) {
-            $siswaUsers->push($createUser([
-                'name' => 'Siswa ' . str_pad((string) $i, 2, '0', STR_PAD_LEFT),
-                'email' => 'siswa' . $i . '@example.com',
-                'role' => 'siswa',
-                'sekolah' => 'SMP Negeri ' . (($i % 3) + 1) . ' Payakumbuh',
-                'tanggal_pendaftaran' => $now->copy()->subDays($i * 5)->toDateString(),
-                'durasi' => $i % 2 === 0 ? '6 Bulan' : '3 Bulan',
-                'hari_belajar' => ['Sabtu'],
-                'no_telepon' => '081240000' . str_pad((string) $i, 2, '0', STR_PAD_LEFT),
-                'alamat' => 'Perumahan Harmoni Blok ' . chr(64 + $i) . ', Payakumbuh',
-                'tanggal_lahir' => $now->copy()->subYears(13 + $i)->toDateString(),
-            ]));
-        }
-
         // Seed Classes
         $kelasDefinitions = [
             [
@@ -137,19 +123,100 @@ class DatabaseSeeder extends Seeder
         }
 
         // Enroll students evenly across classes
-        if ($kelasCollection->isNotEmpty()) {
-            $kelasCount = $kelasCollection->count();
-            foreach ($siswaUsers as $index => $siswa) {
-                $kelas = $kelasCollection[$index % $kelasCount];
-                Enrollment::updateOrCreate(
+        // Siswa seeding dinonaktifkan, biar tambah sendiri
+        // if ($kelasCollection->isNotEmpty()) {
+        //     $kelasCount = $kelasCollection->count();
+        //     foreach ($siswaUsers as $index => $siswa) {
+        //         $kelas = $kelasCollection[$index % $kelasCount];
+        //         Enrollment::updateOrCreate(
+        //             [
+        //                 'user_id' => $siswa->id,
+        //                 'kelas_id' => $kelas->id,
+        //             ],
+        //             [
+        //                 'status' => 'active',
+        //             ]
+        //         );
+        //     }
+        // }
+
+        // Seed Materi for each class
+        $materiByBidang = [
+            'coding' => [
+                ['judul' => 'Pengenalan Algoritma', 'deskripsi' => 'Dasar-dasar algoritma pemrograman'],
+                ['judul' => 'Variabel dan Tipe Data', 'deskripsi' => 'Memahami variabel dan tipe data dalam pemrograman'],
+            ],
+            'desain' => [
+                ['judul' => 'Prinsip Desain Grafis', 'deskripsi' => 'Dasar teori dan prinsip desain grafis modern'],
+                ['judul' => 'Tools Adobe Creative', 'deskripsi' => 'Penggunaan software Adobe untuk desain'],
+            ],
+            'robotik' => [
+                ['judul' => 'Dasar Robotik', 'deskripsi' => 'Pengenalan komponen dan sensor robot'],
+                ['judul' => 'Pemrograman Robot', 'deskripsi' => 'Membuat program untuk mengontrol robot'],
+            ],
+        ];
+
+        foreach ($kelasCollection as $kelas) {
+            $bidang = $kelas->bidang;
+            if (isset($materiByBidang[$bidang])) {
+                foreach ($materiByBidang[$bidang] as $index => $materi) {
+                    Materi::updateOrCreate(
+                        ['judul' => $materi['judul'], 'kelas_id' => $kelas->id],
+                        [
+                            'deskripsi' => $materi['deskripsi'],
+                            'file_path' => 'materials/materi-' . $kelas->id . '-' . $index . '.pdf',
+                            'uploaded_by' => $kelas->guru_id,
+                            'status' => 'approved',
+                            'created_at' => $now->copy()->subDays(rand(30, 90)),
+                        ]
+                    );
+                }
+            }
+        }
+
+        // Seed Pertemuan for each class
+        foreach ($kelasCollection as $index => $kelas) {
+            for ($p = 1; $p <= 5; $p++) {
+                Pertemuan::updateOrCreate(
+                    ['kelas_id' => $kelas->id, 'judul_pertemuan' => "Pertemuan $p"],
                     [
-                        'user_id' => $siswa->id,
-                        'kelas_id' => $kelas->id,
-                    ],
-                    [
-                        'status' => 'active',
+                        'deskripsi' => "Materi pembelajaran pertemuan ke-$p untuk kelas {$kelas->nama_kelas}",
+                        'tanggal_pertemuan' => $now->copy()->addDays($p * 7)->toDateString(),
+                        'waktu_mulai' => '14:00',
+                        'waktu_selesai' => '15:30',
+                        'guru_id' => $kelas->guru_id,
+                        'created_at' => $now->copy()->subDays(rand(20, 60)),
                     ]
                 );
+            }
+        }
+
+        // Seed Activity Logs
+        $activities = [
+            ['action' => 'login', 'description' => 'User login ke sistem'],
+            ['action' => 'create', 'description' => 'Membuat kelas baru'],
+            ['action' => 'update', 'description' => 'Mengubah data kelas'],
+            ['action' => 'delete', 'description' => 'Menghapus data'],
+            ['action' => 'upload', 'description' => 'Upload materi atau file'],
+            ['action' => 'download', 'description' => 'Download data atau report'],
+            ['action' => 'approve', 'description' => 'Approve materi atau permintaan'],
+            ['action' => 'reject', 'description' => 'Reject materi atau permintaan'],
+        ];
+
+        $allUsers = User::all();
+        foreach ($allUsers->take(6) as $user) {
+            for ($i = 0; $i < rand(5, 15); $i++) {
+                $activity = $activities[array_rand($activities)];
+                ActivityLog::create([
+                    'user_id' => $user->id,
+                    'action' => $activity['action'],
+                    'model_type' => 'App\\Models\\Kelas',
+                    'model_id' => $kelasCollection->random()->id,
+                    'description' => $activity['description'],
+                    'ip_address' => '127.0.0.' . rand(1, 255),
+                    'user_agent' => 'Mozilla/5.0',
+                    'created_at' => $now->copy()->subDays(rand(1, 30)),
+                ]);
             }
         }
     }
