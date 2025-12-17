@@ -39,6 +39,31 @@
                             @if ($availableStudents->count() > 0)
                                 <form action="{{ route('admin.kelas.enroll.store', $kelas->id) }}" method="POST">
                                     @csrf
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <x-input-label for="start_date" :value="__('Tanggal Mulai')" />
+                                            <x-text-input id="start_date" name="start_date" type="date" class="block mt-1 w-full" value="{{ old('start_date', now()->toDateString()) }}" required />
+                                            <p class="text-xs text-gray-500 mt-1">Tanggal bergabung untuk paket ini.</p>
+                                        </div>
+                                        <div>
+                                            <x-input-label for="duration_months" :value="__('Durasi (Bulan)')" />
+                                            <select id="duration_months" name="duration_months" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                                @foreach([1,2,3] as $month)
+                                                    <option value="{{ $month }}" {{ old('duration_months', 1) == $month ? 'selected' : '' }}>{{ $month }} Bulan</option>
+                                                @endforeach
+                                            </select>
+                                            <p class="text-xs text-gray-500 mt-1">Paket 1/2/3 bulan.</p>
+                                        </div>
+                                        <div>
+                                            <x-input-label for="monthly_quota" :value="__('Kuota Sesi/Bulan')" />
+                                            <select id="monthly_quota" name="monthly_quota" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                                @foreach([4,8] as $quota)
+                                                    <option value="{{ $quota }}" {{ old('monthly_quota', 4) == $quota ? 'selected' : '' }}>{{ $quota }}x per bulan</option>
+                                                @endforeach
+                                            </select>
+                                            <p class="text-xs text-gray-500 mt-1">Sesuai aturan kuota Lutfi (4x atau 8x).</p>
+                                        </div>
+                                    </div>
                                     <div class="border border-gray-200 rounded-md p-3 mb-4">
                                         @foreach ($availableStudents as $student)
                                             <div class="flex items-center mb-2">

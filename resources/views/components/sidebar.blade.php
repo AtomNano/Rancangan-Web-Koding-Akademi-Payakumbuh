@@ -84,6 +84,13 @@
                             </svg>
                             <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Kelas</span>
                         </x-nav-link>
+                        <!-- Shortcut: Input Pertemuan & Absen -->
+                        <x-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.pertemuan.*')">
+                            <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3-1.343 3-3S13.657 2 12 2 9 3.343 9 5s1.343 3 3 3zm0 2c-2.21 0-4 1.79-4 4v6h8v-6c0-2.21-1.79-4-4-4zm5 4h4m-2-2v4" />
+                            </svg>
+                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Input Pertemuan/Absen</span>
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.materi.index')" :active="request()->routeIs('admin.materi.*')">
                             <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -113,6 +120,19 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                         </svg>
                         <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Materi</span>
+                    </x-nav-link>
+                    <!-- Shortcut: Input Pertemuan & Absen (Guru) -->
+                    <x-nav-link :href="route('guru.absen.index')" :active="request()->routeIs('guru.absen.*')">
+                        <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Input Absen</span>
+                    </x-nav-link>
+                    <x-nav-link :href="route('guru.kelas.index')" :active="request()->routeIs('guru.pertemuan.*') || request()->routeIs('guru.kelas.*')">
+                        <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Kelas Ajar</span>
                     </x-nav-link>
                 </div>
 

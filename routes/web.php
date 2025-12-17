@@ -8,6 +8,8 @@ use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MateriController;
 use App\Http\Controllers\MateriProgressController;
 use App\Http\Controllers\GuruKelasController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -136,6 +138,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('kelas', KelasController::class)->parameters([
             'kelas' => 'kelas',
         ]);
+
+        Route::get('kelas/{kelas}/attendance/export', [KelasController::class, 'exportAttendance'])->name('kelas.attendance.export');
+        Route::get('kelas/{kelas}/siswa/{user}/log/export', [KelasController::class, 'exportStudentLearningLog'])->name('kelas.student.log.export');
         
         // Additional class routes
         Route::get('kelas/{kelas}/enroll', [KelasController::class, 'enrollForm'])->name('kelas.enroll');
@@ -229,16 +234,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
         
         Route::resource('kelas', GuruKelasController::class)->only(['index', 'show']);
+        Route::get('kelas/{kelas}/siswa/{user}/log/export', [\App\Http\Controllers\KelasController::class, 'exportStudentLearningLog'])->name('kelas.student.log.export');
+        
+        // Attendance input flow (simplified)
+        Route::get('absen', [\App\Http\Controllers\Guru\PertemuanController::class, 'attendanceIndex'])->name('absen.index');
+        Route::get('absen/{kelas}', [\App\Http\Controllers\Guru\PertemuanController::class, 'attendanceSelectPertemuan'])->name('absen.select-pertemuan');
         
         // Pertemuan routes
         Route::get('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Guru\PertemuanController::class, 'index'])->name('pertemuan.index');
         Route::get('kelas/{kelas}/pertemuan/create', [\App\Http\Controllers\Guru\PertemuanController::class, 'create'])->name('pertemuan.create');
         Route::post('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Guru\PertemuanController::class, 'store'])->name('pertemuan.store');
         Route::get('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'show'])->name('pertemuan.show');
+        Route::get('kelas/{kelas}/pertemuan/{pertemuan}/absen-detail', [\App\Http\Controllers\Guru\PertemuanController::class, 'absenDetail'])->name('pertemuan.absen-detail');
         Route::post('kelas/{kelas}/pertemuan/{pertemuan}/absen', [\App\Http\Controllers\Guru\PertemuanController::class, 'storeAbsen'])->name('pertemuan.absen');
         Route::get('kelas/{kelas}/pertemuan/{pertemuan}/edit', [\App\Http\Controllers\Guru\PertemuanController::class, 'edit'])->name('pertemuan.edit');
         Route::put('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'update'])->name('pertemuan.update');
         Route::delete('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'destroy'])->name('pertemuan.destroy');
+        
+        // Student progress routes
+        Route::get('kelas/{kelas}/siswa/{siswa}/progress', [\App\Http\Controllers\Guru\PertemuanController::class, 'studentProgress'])->name('siswa.progress');
     });
 
     // Siswa routes

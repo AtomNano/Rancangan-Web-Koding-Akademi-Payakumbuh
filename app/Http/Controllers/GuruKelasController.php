@@ -191,17 +191,48 @@ class GuruKelasController extends Controller
         $progressData = [];
         $materiIds = $materi->pluck('id')->toArray();
         
-        // Get attendance data - get all presensi records for materials uploaded by this teacher
+        // Get pertemuan IDs for this class
+        $pertemuanIds = \App\Models\Pertemuan::where('kelas_id', $kelas->id)
+            ->where('guru_id', $user->id)
+            ->pluck('id')
+            ->toArray();
+        
+        // Get attendance data - get all presensi records (both from materi and pertemuan)
         // Only show presensi from students in this class
         $presensi = collect();
-        if (!empty($materiIds) && $siswa->isNotEmpty()) {
+        if ($siswa->isNotEmpty()) {
             $siswaIds = $siswa->pluck('id')->toArray();
-            $presensi = Presensi::whereIn('materi_id', $materiIds)
-                ->whereIn('user_id', $siswaIds) // Only students in this class
-                ->with(['user', 'materi'])
-                ->orderBy('tanggal_akses', 'desc')
-                ->get()
-                ->groupBy('materi_id');
+            $allPresensi = [];
+            
+            // Get presensi from materi
+            if (!empty($materiIds)) {
+                $allPresensi = Presensi::whereIn('materi_id', $materiIds)
+                    ->whereIn('user_id', $siswaIds) // Only students in this class
+                    ->with(['user', 'materi'])
+                    ->orderBy('tanggal_akses', 'desc')
+                    ->get()
+                    ->groupBy('materi_id')
+                    ->toArray();
+            }
+            
+            // Get presensi from pertemuan
+            if (!empty($pertemuanIds)) {
+                $pertemuanPresensi = Presensi::whereIn('pertemuan_id', $pertemuanIds)
+                    ->whereIn('user_id', $siswaIds) // Only students in this class
+                    ->with(['user', 'pertemuan'])
+                    ->orderBy('tanggal_akses', 'desc')
+                    ->get();
+                
+                foreach ($pertemuanPresensi as $p) {
+                    $key = 'pertemuan_' . $p->pertemuan_id;
+                    if (!isset($allPresensi[$key])) {
+                        $allPresensi[$key] = [];
+                    }
+                    $allPresensi[$key][] = $p;
+                }
+            }
+            
+            $presensi = collect($allPresensi);
         }
         $approvedMateriIds = $materi->where('status', 'approved')->pluck('id')->toArray();
         
@@ -213,11 +244,17 @@ class GuruKelasController extends Controller
                 ->with('materi')
                 ->get();
             
-            // Get presensi count (attendance) - count unique materi accessed (only teacher's materials)
-            $presensiCount = Presensi::where('user_id', $s->id)
+            // Get presensi count (attendance) - count from both materi AND pertemuan
+            $presensiCountMateri = Presensi::where('user_id', $s->id)
                 ->whereIn('materi_id', $materiIds)
                 ->distinct()
                 ->count('materi_id');
+            
+            $presensiCountPertemuan = Presensi::where('user_id', $s->id)
+                ->whereIn('pertemuan_id', $pertemuanIds)
+                ->count();
+            
+            $presensiCount = $presensiCountMateri + $presensiCountPertemuan;
             
             // Get completed materi count (only approved materials uploaded by this teacher)
             $completedMateri = MateriProgress::where('user_id', $s->id)

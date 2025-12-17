@@ -38,4 +38,9 @@ class Kelas extends Model
                     ->withPivot('status')
                     ->withTimestamps();
     }
+
+    public function pertemuan()
+    {
+        return $this->hasMany(Pertemuan::class, 'kelas_id');
+    }
 }

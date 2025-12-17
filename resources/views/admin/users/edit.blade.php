@@ -45,6 +45,31 @@
                                     <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $user->email)" required placeholder="email@example.com" />
                                     <p class="mt-1 text-xs text-gray-500">Email aktif untuk login</p>
                                 </div>
+                                @if ($user->role === 'siswa')
+                                <div>
+                                    <x-input-label :value="__('ID Siswa')" />
+                                    <div class="mt-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                        <p class="text-sm font-semibold text-gray-800">{{ $user->id_siswa ?? '-' }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">Format: NNN-KODEKELASNUM2-MMYYYY (contoh: 001-01-122025)</p>
+                                    </div>
+                                </div>
+                                @elseif ($user->role === 'admin')
+                                <div>
+                                    <x-input-label :value="__('Kode Admin')" />
+                                    <div class="mt-1 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                        <p class="text-sm font-semibold text-purple-800">{{ $user->kode_admin ?? '-' }}</p>
+                                        <p class="text-xs text-purple-600 mt-1">Identitas unik admin</p>
+                                    </div>
+                                </div>
+                                @elseif ($user->role === 'guru')
+                                <div>
+                                    <x-input-label :value="__('Kode Guru')" />
+                                    <div class="mt-1 p-3 bg-green-50 rounded-lg border border-green-200">
+                                        <p class="text-sm font-semibold text-green-800">{{ $user->kode_guru ?? '-' }}</p>
+                                        <p class="text-xs text-green-600 mt-1">Identitas unik guru</p>
+                                    </div>
+                                </div>
+                                @endif
                                 <div>
                                     <x-input-label for="no_telepon" :value="__('No. Telepon / WhatsApp')" />
                                     <div class="mt-1 relative">
@@ -261,6 +286,42 @@
                                         </label>
                                     </div>
                                 </div>
+
+                                @php
+                                    $firstEnrollment = $user->enrollments->first();
+                                    $enStart = old('enrollment_start_date', optional($firstEnrollment?->start_date)->format('Y-m-d'));
+                                    // Derive months from durasi program (e.g., "3 Bulan")
+                                    $durasiStr = old('durasi', $user->durasi ?? '');
+                                    preg_match('/(\d+)/', $durasiStr, $matches);
+                                    $enDuration = isset($matches[1]) ? (int)$matches[1] : ($firstEnrollment?->duration_months ?? 1);
+                                    $enQuota = old('enrollment_monthly_quota', $firstEnrollment?->monthly_quota ?? 4);
+                                    $enTarget = ($enDuration && $enQuota) ? $enDuration * $enQuota : '';
+                                @endphp
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-lg border border-gray-200 bg-white">
+                                    <div>
+                                        <x-input-label for="enrollment_start_date" :value="__('Tanggal Mulai Paket Sesi')" />
+                                        <x-text-input id="enrollment_start_date" name="enrollment_start_date" type="date" class="block mt-1 w-full" value="{{ $enStart ?: date('Y-m-d') }}" required />
+                                        <p class="text-xs text-gray-500 mt-1">Tanggal sesi pertama atau tanggal bergabung.</p>
+                                    </div>
+                                    <div>
+                                        <x-input-label for="enrollment_monthly_quota" :value="__('Kuota Sesi per Bulan')" />
+                                        <select id="enrollment_monthly_quota" name="enrollment_monthly_quota" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                            @foreach([4,8] as $q)
+                                                <option value="{{ $q }}" {{ (int)$enQuota === $q ? 'selected' : '' }}>{{ $q }}x per bulan</option>
+                                            @endforeach
+                                        </select>
+                                        <p class="text-xs text-gray-500 mt-1">Pilih 4x atau 8x per bulan.</p>
+                                    </div>
+                                    <div class="md:col-span-3">
+                                        <div class="flex items-center justify-between bg-indigo-50 text-indigo-800 px-4 py-2 rounded">
+                                            <span class="text-sm font-medium">Target total sesi</span>
+                                            <span class="text-lg font-semibold" id="target_sessions_display">{{ $enTarget ? $enTarget . ' sesi' : '-' }}</span>
+                                        </div>
+                                        <input type="hidden" name="enrollment_duration_months" id="enrollment_duration_months" value="{{ old('enrollment_duration_months', $enDuration) }}">
+                                        <input type="hidden" name="enrollment_target_sessions" id="enrollment_target_sessions" value="{{ old('enrollment_target_sessions', $enTarget) }}">
+                                        <p class="text-xs text-gray-500 mt-1">Akan menonaktifkan akun setelah target sesi tercapai.</p>
+                                    </div>
+                                </div>
                                 <div class="md:col-span-2">
                                     <x-input-label :value="__('Hari Belajar')" />
                                     <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -373,12 +434,18 @@
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="password" :value="__('Kata Sandi')" />
-                                    <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" />
+                                    <div class="relative mt-1">
+                                        <x-text-input id="password" class="block w-full pr-24" type="password" name="password" />
+                                        <button type="button" class="absolute inset-y-0 right-0 px-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium" data-password-target="password">Lihat</button>
+                                    </div>
                                     <p class="text-sm text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah kata sandi.</p>
                                 </div>
                                 <div>
                                     <x-input-label for="password_confirmation" :value="__('Konfirmasi Kata Sandi')" />
-                                    <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" />
+                                    <div class="relative mt-1">
+                                        <x-text-input id="password_confirmation" class="block w-full pr-24" type="password" name="password_confirmation" />
+                                        <button type="button" class="absolute inset-y-0 right-0 px-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium" data-password-target="password_confirmation">Lihat</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -418,12 +485,18 @@
 
                             <div>
                                 <x-input-label for="password" :value="__('Password Baru (Opsional)')" />
-                                <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" />
+                                <div class="relative mt-1">
+                                    <x-text-input id="password" class="block w-full pr-24" type="password" name="password" />
+                                    <button type="button" class="absolute inset-y-0 right-0 px-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium" data-password-target="password">Lihat</button>
+                                </div>
                                 <p class="text-sm text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password.</p>
                             </div>
                             <div>
                                 <x-input-label for="password_confirmation" :value="__('Konfirmasi Password Baru')" />
-                                <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" />
+                                <div class="relative mt-1">
+                                    <x-text-input id="password_confirmation" class="block w-full pr-24" type="password" name="password_confirmation" />
+                                    <button type="button" class="absolute inset-y-0 right-0 px-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium" data-password-target="password_confirmation">Lihat</button>
+                                </div>
                             </div>
                         </div>
                     @else
@@ -466,6 +539,32 @@
     @if ($user->role === 'siswa')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const durasiRadios = Array.from(document.querySelectorAll('input[name="durasi"]'));
+            const quotaSelect = document.getElementById('enrollment_monthly_quota');
+            const targetDisplay = document.getElementById('target_sessions_display');
+            const targetHidden = document.getElementById('enrollment_target_sessions');
+            const durationHidden = document.getElementById('enrollment_duration_months');
+
+            function getDurationMonths() {
+                const selected = durasiRadios.find(r => r.checked);
+                if (!selected) return 0;
+                const match = (selected.value || '').match(/(\d+)/);
+                return match ? parseInt(match[1], 10) : 0;
+            }
+
+            function updateTargetSessions() {
+                const m = getDurationMonths();
+                const q = parseInt(quotaSelect.value || '0', 10);
+                const total = m > 0 && q > 0 ? m * q : '';
+                targetDisplay.textContent = total ? `${total} sesi` : '-';
+                targetHidden.value = total || '';
+                durationHidden.value = m || '';
+            }
+
+            durasiRadios.forEach(r => r.addEventListener('change', updateTargetSessions));
+            quotaSelect.addEventListener('change', updateTargetSessions);
+            updateTargetSessions();
+
             // Address Data (Indonesia - focused on Sumatera Barat)
             const addressData = {
                 'Sumatera Barat': {
@@ -792,4 +891,21 @@
         });
     </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggles = document.querySelectorAll('[data-password-target]');
+            toggles.forEach(button => {
+                const targetId = button.getAttribute('data-password-target');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+
+                button.addEventListener('click', () => {
+                    const isHidden = input.getAttribute('type') === 'password';
+                    input.setAttribute('type', isHidden ? 'text' : 'password');
+                    button.textContent = isHidden ? 'Sembunyikan' : 'Lihat';
+                });
+            });
+        });
+    </script>
 </x-app-layout>

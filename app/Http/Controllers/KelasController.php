@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\KelasAttendanceExport;
+use App\Exports\StudentLearningLogExport;
+use App\Helpers\ActivityLogger;
 use App\Models\Kelas;
 use App\Models\User;
-use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KelasController extends Controller
 {
@@ -179,13 +182,22 @@ class KelasController extends Controller
     {
         $validated = $request->validate([
             'student_ids' => 'required|array|exists:users,id',
+            'start_date' => 'required|date',
+            'duration_months' => 'required|integer|min:1|max:12',
+            'monthly_quota' => 'required|integer|in:4,8',
         ]);
+
+        $targetSessions = $validated['duration_months'] * $validated['monthly_quota'];
 
         foreach ($validated['student_ids'] as $studentId) {
             $student = User::find($studentId);
             $kelas->enrollments()->create([
                 'user_id' => $studentId,
                 'status' => 'active',
+                'start_date' => $validated['start_date'],
+                'duration_months' => $validated['duration_months'],
+                'monthly_quota' => $validated['monthly_quota'],
+                'target_sessions' => $targetSessions,
             ]);
             // Log activity
             if ($student) {
@@ -195,6 +207,33 @@ class KelasController extends Controller
 
         return redirect()->route('admin.kelas.show', $kelas)
             ->with('success', 'Siswa berhasil didaftarkan ke kelas.');
+    }
+
+    /**
+     * Export attendance matrix for the class.
+     */
+    public function exportAttendance(Kelas $kelas)
+    {
+        $filename = 'kehadiran-kelas-' . $kelas->id . '.xlsx';
+
+        return Excel::download(new KelasAttendanceExport($kelas), $filename);
+    }
+
+    /**
+     * Export per-student learning log for a class
+     */
+    public function exportStudentLearningLog(Kelas $kelas, User $user)
+    {
+        // Ensure the user is a student enrolled in this class
+        $enrolled = $kelas->enrollments()->where('user_id', $user->id)->exists();
+        if (!$enrolled) {
+            abort(404, 'Siswa tidak terdaftar di kelas ini');
+        }
+
+        $safeStudent = preg_replace('/[^a-zA-Z0-9_-]+/', '-', strtolower($user->name));
+        $filename = 'log-belajar-' . $safeStudent . '-kelas-' . $kelas->id . '.xlsx';
+
+        return Excel::download(new StudentLearningLogExport($kelas, $user), $filename);
     }
 
     /**

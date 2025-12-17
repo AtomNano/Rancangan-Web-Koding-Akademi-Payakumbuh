@@ -53,18 +53,14 @@
                             </div>
 
                             <div>
-                                <x-input-label for="materi_id" :value="__('Materi yang Dipelajari (Opsional)')" />
-                                <select id="materi_id" 
-                                        name="materi_id" 
-                                        class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="">-- Pilih Materi --</option>
-                                    @foreach($materis as $materi)
-                                        <option value="{{ $materi->id }}" {{ old('materi_id') == $materi->id ? 'selected' : '' }}>
-                                            {{ $materi->judul }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <p class="mt-1 text-xs text-gray-500">Pilih materi yang akan dipelajari pada pertemuan ini</p>
+                                <x-input-label for="materi" :value="__('Materi yang Dipelajari (Opsional)')" />
+                                <x-text-input id="materi" 
+                                              class="block mt-1 w-full" 
+                                              type="text" 
+                                              name="materi" 
+                                              :value="old('materi')" 
+                                              placeholder="Contoh: Pengenalan HTML, CSS Dasar, JavaScript Fundamentals..." />
+                                <p class="mt-1 text-xs text-gray-500">Masukkan nama materi atau topik yang akan dipelajari</p>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

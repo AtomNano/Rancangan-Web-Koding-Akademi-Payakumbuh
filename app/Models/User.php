@@ -23,6 +23,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'id_siswa',
+        'kode_admin',
+        'kode_guru',
         'tanggal_pendaftaran',
         'sekolah',
         'bidang_ajar',
@@ -123,33 +126,87 @@ class User extends Authenticatable
             return true;
         }
 
-        // Check if the student has any enrollment record with 'active' status.
-        // This is the manual override by the admin.
-        $hasActiveEnrollment = $this->enrollments()->where('status', 'active')->exists();
+        $enrollments = $this->enrollments()
+            ->whereIn('status', ['active', 'expiring'])
+            ->get();
 
-        if (!$hasActiveEnrollment) {
+        if ($enrollments->isEmpty()) {
             return false;
         }
 
-        // Now, check if the active period has expired.
-        $registrationDate = $this->tanggal_pendaftaran;
-        $duration = $this->durasi; // e.g., "3 Bulan", "6 Bulan", "12 Bulan"
+        foreach ($enrollments as $enrollment) {
+            // If quota-based, ensure there are remaining sessions
+            $target = $enrollment->calculateTargetSessions();
+            $attended = $enrollment->sessions_attended ?? 0;
 
-        if (!$registrationDate || !$duration) {
-            // If essential data is missing, they cannot be active.
-            return false;
+            if ($target) {
+                if ($attended < $target) {
+                    return true;
+                }
+                continue;
+            }
+
+            // Fallback to date-based expiration when no target is defined
+            $expirationDate = $enrollment->getExpirationDate();
+
+            if (!$expirationDate || \Carbon\Carbon::now()->lte($expirationDate)) {
+                return true;
+            }
         }
 
-        // Parse the duration string to get the number of months.
-        $months = (int) filter_var($duration, FILTER_SANITIZE_NUMBER_INT);
-        if ($months <= 0) {
-            return false;
+        return false;
+    }
+
+    /**
+     * Generate ID Siswa otomatis dengan format: NNN-KK-MMYYYY
+     * KK  = kode kelas numerik berurutan (berdasar id kelas, 2 digit)
+     * NNN = nomor urut siswa 3 digit per bulan per kelas
+     * Contoh: 001-01-122025
+     */
+    public static function generateIdSiswa($kelasId = null)
+    {
+        $now = \Carbon\Carbon::now();
+        $monthYear = $now->format('mY');
+
+        // Gunakan kode kelas numerik berurutan berdasarkan id kelas (zero-padded 3 digit)
+        $kelasCode = '00';
+        if ($kelasId) {
+            $kelas = Kelas::find($kelasId);
+            if ($kelas) {
+                $kelasCode = str_pad((string) $kelas->id, 2, '0', STR_PAD_LEFT);
+            }
         }
 
-        // Calculate the expiration date.
-        $expirationDate = \Carbon\Carbon::parse($registrationDate)->addMonths($months);
+        // Hitung jumlah siswa yang sudah terdaftar di bulan/tahun ini dengan kode kelas yang sama
+        $count = User::where('role', 'siswa')
+            ->where('id_siswa', 'like', "%-{$kelasCode}-{$monthYear}")
+            ->count();
 
-        // The user is active if today is before or on the expiration date.
-        return \Carbon\Carbon::now()->lte($expirationDate);
+        // Format nomor urut dengan leading zero (3 digit)
+        $nextNumber = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+
+        return "{$nextNumber}-{$kelasCode}-{$monthYear}";
+    }
+
+    /**
+     * Generate kode Admin otomatis
+     * Format: ADMIN-NNNN (Contoh: ADMIN-0001)
+     */
+    public static function generateKodeAdmin()
+    {
+        $count = User::where('role', 'admin')->whereNotNull('kode_admin')->count();
+        $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        return "ADMIN-{$nextNumber}";
+    }
+
+    /**
+     * Generate kode Guru otomatis
+     * Format: GURU-NNNN (Contoh: GURU-0001)
+     */
+    public static function generateKodeGuru()
+    {
+        $count = User::where('role', 'guru')->whereNotNull('kode_guru')->count();
+        $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        return "GURU-{$nextNumber}";
     }
 }

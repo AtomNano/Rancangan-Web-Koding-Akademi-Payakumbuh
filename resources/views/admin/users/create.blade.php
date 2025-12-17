@@ -44,6 +44,31 @@
                                     <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required placeholder="email@example.com" />
                                     <p class="mt-1 text-xs text-gray-500">Email aktif untuk login</p>
                                 </div>
+                                @if ($role === 'siswa')
+                                <div>
+                                    <x-input-label :value="__('ID Siswa')" />
+                                    <div class="mt-1 p-3 bg-gray-100 rounded-lg border border-gray-300">
+                                        <p class="text-sm text-gray-600">Akan di-generate otomatis setelah pendaftaran</p>
+                                        <p class="text-xs text-gray-500 mt-1">Format: NNN-KODEKELASNUM2-MMYYYY (contoh: 001-01-122025) Akan di-generate otomatis setelah pendaftaran</p>
+                                    </div>
+                                </div>
+                                @elseif ($role === 'admin')
+                                <div>
+                                    <x-input-label :value="__('Kode Admin')" />
+                                    <div class="mt-1 p-3 bg-purple-50 rounded-lg border border-purple-300">
+                                        <p class="text-sm text-purple-600">Akan di-generate otomatis setelah pendaftaran</p>
+                                        <p class="text-xs text-purple-500 mt-1">Format: ADMIN-NNNN (contoh: ADMIN-0001)</p>
+                                    </div>
+                                </div>
+                                @elseif ($role === 'guru')
+                                <div>
+                                    <x-input-label :value="__('Kode Guru')" />
+                                    <div class="mt-1 p-3 bg-green-50 rounded-lg border border-green-300">
+                                        <p class="text-sm text-green-600">Akan di-generate otomatis setelah pendaftaran</p>
+                                        <p class="text-xs text-green-500 mt-1">Format: GURU-NNNN (contoh: GURU-0001)</p>
+                                    </div>
+                                </div>
+                                @endif
                                 <div>
                                     <x-input-label for="no_telepon" :value="__('No. Telepon / WhatsApp')" />
                                     <div class="mt-1 relative">
@@ -209,6 +234,32 @@
                                             <input type="radio" name="durasi" value="12 Bulan" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi') == '12 Bulan' ? 'checked' : '' }}>
                                             <span class="ml-2 text-sm font-medium text-gray-700">12 Bulan</span>
                                         </label>
+                                    </div>
+                                </div>
+
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-lg border border-gray-200 bg-white">
+                                    <div>
+                                        <x-input-label for="enrollment_start_date" :value="__('Tanggal Mulai Paket Sesi')" />
+                                        <x-text-input id="enrollment_start_date" name="enrollment_start_date" type="date" class="block mt-1 w-full" value="{{ old('enrollment_start_date', date('Y-m-d')) }}" required />
+                                        <p class="text-xs text-gray-500 mt-1">Tanggal sesi pertama atau tanggal bergabung.</p>
+                                    </div>
+                                    <div>
+                                        <x-input-label for="enrollment_monthly_quota" :value="__('Kuota Sesi per Bulan')" />
+                                        <select id="enrollment_monthly_quota" name="enrollment_monthly_quota" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                            @foreach([4,8] as $q)
+                                                <option value="{{ $q }}" {{ old('enrollment_monthly_quota', 4) == $q ? 'selected' : '' }}>{{ $q }}x per bulan</option>
+                                            @endforeach
+                                        </select>
+                                        <p class="text-xs text-gray-500 mt-1">Pilih 4x atau 8x per bulan.</p>
+                                    </div>
+                                    <div class="md:col-span-3">
+                                        <div class="flex items-center justify-between bg-indigo-50 text-indigo-800 px-4 py-2 rounded">
+                                            <span class="text-sm font-medium">Target total sesi</span>
+                                            <span class="text-lg font-semibold" id="target_sessions_display">-</span>
+                                        </div>
+                                        <input type="hidden" name="enrollment_duration_months" id="enrollment_duration_months" value="{{ old('enrollment_duration_months') }}">
+                                        <input type="hidden" name="enrollment_target_sessions" id="enrollment_target_sessions" value="{{ old('enrollment_target_sessions') }}">
+                                        <p class="text-xs text-gray-500 mt-1">Akan menonaktifkan akun setelah target sesi tercapai.</p>
                                     </div>
                                 </div>
                                 <div class="md:col-span-2">
@@ -419,6 +470,31 @@
     @if ($role === 'siswa')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const quotaSelect = document.getElementById('enrollment_monthly_quota');
+            const targetDisplay = document.getElementById('target_sessions_display');
+            const targetHidden = document.getElementById('enrollment_target_sessions');
+            const monthsHidden = document.getElementById('enrollment_duration_months');
+
+            function parseDurasiToMonths() {
+                const selected = document.querySelector('input[name="durasi"]:checked');
+                if (!selected) return 0;
+                const match = (selected.value || '').match(/(\d+)/);
+                return match ? parseInt(match[1], 10) : 0;
+            }
+
+            function updateTargetSessions() {
+                const m = parseDurasiToMonths();
+                const q = parseInt(quotaSelect.value || '0', 10);
+                const total = m > 0 && q > 0 ? m * q : '';
+                targetDisplay.textContent = total ? `${total} sesi` : '-';
+                targetHidden.value = total || '';
+                if (monthsHidden) monthsHidden.value = m || '';
+            }
+
+            document.querySelectorAll('input[name="durasi"]').forEach(r => r.addEventListener('change', updateTargetSessions));
+            quotaSelect.addEventListener('change', updateTargetSessions);
+            updateTargetSessions();
+
             // Address Data (Indonesia - focused on Sumatera Barat)
             const addressData = {
                 'Sumatera Barat': {

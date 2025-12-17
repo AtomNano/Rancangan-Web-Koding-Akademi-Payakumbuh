@@ -140,6 +140,7 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Materi Selesai</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Kehadiran</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -188,6 +189,15 @@
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $enrollmentStatus === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                                     {{ $enrollmentStatus === 'active' ? 'Aktif' : 'Tidak Aktif' }}
                                                 </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <a href="{{ route('guru.siswa.progress', [$kelas->id, $s->id]) }}" 
+                                                   class="inline-flex items-center px-3 py-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-md transition">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                                    </svg>
+                                                    Progress
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -632,57 +642,219 @@
 
                 <!-- Tab: Kehadiran -->
                 <div x-show="openTab === 'kehadiran'" class="p-6">
-                    @if($presensi->count() > 0)
-                        <div class="space-y-4">
-                            @foreach($presensi as $materiId => $presensiRecords)
-                                @php
-                                    $currentMateri = $materi->firstWhere('id', $materiId);
-                                @endphp
-                                @if($currentMateri)
-                                    <div class="border border-gray-200 rounded-lg p-4">
-                                        <h4 class="font-medium text-gray-900 mb-3">{{ $currentMateri->judul }}</h4>
-                                        <div class="overflow-x-auto">
-                                            <table class="min-w-full divide-y divide-gray-200">
-                                                <thead class="bg-gray-50">
-                                                    <tr>
-                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nama Siswa</th>
-                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Akses</th>
-                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="bg-white divide-y divide-gray-200">
-                                                    @foreach($presensiRecords as $p)
-                                                        <tr>
-                                                            <td class="px-4 py-2 text-sm text-gray-900">{{ $p->user->name ?? 'N/A' }}</td>
-                                                            <td class="px-4 py-2 text-sm text-gray-500">
-                                                                @php
-                                                                    // Handle both Carbon instance and string
-                                                                    $tanggalAkses = $p->tanggal_akses;
-                                                                    if (is_string($tanggalAkses)) {
-                                                                        $tanggalAkses = \Carbon\Carbon::parse($tanggalAkses);
-                                                                    }
-                                                                @endphp
-                                                                {{ $tanggalAkses ? $tanggalAkses->format('d M Y H:i') : 'N/A' }}
-                                                            </td>
-                                                            <td class="px-4 py-2">
-                                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                                    {{ $p->status_kehadiran === 'hadir' ? 'bg-green-100 text-green-800' : 
-                                                                       ($p->status_kehadiran === 'izin' ? 'bg-yellow-100 text-yellow-800' : 
-                                                                       ($p->status_kehadiran === 'sakit' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800')) }}">
-                                                                    {{ ucfirst($p->status_kehadiran) }}
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
+                    @php
+                        // Get pertemuan IDs for this class
+                        $pertemuanIds = $kelas->pertemuan()->where('guru_id', auth()->id())->pluck('id')->toArray();
+                        
+                        // Calculate attendance statistics from both materi and pertemuan
+                        $totalHadir = 0;
+                        $totalIzin = 0;
+                        $totalSakit = 0;
+                        $totalAlpha = 0;
+                        
+                        foreach($siswaCollection as $s) {
+                            // Get presensi from materi
+                            $siswaMateriPresensi = \App\Models\Presensi::where('user_id', $s->id)
+                                ->whereIn('materi_id', $materiCollection->pluck('id'))
+                                ->get();
+                            
+                            // Get presensi from pertemuan
+                            $siswaPertemuanPresensi = \App\Models\Presensi::where('user_id', $s->id)
+                                ->whereIn('pertemuan_id', $pertemuanIds)
+                                ->get();
+                            
+                            // Combine both
+                            $siswaPresensi = $siswaMateriPresensi->merge($siswaPertemuanPresensi);
+                            
+                            $totalHadir += $siswaPresensi->where('status_kehadiran', 'hadir')->count();
+                            $totalIzin += $siswaPresensi->where('status_kehadiran', 'izin')->count();
+                            $totalSakit += $siswaPresensi->where('status_kehadiran', 'sakit')->count();
+                            $totalAlpha += $siswaPresensi->where('status_kehadiran', 'alpha')->count();
+                        }
+                    @endphp
+
+                    <!-- Summary Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-green-50 border-2 border-green-200 rounded-xl shadow-md p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-green-600 text-sm font-medium mb-1">Total Siswa</p>
+                                    <p class="text-3xl font-bold text-green-900">{{ $siswaCollection->count() }}</p>
+                                </div>
+                                <div class="bg-green-100 rounded-lg p-3">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.856-1.487M15 10h.01M13 16h2v2h-2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl shadow-md p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-indigo-600 text-sm font-medium mb-1">Siswa Aktif</p>
+                                    <p class="text-3xl font-bold text-indigo-900">
+                                        @php
+                                            $activeCount = $siswaCollection->filter(function($s) use ($kelas) {
+                                                $enrollment = \App\Models\Enrollment::where('user_id', $s->id)
+                                                    ->where('kelas_id', $kelas->id)
+                                                    ->first();
+                                                return $enrollment && $enrollment->status === 'active';
+                                            })->count();
+                                        @endphp
+                                        {{ $activeCount }}
+                                    </p>
+                                </div>
+                                <div class="bg-indigo-100 rounded-lg p-3">
+                                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl shadow-md p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-yellow-600 text-sm font-medium mb-1">Rata-rata Kehadiran</p>
+                                    <p class="text-3xl font-bold text-yellow-900">
+                                        @php
+                                            $totalKehadiran = $totalHadir + $totalIzin + $totalSakit + $totalAlpha;
+                                            $rataKehadiran = $totalKehadiran > 0 ? round(($totalHadir / $totalKehadiran) * 100, 1) : 0;
+                                        @endphp
+                                        {{ $rataKehadiran }}%
+                                    </p>
+                                </div>
+                                <div class="bg-yellow-100 rounded-lg p-3">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-50 border-2 border-purple-200 rounded-xl shadow-md p-5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-purple-600 text-sm font-medium mb-1">Total Pertemuan</p>
+                                    <p class="text-3xl font-bold text-purple-900">{{ $materiCollection->count() + count($pertemuanIds) }}</p>
+                                </div>
+                                <div class="bg-purple-100 rounded-lg p-3">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Breakdown -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-green-100 rounded-lg p-4 text-center">
+                            <p class="text-green-600 text-sm font-medium mb-1">Hadir</p>
+                            <p class="text-3xl font-bold text-green-800">{{ $totalHadir }}</p>
+                        </div>
+                        <div class="bg-yellow-100 rounded-lg p-4 text-center">
+                            <p class="text-yellow-600 text-sm font-medium mb-1">Izin</p>
+                            <p class="text-3xl font-bold text-yellow-800">{{ $totalIzin }}</p>
+                        </div>
+                        <div class="bg-blue-100 rounded-lg p-4 text-center">
+                            <p class="text-blue-600 text-sm font-medium mb-1">Sakit</p>
+                            <p class="text-3xl font-bold text-blue-800">{{ $totalSakit }}</p>
+                        </div>
+                        <div class="bg-red-100 rounded-lg p-4 text-center">
+                            <p class="text-red-600 text-sm font-medium mb-1">Alpha</p>
+                            <p class="text-3xl font-bold text-red-800">{{ $totalAlpha }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Table by Student -->
+                    @if($siswaCollection->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Hadir</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Izin</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Sakit</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Alpha</th>
+                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($siswaCollection as $s)
+                                        @php
+                                            // Get presensi from materi
+                                            $siswaMateriPresensi = \App\Models\Presensi::where('user_id', $s->id)
+                                                ->whereIn('materi_id', $materiCollection->pluck('id'))
+                                                ->get();
+                                            
+                                            // Get presensi from pertemuan
+                                            $siswaPertemuanPresensi = \App\Models\Presensi::where('user_id', $s->id)
+                                                ->whereIn('pertemuan_id', $pertemuanIds)
+                                                ->get();
+                                            
+                                            // Combine both
+                                            $siswaPresensi = $siswaMateriPresensi->merge($siswaPertemuanPresensi);
+                                            
+                                            $hadirCount = $siswaPresensi->where('status_kehadiran', 'hadir')->count();
+                                            $izinCount = $siswaPresensi->where('status_kehadiran', 'izin')->count();
+                                            $sakitCount = $siswaPresensi->where('status_kehadiran', 'sakit')->count();
+                                            $alphaCount = $siswaPresensi->where('status_kehadiran', 'alpha')->count();
+                                            $totalPersensi = $hadirCount + $izinCount + $sakitCount + $alphaCount;
+                                        @endphp
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <div class="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center">
+                                                            <span class="text-indigo-700 font-bold text-sm">{{ substr($s->name, 0, 2) }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">{{ $s->name }}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $s->email }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    {{ $hadirCount }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                    {{ $izinCount }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                    {{ $sakitCount }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                    {{ $alphaCount }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <span class="text-sm font-medium text-gray-900">{{ $totalPersensi }}</span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     @else
-                        <p class="text-gray-500 text-center py-8">Belum ada data kehadiran untuk ditampilkan.</p>
+                        <div class="bg-white rounded-xl shadow-md p-12 text-center">
+                            <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum Ada Data Kehadiran</h3>
+                            <p class="text-gray-600">Belum ada data kehadiran untuk ditampilkan.</p>
+                        </div>
                     @endif
                 </div>
             </div>

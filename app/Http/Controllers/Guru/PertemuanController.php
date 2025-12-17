@@ -8,6 +8,8 @@ use App\Models\Pertemuan;
 use App\Models\Presensi;
 use App\Models\Enrollment;
 use App\Models\Materi;
+use App\Models\User;
+use App\Notifications\SessionQuotaReminder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -57,13 +59,7 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        // Get all active materials for this class
-        $materis = Materi::where('kelas_id', $kelas->id)
-            ->where('status', 'active')
-            ->orderBy('judul')
-            ->get();
-
-        return view('guru.pertemuan.create', compact('kelas', 'materis'));
+        return view('guru.pertemuan.create', compact('kelas'));
     }
 
     /**
@@ -83,7 +79,7 @@ class PertemuanController extends Controller
             'tanggal_pertemuan' => 'required|date',
             'waktu_mulai' => 'nullable|date_format:H:i',
             'waktu_selesai' => 'nullable|date_format:H:i|after:waktu_mulai',
-            'materi_id' => 'nullable|exists:materis,id',
+            'materi' => 'nullable|string|max:255',
         ]);
 
         $pertemuan = Pertemuan::create([
@@ -94,7 +90,7 @@ class PertemuanController extends Controller
             'tanggal_pertemuan' => $validated['tanggal_pertemuan'],
             'waktu_mulai' => $validated['waktu_mulai'] ?? null,
             'waktu_selesai' => $validated['waktu_selesai'] ?? null,
-            'materi_id' => $validated['materi_id'] ?? null,
+            'materi' => $validated['materi'] ?? null,
         ]);
 
         return redirect()->route('guru.pertemuan.show', ['kelas' => $kelas->id, 'pertemuan' => $pertemuan->id])
@@ -115,9 +111,6 @@ class PertemuanController extends Controller
         if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
             abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
         }
-
-        // Load materi relationship
-        $pertemuan->load('materi');
 
         // Get all students enrolled in this class
         $enrollmentIds = Enrollment::where('kelas_id', $kelas->id)
@@ -160,6 +153,7 @@ class PertemuanController extends Controller
 
         $created = 0;
         $updated = 0;
+        $touchedUserIds = [];
 
         foreach ($validated['absen'] as $absenData) {
             $existingPresensi = Presensi::where('pertemuan_id', $pertemuan->id)
@@ -181,6 +175,37 @@ class PertemuanController extends Controller
                     'tanggal_akses' => now(),
                 ]);
                 $created++;
+            }
+
+            $touchedUserIds[] = (int) $absenData['user_id'];
+        }
+
+        // Sinkronkan progres kuota sesi dan kirim notifikasi jika hampir habis
+        foreach (array_unique($touchedUserIds) as $touchedUserId) {
+            $enrollment = Enrollment::where('user_id', $touchedUserId)
+                ->where('kelas_id', $kelas->id)
+                ->first();
+
+            if (!$enrollment) {
+                continue;
+            }
+
+            $progress = $enrollment->syncSessionProgress(1);
+
+            if (
+                $progress['target']
+                && $progress['remaining'] === 1
+                && $enrollment->needsQuotaReminder(1)
+            ) {
+                if ($enrollment->user) {
+                    $enrollment->user->notify(new SessionQuotaReminder($enrollment, $progress['remaining'], $progress['target']));
+                }
+
+                if ($kelas->guru) {
+                    $kelas->guru->notify(new SessionQuotaReminder($enrollment, $progress['remaining'], $progress['target']));
+                }
+
+                $enrollment->markQuotaNotified();
             }
         }
 
@@ -205,13 +230,7 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
         }
 
-        // Get all active materials for this class
-        $materis = Materi::where('kelas_id', $kelas->id)
-            ->where('status', 'active')
-            ->orderBy('judul')
-            ->get();
-
-        return view('guru.pertemuan.edit', compact('kelas', 'pertemuan', 'materis'));
+        return view('guru.pertemuan.edit', compact('kelas', 'pertemuan'));
     }
 
     /**
@@ -235,7 +254,7 @@ class PertemuanController extends Controller
             'tanggal_pertemuan' => 'required|date',
             'waktu_mulai' => 'nullable|date_format:H:i',
             'waktu_selesai' => 'nullable|date_format:H:i|after:waktu_mulai',
-            'materi_id' => 'nullable|exists:materis,id',
+            'materi' => 'nullable|string|max:255',
         ]);
 
         $pertemuan->update($validated);
@@ -264,4 +283,157 @@ class PertemuanController extends Controller
         return redirect()->route('guru.pertemuan.index', $kelas->id)
             ->with('success', 'Pertemuan berhasil dihapus.');
     }
+
+    /**
+     * Show attendance input selection (classes for guru)
+     */
+    public function attendanceIndex()
+    {
+        $user = Auth::user();
+        
+        // Get all classes assigned to or enrolled by this guru
+        $enrolledKelasIds = $user->enrolledClasses->pluck('id')->toArray();
+        $assignedKelasIds = Kelas::where('guru_id', $user->id)->pluck('id')->toArray();
+        $kelasIds = array_unique(array_merge($enrolledKelasIds, $assignedKelasIds));
+        
+        if (empty($kelasIds)) {
+            return view('guru.absen.index', ['kelas' => collect()]);
+        }
+        
+        $kelas = Kelas::whereIn('id', $kelasIds)
+            ->where('status', 'active')
+            ->withCount('pertemuan')
+            ->orderBy('nama_kelas')
+            ->get();
+        
+        // If only one class, redirect directly to pertemuan management
+        if ($kelas->count() === 1) {
+            return redirect()->route('guru.pertemuan.index', $kelas->first()->id);
+        }
+        
+        return view('guru.absen.index', compact('kelas'));
+    }
+
+    /**
+     * Show pertemuan list for attendance input (for a specific class)
+     */
+    public function attendanceSelectPertemuan(Kelas $kelas)
+    {
+        $user = Auth::user();
+        
+        if (!$this->hasAccessToClass($user, $kelas)) {
+            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
+        }
+
+        $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
+            ->where('guru_id', $user->id)
+            ->orderBy('tanggal_pertemuan', 'desc')
+            ->orderBy('waktu_mulai', 'desc')
+            ->withCount('presensi')
+            ->get();
+
+        return view('guru.absen.select-pertemuan', compact('kelas', 'pertemuans'));
+    }
+
+    /**
+     * Show attendance detail for a pertemuan
+     */
+    public function absenDetail(Request $request, Kelas $kelas, Pertemuan $pertemuan)
+    {
+        $user = Auth::user();
+        
+        if (!$this->hasAccessToClass($user, $kelas)) {
+            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
+        }
+
+        if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
+            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+        }
+
+        // Get all students in the class
+        $siswa = Enrollment::where('kelas_id', $kelas->id)
+            ->pluck('user_id')
+            ->toArray();
+        $siswa = User::whereIn('id', $siswa)
+            ->where('role', 'siswa')
+            ->orderBy('name')
+            ->get();
+
+        // Get attendance for this pertemuan
+        $presensi = Presensi::where('pertemuan_id', $pertemuan->id)
+            ->with('user')
+            ->orderBy('status_kehadiran', 'asc')
+            ->orderBy('tanggal_akses', 'desc')
+            ->get();
+
+        // Group presensi by status
+        $hadirList = $presensi->where('status_kehadiran', 'hadir')->values();
+        $izinList = $presensi->where('status_kehadiran', 'izin')->values();
+        $sakitList = $presensi->where('status_kehadiran', 'sakit')->values();
+        $alphaList = $presensi->where('status_kehadiran', 'alpha')->values();
+
+        return view('guru.pertemuan.absen-detail', compact(
+            'kelas',
+            'pertemuan',
+            'siswa',
+            'presensi',
+            'hadirList',
+            'izinList',
+            'sakitList',
+            'alphaList'
+        ));
+    }
+
+    /**
+     * Show individual student progress/learning log
+     */
+    public function studentProgress(Request $request, Kelas $kelas, User $siswa)
+    {
+        $user = Auth::user();
+        
+        if (!$this->hasAccessToClass($user, $kelas)) {
+            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
+        }
+
+        // Check if student is in this class
+        $enrollment = Enrollment::where('kelas_id', $kelas->id)
+            ->where('user_id', $siswa->id)
+            ->firstOrFail();
+
+        // Get all pertemuans in this class
+        $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
+            ->where('guru_id', $user->id)
+            ->orderBy('tanggal_pertemuan')
+            ->get();
+
+        // Get attendance records for this student
+        $presensiList = Presensi::where('user_id', $siswa->id)
+            ->whereIn('pertemuan_id', $pertemuans->pluck('id'))
+            ->get()
+            ->keyBy('pertemuan_id');
+
+        // Build learning log data
+        $learningLog = [];
+        foreach ($pertemuans as $index => $pertemuan) {
+            $presensi = $presensiList->get($pertemuan->id);
+            
+            $learningLog[] = [
+                'number' => $index + 1,
+                'pertemuan' => $pertemuan,
+                'presensi' => $presensi,
+                'tanggal_belajar' => $pertemuan->tanggal_pertemuan,
+                'nama_mentor' => $user->name,
+                'materi' => $pertemuan->materi,
+                'status_kehadiran' => $presensi ? $presensi->status_kehadiran : null,
+            ];
+        }
+
+        return view('guru.siswa.progress', compact(
+            'kelas',
+            'siswa',
+            'enrollment',
+            'learningLog'
+        ));
+    }
+
 }

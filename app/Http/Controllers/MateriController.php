@@ -202,7 +202,7 @@ class MateriController extends Controller
             $filePath = $file->storeAs('materi', $fileName, 'public');
         }
 
-        Materi::create([
+        $materi = Materi::create([
             'judul' => $validated['judul'],
             'deskripsi' => $validated['deskripsi'],
             'file_path' => $filePath,

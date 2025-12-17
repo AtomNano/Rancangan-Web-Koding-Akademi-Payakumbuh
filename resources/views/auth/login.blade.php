@@ -153,10 +153,11 @@
                             id="password" 
                             name="password" 
                             placeholder="Masukkan password Anda"
-                            class="input-field block w-full rounded-xl border border-gray-300 bg-white py-3 pl-12 pr-4 text-black placeholder-gray-400 
+                            class="input-field block w-full rounded-xl border border-gray-300 bg-white py-3 pl-12 pr-20 text-black placeholder-gray-400 
                             transition-all duration-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm" 
                             required 
                         />
+                        <button type="button" class="absolute inset-y-0 right-0 px-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center" data-password-target="password">Lihat</button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
@@ -340,6 +341,23 @@
                         }
                     });
                 }
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const toggles = document.querySelectorAll('[data-password-target]');
+                toggles.forEach(button => {
+                    const targetId = button.getAttribute('data-password-target');
+                    const input = document.getElementById(targetId);
+                    if (!input) return;
+
+                    button.addEventListener('click', () => {
+                        const isHidden = input.getAttribute('type') === 'password';
+                        input.setAttribute('type', isHidden ? 'text' : 'password');
+                        button.textContent = isHidden ? 'Sembunyikan' : 'Lihat';
+                    });
+                });
             });
         </script>
     @endsection

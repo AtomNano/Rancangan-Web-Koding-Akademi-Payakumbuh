@@ -136,8 +136,9 @@
                                                             </div>
                                                             <p class="text-xs text-gray-600 dark:text-gray-600 mt-1">{{ $studentData['completed_materi_count'] }} dari {{ $studentData['total_approved_materi'] }} Materi ({{ $studentData['progress'] }}%)</p>
                                                         </td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                            <form action="{{ route('admin.kelas.unenroll', ['kelas' => $kelas->id, 'user' => $studentData['student']->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengeluarkan siswa ini dari kelas?');">
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                                                            <a href="{{ route('admin.kelas.student.log.export', ['kelas' => $kelas->id, 'user' => $studentData['student']->id]) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-600 dark:hover:text-indigo-800">Export Log Belajar</a>
+                                                            <form action="{{ route('admin.kelas.unenroll', ['kelas' => $kelas->id, 'user' => $studentData['student']->id]) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin mengeluarkan siswa ini dari kelas?');">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-600 dark:hover:text-red-800">Keluarkan</button>
@@ -171,6 +172,7 @@
                         </div>
 
                         <div class="mt-8 flex justify-end space-x-3">
+                            <a href="{{ route('admin.kelas.attendance.export', $kelas) }}" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 active:bg-amber-800 focus:outline-none focus:border-amber-800 focus:ring ring-amber-300 disabled:opacity-25 transition ease-in-out duration-150">Export Kehadiran (Excel)</a>
                             <a href="{{ route('admin.kelas.edit', $kelas) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:border-indigo-800 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">Edit Kelas</a>
                             <a href="{{ route('admin.kelas.enroll', $kelas) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-800 focus:outline-none focus:border-green-800 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">Daftarkan Siswa</a>
                         </div>

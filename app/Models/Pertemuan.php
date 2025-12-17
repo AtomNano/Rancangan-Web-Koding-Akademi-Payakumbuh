@@ -17,7 +17,7 @@ class Pertemuan extends Model
         'waktu_mulai',
         'waktu_selesai',
         'guru_id',
-        'materi_id',
+        'materi',
     ];
 
     protected $casts = [
@@ -44,10 +44,5 @@ class Pertemuan extends Model
         return $this->hasManyThrough(User::class, Presensi::class, 'pertemuan_id', 'id', 'id', 'user_id')
             ->where('users.role', 'siswa')
             ->distinct();
-    }
-
-    public function materi()
-    {
-        return $this->belongsTo(Materi::class);
     }
 }

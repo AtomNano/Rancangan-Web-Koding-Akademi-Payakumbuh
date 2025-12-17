@@ -102,6 +102,9 @@ class UserController extends Controller
 
             $studentValidated = $request->validate([
                 'tanggal_pendaftaran' => 'nullable|date',
+                'enrollment_start_date' => 'required|date',
+                'enrollment_duration_months' => 'required|integer|in:1,3,6,12',
+                'enrollment_monthly_quota' => 'required|integer|in:4,8',
                 'sekolah' => 'required|string|max:255',
                 'kelas_sekolah' => 'required|string|max:50',
                 'bidang_ajar' => 'nullable|array',
@@ -131,6 +134,14 @@ class UserController extends Controller
             $total_biaya = $studentValidated['total_biaya'] ?? 0;
             $discount_type = $studentValidated['discount_type'] ?? null;
             $discount_value = $studentValidated['discount_value'] ?? 0;
+            $durationMonths = (int) ($studentValidated['enrollment_duration_months'] ?? 0);
+            $monthlyQuota = (int) ($studentValidated['enrollment_monthly_quota'] ?? 0);
+            $targetSessions = $durationMonths > 0 && $monthlyQuota > 0 ? $durationMonths * $monthlyQuota : null;
+
+            // Backfill durasi string for compatibility
+            if (empty($studentValidated['durasi']) && $durationMonths > 0) {
+                $studentValidated['durasi'] = $durationMonths . ' Bulan';
+            }
 
             if (isset($studentValidated['status_promo']) && $studentValidated['status_promo'] === 'Beasiswa') {
                 $studentValidated['total_setelah_diskon'] = 0;
@@ -164,6 +175,12 @@ class UserController extends Controller
             
             $userData = array_merge($userData, $studentValidated);
 
+            // Save target sessions info for later enrollment creation
+            $userData['_target_sessions'] = $targetSessions;
+            $userData['_duration_months'] = $durationMonths;
+            $userData['_monthly_quota'] = $monthlyQuota;
+            $userData['_start_date'] = $studentValidated['enrollment_start_date'];
+
         } elseif ($request->role === 'guru') {
             $guruValidated = $request->validate([
                 'bidang_ajar' => 'nullable|array',
@@ -176,6 +193,15 @@ class UserController extends Controller
 
         $user = User::create($userData);
 
+        // Generate kode otomatis untuk admin dan guru
+        if ($request->role === 'admin') {
+            $kodeAdmin = User::generateKodeAdmin();
+            $user->update(['kode_admin' => $kodeAdmin]);
+        } elseif ($request->role === 'guru') {
+            $kodeGuru = User::generateKodeGuru();
+            $user->update(['kode_guru' => $kodeGuru]);
+        }
+
         if (($request->role === 'siswa' || $request->role === 'guru') && !empty($request->bidang_ajar)) {
             $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
             foreach ($request->bidang_ajar as $bidangAjarItem) {
@@ -184,7 +210,19 @@ class UserController extends Controller
                     $user->enrollments()->create([
                         'kelas_id' => $kelas->id,
                         'status' => $status,
+                        'start_date' => $userData['_start_date'] ?? null,
+                        'duration_months' => $userData['_duration_months'] ?? null,
+                        'monthly_quota' => $userData['_monthly_quota'] ?? null,
+                        'target_sessions' => $userData['_target_sessions'] ?? null,
+                        'sessions_attended' => 0,
                     ]);
+
+                    // Generate ID Siswa otomatis setelah enrollment dibuat
+                    if ($request->role === 'siswa' && !$user->id_siswa) {
+                        $idSiswa = User::generateIdSiswa($kelas->id);
+                        $user->update(['id_siswa' => $idSiswa]);
+                        break; // Generate ID berdasarkan kelas pertama
+                    }
                 }
             }
         }
@@ -251,6 +289,9 @@ class UserController extends Controller
         if ($request->role === 'siswa') {
             $studentValidated = $request->validate([
                 'tanggal_pendaftaran' => 'nullable|date',
+                'enrollment_start_date' => 'required|date',
+                'enrollment_duration_months' => 'required|integer|in:1,3,6,12',
+                'enrollment_monthly_quota' => 'required|integer|in:4,8',
                 'sekolah' => 'nullable|string|max:255',
                 'kelas_sekolah' => 'nullable|string|max:50',
                 'bidang_ajar' => 'nullable|array',
@@ -279,6 +320,14 @@ class UserController extends Controller
             $total_biaya = $studentValidated['total_biaya'] ?? 0;
             $discount_type = $studentValidated['discount_type'] ?? null;
             $discount_value = $studentValidated['discount_value'] ?? 0;
+            $durationMonths = (int) ($studentValidated['enrollment_duration_months'] ?? 0);
+            $monthlyQuota = (int) ($studentValidated['enrollment_monthly_quota'] ?? 0);
+            $targetSessions = $durationMonths > 0 && $monthlyQuota > 0 ? $durationMonths * $monthlyQuota : null;
+
+            // Backfill durasi string for compatibility
+            if (empty($studentValidated['durasi']) && $durationMonths > 0) {
+                $studentValidated['durasi'] = $durationMonths . ' Bulan';
+            }
 
             if (isset($studentValidated['status_promo']) && $studentValidated['status_promo'] === 'Beasiswa') {
                 $studentValidated['total_setelah_diskon'] = 0;
@@ -293,6 +342,12 @@ class UserController extends Controller
             }
             
             $userData = array_merge($userData, $studentValidated);
+
+            // Save target sessions info for enrollment updates
+            $userData['_target_sessions'] = $targetSessions;
+            $userData['_duration_months'] = $durationMonths;
+            $userData['_monthly_quota'] = $monthlyQuota;
+            $userData['_start_date'] = $studentValidated['enrollment_start_date'];
 
         } elseif ($request->role === 'guru') {
             $guruValidated = $request->validate([
@@ -331,14 +386,29 @@ class UserController extends Controller
                     'user_id' => $user->id,
                     'kelas_id' => $kelasId,
                     'status' => $status,
+                    'start_date' => $userData['_start_date'] ?? null,
+                    'duration_months' => $userData['_duration_months'] ?? null,
+                    'monthly_quota' => $userData['_monthly_quota'] ?? null,
+                    'target_sessions' => $userData['_target_sessions'] ?? null,
+                    'sessions_attended' => 0,
                 ]);
             }
 
             if (!empty($idsToUpdate)) {
                 $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
+                $updatePayload = ['status' => $status];
+                if ($request->role === 'siswa') {
+                    $updatePayload = array_merge($updatePayload, [
+                        'start_date' => $userData['_start_date'] ?? null,
+                        'duration_months' => $userData['_duration_months'] ?? null,
+                        'monthly_quota' => $userData['_monthly_quota'] ?? null,
+                        'target_sessions' => $userData['_target_sessions'] ?? null,
+                    ]);
+                }
+
                 \App\Models\Enrollment::where('user_id', $user->id)
                     ->whereIn('kelas_id', $idsToUpdate)
-                    ->update(['status' => $status]);
+                    ->update($updatePayload);
             }
         }
 

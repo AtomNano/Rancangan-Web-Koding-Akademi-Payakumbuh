@@ -139,6 +139,13 @@
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
                                             <div class="text-sm text-gray-500">{{ $user->email }}</div>
+                                            @if($user->role === 'siswa' && $user->id_siswa)
+                                            <div class="text-xs text-indigo-600 font-semibold">ID: {{ $user->id_siswa }}</div>
+                                            @elseif($user->role === 'admin' && $user->kode_admin)
+                                            <div class="text-xs text-purple-600 font-semibold">{{ $user->kode_admin }}</div>
+                                            @elseif($user->role === 'guru' && $user->kode_guru)
+                                            <div class="text-xs text-green-600 font-semibold">{{ $user->kode_guru }}</div>
+                                            @endif
                                         </div>
                                     </div>
                                 </a>
