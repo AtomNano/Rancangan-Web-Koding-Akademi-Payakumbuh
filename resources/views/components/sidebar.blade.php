@@ -85,11 +85,12 @@
                             <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Kelas</span>
                         </x-nav-link>
                         <!-- Shortcut: Input Pertemuan & Absen -->
-                        <x-nav-link :href="route('admin.kelas.index')" :active="request()->routeIs('admin.pertemuan.*')">
+                        <!-- Shortcut: Pertemuan Management (select kelas first) -->
+                        <x-nav-link :href="route('admin.pertemuan.select')" :active="request()->routeIs('admin.pertemuan.*')" title="Pilih kelas terlebih dahulu, lalu kelola pertemuan & absen">
                             <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3-1.343 3-3S13.657 2 12 2 9 3.343 9 5s1.343 3 3 3zm0 2c-2.21 0-4 1.79-4 4v6h8v-6c0-2.21-1.79-4-4-4zm5 4h4m-2-2v4" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Input Pertemuan/Absen</span>
+                            <span x-show="sidebarOpen" class="ml-3 whitespace-nowrap" x-cloak>Pertemuan & Absen</span>
                         </x-nav-link>
                         <x-nav-link :href="route('admin.materi.index')" :active="request()->routeIs('admin.materi.*')">
                             <svg class="h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

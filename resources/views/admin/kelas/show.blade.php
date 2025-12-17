@@ -57,6 +57,11 @@
                             </div>
                         </div>
 
+                        {{-- Informasi Guru --}}
+                        <div class="mt-8">
+                            <h4 class="text-xl font-semibold mb-4">Informasi Pengajar</h4>
+                            @if ($kelas->guru)
+                                <div class="bg-white dark:bg-white p-4 rounded-lg shadow flex items-center space-x-4">
                         {{-- Tabbed View --}}
                         <div x-data="{ openTab: 'materi' }" class="mt-8">
                             <div class="border-b border-gray-200 dark:border-gray-200">
@@ -170,11 +175,47 @@
                                 @endif
                             </div>
                         </div>
+                                    <div>
+                                        <p class="text-lg font-semibold">{{ $kelas->guru->name }}</p>
+                                        <p class="text-gray-600 dark:text-gray-600">{{ $kelas->guru->email }}</p>
+                                        <p class="text-gray-600 dark:text-gray-600">Bidang: {{ $kelas->guru->bidang ?? 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            @else
+                                <p>Belum ada guru yang ditunjuk untuk kelas ini.</p>
+                            @endif
+                        </div>
 
-                        <div class="mt-8 flex justify-end space-x-3">
-                            <a href="{{ route('admin.kelas.attendance.export', $kelas) }}" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 active:bg-amber-800 focus:outline-none focus:border-amber-800 focus:ring ring-amber-300 disabled:opacity-25 transition ease-in-out duration-150">Export Kehadiran (Excel)</a>
-                            <a href="{{ route('admin.kelas.edit', $kelas) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:border-indigo-800 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">Edit Kelas</a>
-                            <a href="{{ route('admin.kelas.enroll', $kelas) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-800 focus:outline-none focus:border-green-800 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">Daftarkan Siswa</a>
+                        <div class="mt-8 flex flex-col space-y-4">
+                            <!-- Primary Action: Manage Pertemuan -->
+                            <a href="{{ route('admin.pertemuan.index', $kelas) }}" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 border border-transparent rounded-lg font-semibold text-sm text-white uppercase tracking-widest hover:from-cyan-700 hover:to-blue-700 active:from-cyan-800 active:to-blue-800 focus:outline-none focus:border-cyan-800 focus:ring ring-cyan-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-lg hover:shadow-xl">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Kelola Pertemuan & Absen
+                            </a>
+
+                            <!-- Secondary Actions -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <a href="{{ route('admin.kelas.attendance.export', $kelas) }}" class="inline-flex items-center justify-center px-4 py-2 bg-amber-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 active:bg-amber-800 focus:outline-none focus:border-amber-800 focus:ring ring-amber-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Export Kehadiran
+                                </a>
+                                <a href="{{ route('admin.kelas.enroll', $kelas) }}" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-800 focus:outline-none focus:border-green-800 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Daftarkan Siswa
+                                </a>
+                                <a href="{{ route('admin.kelas.edit', $kelas) }}" class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:border-indigo-800 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Edit Kelas
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

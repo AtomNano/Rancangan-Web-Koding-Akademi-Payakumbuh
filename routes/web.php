@@ -147,6 +147,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('kelas/{kelas}/enroll', [KelasController::class, 'enroll'])->name('kelas.enroll.store');
         Route::delete('kelas/{kelas}/enroll/{user}', [KelasController::class, 'unenroll'])->name('kelas.unenroll');
         
+        // Pertemuan: select kelas entrypoint (shortcut from sidebar)
+        Route::get('pertemuan', [\App\Http\Controllers\Admin\PertemuanController::class, 'selectKelas'])->name('pertemuan.select');
+        
+        // Pertemuan management routes for admin
+        Route::get('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Admin\PertemuanController::class, 'index'])->name('pertemuan.index');
+        Route::get('kelas/{kelas}/pertemuan/create', [\App\Http\Controllers\Admin\PertemuanController::class, 'create'])->name('pertemuan.create');
+        Route::post('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Admin\PertemuanController::class, 'store'])->name('pertemuan.store');
+        Route::get('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Admin\PertemuanController::class, 'show'])->name('pertemuan.show');
+        Route::get('kelas/{kelas}/pertemuan/{pertemuan}/absen-detail', [\App\Http\Controllers\Admin\PertemuanController::class, 'absenDetail'])->name('pertemuan.absen-detail');
+        Route::get('kelas/{kelas}/pertemuan/{pertemuan}/edit', [\App\Http\Controllers\Admin\PertemuanController::class, 'edit'])->name('pertemuan.edit');
+        Route::put('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Admin\PertemuanController::class, 'update'])->name('pertemuan.update');
+        Route::delete('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Admin\PertemuanController::class, 'destroy'])->name('pertemuan.destroy');
+        Route::post('kelas/{kelas}/pertemuan/{pertemuan}/absen', [\App\Http\Controllers\Admin\PertemuanController::class, 'storeAbsen'])->name('pertemuan.absen');
+        
         // Material verification routes
         Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
         Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
