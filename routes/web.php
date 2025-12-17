@@ -329,6 +329,7 @@ require __DIR__.'/auth.php';
 Route::get('/admin/backup/debug-list-files', [App\Http\Controllers\Admin\BackupController::class, 'debugListFiles']);
 
 // Alias untuk kompatibilitas link sidebar lama
+// Redirect ke daftar kelas (tanpa parameter kelas) untuk menghindari 500
 Route::get('/admin/pertemuan/select', function () {
-    return redirect()->route('admin.pertemuan.index');
+    return redirect()->route('admin.kelas.index');
 })->name('admin.pertemuan.select');
