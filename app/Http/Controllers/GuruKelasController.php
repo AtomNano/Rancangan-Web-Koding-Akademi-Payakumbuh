@@ -300,7 +300,40 @@ class GuruKelasController extends Controller
             ->where('kelas_id', $kelas->id)
             ->exists();
 
-        return view('guru.kelas.show', compact('kelas', 'siswa', 'materi', 'presensi', 'progressData', 'materiAccess', 'isGuruAssigned', 'isGuruEnrolled'));
+        // Calculate total attendance counts from all presensi
+        $siswaIds = $siswa->pluck('id')->toArray();
+        $totalHadir = 0;
+        $totalIzin = 0;
+        $totalSakit = 0;
+        $totalAlpha = 0;
+
+        if (!empty($siswaIds)) {
+            // Count from materi presensi
+            if (!empty($materiIds)) {
+                $materiPresensi = Presensi::whereIn('materi_id', $materiIds)
+                    ->whereIn('user_id', $siswaIds)
+                    ->get();
+
+                $totalHadir += $materiPresensi->where('status_kehadiran', 'hadir')->count();
+                $totalIzin += $materiPresensi->where('status_kehadiran', 'izin')->count();
+                $totalSakit += $materiPresensi->where('status_kehadiran', 'sakit')->count();
+                $totalAlpha += $materiPresensi->where('status_kehadiran', 'alpha')->count();
+            }
+
+            // Count from pertemuan presensi
+            if (!empty($pertemuanIds)) {
+                $pertemuanPresensi = Presensi::whereIn('pertemuan_id', $pertemuanIds)
+                    ->whereIn('user_id', $siswaIds)
+                    ->get();
+
+                $totalHadir += $pertemuanPresensi->where('status_kehadiran', 'hadir')->count();
+                $totalIzin += $pertemuanPresensi->where('status_kehadiran', 'izin')->count();
+                $totalSakit += $pertemuanPresensi->where('status_kehadiran', 'sakit')->count();
+                $totalAlpha += $pertemuanPresensi->where('status_kehadiran', 'alpha')->count();
+            }
+        }
+
+        return view('guru.kelas.show', compact('kelas', 'siswa', 'materi', 'presensi', 'progressData', 'materiAccess', 'isGuruAssigned', 'isGuruEnrolled', 'totalHadir', 'totalIzin', 'totalSakit', 'totalAlpha', 'pertemuanIds'));
     }
 }
 

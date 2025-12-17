@@ -178,9 +178,9 @@ class MateriController extends Controller
         } else {
             // Different max sizes based on file type
             if ($fileType === 'pdf') {
-                $rules['file'] = 'required|file|mimes:pdf|max:5120'; // 5MB for PDF
+                $rules['file'] = 'required|file|mimes:pdf|max:10240'; // 10MB for PDF
             } else {
-                $rules['file'] = 'required|file|mimes:mp4,doc,docx|max:102400'; // 100MB for other types
+                $rules['file'] = 'required|file|mimes:mp4,doc,docx|max:10240'; // 10MB for other types
             }
         }
 
@@ -314,9 +314,9 @@ class MateriController extends Controller
         } else {
             // Different max sizes based on file type
             if ($fileType === 'pdf') {
-                $rules['file'] = 'nullable|file|mimes:pdf|max:5120'; // 5MB for PDF
+                $rules['file'] = 'nullable|file|mimes:pdf|max:10240'; // 10MB for PDF
             } else {
-                $rules['file'] = 'nullable|file|mimes:mp4,doc,docx|max:102400'; // 100MB for other types
+                $rules['file'] = 'nullable|file|mimes:mp4,doc,docx|max:10240'; // 10MB for other types
             }
         }
 

@@ -22,8 +22,18 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pertemuans', function (Blueprint $table) {
-            $table->dropForeign(['materi_id']);
-            $table->dropColumn('materi_id');
+            // Check if foreign key exists before dropping
+            $indexName = 'pertemuans_materi_id_foreign';
+            $sm = Schema::getConnection()->getDoctrineSchemaManager();
+            $doctrineTable = $sm->introspectTable('pertemuans');
+            
+            if ($doctrineTable->hasForeignKey($indexName)) {
+                $table->dropForeign(['materi_id']);
+            }
+            
+            if (Schema::hasColumn('pertemuans', 'materi_id')) {
+                $table->dropColumn('materi_id');
+            }
         });
     }
 };

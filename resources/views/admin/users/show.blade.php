@@ -45,10 +45,33 @@
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <!-- Left Column: Personal & Academic -->
                             <div class="lg:col-span-2 space-y-8">
+                                <!-- Student ID & Personal Info -->
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Identitas Siswa</h4>
+                                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                        <div class="p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg border border-indigo-100">
+                                            <dt class="text-sm font-medium text-indigo-700">ID Siswa</dt>
+                                            @if($user->student_id)
+                                                <dd class="text-lg font-bold text-indigo-900 mt-1">{{ $user->student_id }}</dd>
+                                            @else
+                                                <dd class="text-sm text-gray-500 italic mt-1">-</dd>
+                                            @endif
+                                        </div>
+                                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                            <dt class="text-sm font-medium text-gray-600">Nama Siswa</dt>
+                                            <dd class="text-lg font-semibold text-gray-900 mt-1">{{ $user->name }}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+
                                 <!-- Data Diri -->
                                 <div>
                                     <h4 class="text-lg font-semibold text-gray-800 mb-4">Data Diri</h4>
                                     <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                        <div class="p-3 bg-gray-50 rounded-lg">
+                                            <dt class="text-sm font-medium text-gray-500">Email</dt>
+                                            <dd class="text-sm text-gray-900 mt-1">{{ $user->email }}</dd>
+                                        </div>
                                         <div class="p-3 bg-gray-50 rounded-lg">
                                             <dt class="text-sm font-medium text-gray-500">No. Telepon</dt>
                                             <dd class="text-sm text-gray-900 mt-1">{{ $user->no_telepon ?? '-' }}</dd>
@@ -81,10 +104,14 @@
                                             <dd class="text-sm text-gray-900 mt-1">{{ $user->sekolah ?? '-' }}</dd>
                                         </div>
                                         <div class="p-3 bg-gray-50 rounded-lg">
+                                            <dt class="text-sm font-medium text-gray-500">Kelas Sekolah</dt>
+                                            <dd class="text-sm text-gray-900 mt-1">{{ $user->kelas_sekolah ?? '-' }}</dd>
+                                        </div>
+                                        <div class="p-3 bg-gray-50 rounded-lg">
                                             <dt class="text-sm font-medium text-gray-500">Durasi Program</dt>
                                             <dd class="text-sm text-gray-900 mt-1">{{ $user->durasi ?? '-' }}</dd>
                                         </div>
-                                        <div class="p-3 bg-gray-50 rounded-lg">
+                                        <div class="p-3 bg-gray-50 rounded-lg md:col-span-2">
                                             <dt class="text-sm font-medium text-gray-500">Hari Belajar</dt>
                                             <dd class="text-sm text-gray-900 mt-1">{{ is_array($user->hari_belajar) ? implode(', ', $user->hari_belajar) : '-' }}</dd>
                                         </div>
@@ -124,22 +151,43 @@
                                 <!-- Kelas yang Diikuti -->
                                 <div>
                                     <h4 class="text-lg font-semibold text-gray-800 mb-4">Kelas yang Diikuti</h4>
-                                    <div class="space-y-2">
+                                    <div class="space-y-3">
                                         @forelse($user->enrolledClasses as $kelas)
-                                            <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                                                <div>
-                                                    <h5 class="text-sm font-medium text-gray-900">{{ $kelas->nama_kelas }}</h5>
-                                                    <p class="text-xs text-gray-500">{{ $kelas->bidang === 'coding' ? 'Coding' : ($kelas->bidang === 'desain' ? 'Desain' : 'Robotik') }}</p>
+                                            @php
+                                                $enrollment = $kelas->pivot;
+                                                $status = $enrollment->status;
+                                                $targetSessions = $enrollment->target_sessions ?? 0;
+                                                $attendedSessions = $enrollment->sessions_attended ?? 0;
+                                                $remainingSessions = max(0, $targetSessions - $attendedSessions);
+                                                $progressPercent = $targetSessions > 0 ? round(($attendedSessions / $targetSessions) * 100) : 0;
+                                            @endphp
+                                            <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <div class="flex justify-between items-start mb-3">
+                                                    <div>
+                                                        <h5 class="text-sm font-semibold text-gray-900">{{ $kelas->nama_kelas }}</h5>
+                                                        <p class="text-xs text-gray-500 mt-1">{{ $kelas->bidang === 'coding' ? 'Coding' : ($kelas->bidang === 'desain' ? 'Desain' : 'Robotik') }}</p>
+                                                    </div>
+                                                    <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full {{ $status == 'active' ? 'bg-green-100 text-green-800' : ($status == 'expiring' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                                        {{ $status == 'active' ? 'Aktif' : ($status == 'expiring' ? 'Berakhir Segera' : 'Tidak Aktif') }}
+                                                    </span>
                                                 </div>
-                                                @php
-                                                    $status = $kelas->pivot->status;
-                                                @endphp
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                    {{ $status == 'active' ? 'Aktif' : 'Tidak Aktif' }}
-                                                </span>
+                                                
+                                                <!-- Session Progress -->
+                                                <div class="space-y-2">
+                                                    <div class="flex justify-between text-xs">
+                                                        <span class="text-gray-600">Sesi Tersisa</span>
+                                                        <span class="font-bold text-indigo-600">{{ $remainingSessions }} / {{ $targetSessions }}</span>
+                                                    </div>
+                                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                                        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all" style="width: {{ $progressPercent }}%"></div>
+                                                    </div>
+                                                    <div class="text-xs text-gray-500">
+                                                        {{ $attendedSessions }} sesi selesai • {{ $progressPercent }}% progress
+                                                    </div>
+                                                </div>
                                             </div>
                                         @empty
-                                            <p class="text-sm text-gray-500">Siswa ini belum terdaftar di kelas manapun.</p>
+                                            <p class="text-sm text-gray-500 italic">Siswa ini belum terdaftar di kelas manapun.</p>
                                         @endforelse
                                     </div>
                                 </div>

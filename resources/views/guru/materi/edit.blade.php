@@ -83,7 +83,7 @@
                                 <x-input-label for="file" :value="__('File Baru (kosongkan jika tidak ingin mengubah)')" />
                                 <input id="file" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" type="file" name="file" accept=".pdf,.mp4,.doc,.docx" />
                                 <p class="mt-1 text-sm text-gray-500">
-                                    <span id="file_size_info">Maksimal: PDF 5MB, Dokumen/Video 100MB</span>
+                                    <span id="file_size_info">Maksimal: 10MB untuk semua file</span>
                                 </p>
                                 <x-input-error :messages="$errors->get('file')" class="mt-2" />
                                 
@@ -163,8 +163,8 @@
             const fileInput = document.getElementById('file');
             const fileSizeInfo = document.getElementById('file_size_info');
             const maxSizes = {
-                'pdf': 5 * 1024 * 1024, // 5MB
-                'document': 100 * 1024 * 1024, // 100MB
+                'pdf': 10 * 1024 * 1024, // 10MB
+                'document': 10 * 1024 * 1024, // 10MB
                 'link': 0
             };
             
@@ -173,7 +173,7 @@
                 if (!file) return;
                 
                 const fileType = fileTypeSelect?.value;
-                const maxSize = maxSizes[fileType] || (100 * 1024 * 1024); // Default 100MB
+                const maxSize = maxSizes[fileType] || (10 * 1024 * 1024); // Default 10MB
                 
                 if (file.size > maxSize) {
                     const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(0);
@@ -201,7 +201,7 @@
                 } else if (fileType === 'video') {
                     fileSizeInfo.textContent = 'Untuk video, gunakan link YouTube';
                 } else {
-                    fileSizeInfo.textContent = 'Maksimal: PDF 5MB, Dokumen/Video 100MB';
+                    fileSizeInfo.textContent = 'Maksimal: 10MB untuk semua file';
                 }
             });
             

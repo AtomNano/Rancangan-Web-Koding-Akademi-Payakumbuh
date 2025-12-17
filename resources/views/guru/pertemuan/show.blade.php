@@ -152,7 +152,7 @@
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Siswa</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
                                             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Hadir</th>
                                             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Izin</th>
@@ -166,8 +166,21 @@
                                                 $existingPresensi = $presensi->get($s->id);
                                             @endphp
                                             <tr data-student-text="{{ strtolower($s->name . ' ' . $s->email) }}">
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $index + 1 }}
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    @if($s->student_id)
+                                                        <div class="flex items-center">
+                                                            <div class="flex-shrink-0 h-8 w-8">
+                                                                <div class="w-8 h-8 bg-indigo-100 rounded flex items-center justify-center">
+                                                                    <span class="text-indigo-700 font-bold text-xs">{{ substr($s->student_id, 0, 1) }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ml-2">
+                                                                <div class="text-sm font-semibold text-indigo-600">{{ $s->student_id }}</div>
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <span class="text-sm text-gray-400 italic">-</span>
+                                                    @endif
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="text-sm font-medium text-gray-900">{{ $s->name }}</div>

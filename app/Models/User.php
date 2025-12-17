@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'role',
         'id_siswa',
+        'student_id',
         'kode_admin',
         'kode_guru',
         'tanggal_pendaftaran',

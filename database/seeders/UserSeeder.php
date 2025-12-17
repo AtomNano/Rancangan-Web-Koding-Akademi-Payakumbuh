@@ -93,6 +93,7 @@ class UserSeeder extends Seeder
                 'kelas_sekolah' => '11 SMA',
                 'tanggal_lahir' => '2006-05-15',
                 'jenis_kelamin' => 'laki-laki',
+                'student_id' => '001-01-122025',
             ],
             [
                 'name' => 'Indah Permata',
@@ -104,6 +105,7 @@ class UserSeeder extends Seeder
                 'kelas_sekolah' => '10 SMA',
                 'tanggal_lahir' => '2007-03-20',
                 'jenis_kelamin' => 'perempuan',
+                'student_id' => '002-01-122025',
             ],
             [
                 'name' => 'Reza Pratama',
@@ -115,6 +117,7 @@ class UserSeeder extends Seeder
                 'kelas_sekolah' => '9 SMP',
                 'tanggal_lahir' => '2008-07-10',
                 'jenis_kelamin' => 'laki-laki',
+                'student_id' => '003-01-122025',
             ],
         ];
 
@@ -128,6 +131,7 @@ class UserSeeder extends Seeder
                 'sekolah' => $student['sekolah'],
                 'tanggal_lahir' => $student['tanggal_lahir'],
                 'jenis_kelamin' => $student['jenis_kelamin'],
+                'student_id' => $student['student_id'],
             ]);
         }
 

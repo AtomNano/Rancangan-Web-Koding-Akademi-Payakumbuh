@@ -25,56 +25,10 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <!-- Left Sidebar: Pertemuan List -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden sticky top-20">
-                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4">
-                            <h3 class="text-sm font-bold text-white uppercase tracking-wide">Daftar Pertemuan</h3>
-                        </div>
-                        <div class="max-h-96 overflow-y-auto divide-y divide-gray-200">
-                            @if($pertemuans->count() > 0)
-                                @foreach($pertemuans as $pertemuan)
-                                    <a href="{{ route('guru.pertemuan.show', ['kelas' => $kelas->id, 'pertemuan' => $pertemuan->id]) }}" 
-                                       class="block p-3 hover:bg-indigo-50 transition-colors border-l-4 border-transparent hover:border-indigo-600">
-                                        <div class="text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ $pertemuan->judul_pertemuan }}</div>
-                                        <div class="text-xs text-gray-500 mt-1">
-                                            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                            {{ $pertemuan->tanggal_pertemuan->format('d M Y') }}
-                                        </div>
-                                        @if($pertemuan->waktu_mulai)
-                                            <div class="text-xs text-gray-500 mt-0.5">
-                                                <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                {{ $pertemuan->waktu_mulai }}
-                                            </div>
-                                        @endif
-                                        <div class="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded inline-block">
-                                            Input Absen
-                                        </div>
-                                    </a>
-                                @endforeach
-                            @else
-                                <div class="p-4 text-center text-xs text-gray-500">
-                                    Belum ada pertemuan
-                                </div>
-                            @endif
-                        </div>
-                        <div class="p-3 border-t border-gray-200 bg-gray-50">
-                            <a href="{{ route('guru.pertemuan.create', $kelas->id) }}" 
-                               class="block w-full text-center px-3 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold rounded hover:from-indigo-700 hover:to-purple-700 transition-all">
-                                + Pertemuan Baru
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Main Content -->
-                <div class="lg:col-span-3">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Main Content - Full Width -->
+                <div class="w-full">
             @if (session('success'))
                 <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
                     <div class="flex items-center">
@@ -148,22 +102,22 @@
                 </div>
 
                 <!-- Pertemuan List -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden w-full">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table class="w-full divide-y divide-gray-200">
                             <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pertemuan</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Tanggal & Waktu</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Materi</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Jumlah Absen</th>
-                                    <th class="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Aksi</th>
+                                    <th class="px-8 py-5 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pertemuan</th>
+                                    <th class="px-8 py-5 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Tanggal & Waktu</th>
+                                    <th class="px-8 py-5 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Materi</th>
+                                    <th class="px-8 py-5 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Jumlah Absen</th>
+                                    <th class="px-8 py-5 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($pertemuans as $pertemuan)
                                     <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-4">
+                                        <td class="px-8 py-5">
                                             <div class="flex items-center">
                                                 <div class="flex-shrink-0 h-10 w-10 rounded-lg bg-indigo-100 flex items-center justify-center">
                                                     <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +132,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-8 py-5 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
                                                 {{ $pertemuan->tanggal_pertemuan->format('d M Y') }}
                                             </div>
@@ -194,7 +148,7 @@
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-8 py-5">
                                             @if($pertemuan->materi)
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                                     {{ Str::limit($pertemuan->materi, 30) }}
@@ -203,7 +157,7 @@
                                                 <span class="text-xs text-gray-400">Tidak ada materi</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-8 py-5 whitespace-nowrap">
                                             <a href="{{ route('guru.pertemuan.absen-detail', ['kelas' => $kelas->id, 'pertemuan' => $pertemuan->id]) }}" 
                                                class="flex items-center hover:text-indigo-600 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4 text-green-500 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,7 +167,7 @@
                                                 <span class="text-xs text-gray-500 ml-1">siswa</span>
                                             </a>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <td class="px-8 py-5 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex items-center justify-end space-x-2">
                                                 <a href="{{ route('guru.pertemuan.absen-detail', ['kelas' => $kelas->id, 'pertemuan' => $pertemuan->id]) }}" 
                                                    class="inline-flex items-center px-3 py-1.5 bg-cyan-50 text-cyan-700 rounded-lg hover:bg-cyan-100 transition-colors text-xs font-medium">
