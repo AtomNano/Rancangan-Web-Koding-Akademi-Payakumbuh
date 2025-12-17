@@ -327,3 +327,8 @@ Route::get('/check-google-oauth', function () {
 require __DIR__.'/auth.php';
 
 Route::get('/admin/backup/debug-list-files', [App\Http\Controllers\Admin\BackupController::class, 'debugListFiles']);
+
+// Alias untuk kompatibilitas link sidebar lama
+Route::get('/admin/pertemuan/select', function () {
+    return redirect()->route('admin.pertemuan.index');
+})->name('admin.pertemuan.select');
