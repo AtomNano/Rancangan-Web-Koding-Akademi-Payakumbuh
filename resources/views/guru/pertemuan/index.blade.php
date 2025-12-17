@@ -134,7 +134,7 @@
                                         </td>
                                         <td class="px-8 py-5 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
-                                                {{ $pertemuan->tanggal_pertemuan->format('d M Y') }}
+                                                {{ optional($pertemuan->tanggal_pertemuan)?->format('d M Y') ?? '-' }}
                                             </div>
                                             @if($pertemuan->waktu_mulai)
                                                 <div class="text-xs text-gray-500 mt-0.5">

@@ -34,7 +34,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                         <div class="bg-blue-50 p-4 rounded-lg">
                             <p class="text-sm text-gray-600">Tanggal</p>
-                            <p class="text-lg font-semibold text-gray-900 mt-1">{{ $pertemuan->tanggal_pertemuan->format('d M Y') }}</p>
+                            <p class="text-lg font-semibold text-gray-900 mt-1">{{ optional($pertemuan->tanggal_pertemuan)?->format('d M Y') ?? '-' }}</p>
                         </div>
                         @if($pertemuan->waktu_mulai)
                         <div class="bg-green-50 p-4 rounded-lg">
@@ -135,12 +135,12 @@
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <div class="h-10 w-10 rounded-full bg-green-200 flex items-center justify-center">
-                                                    <span class="text-green-700 font-bold text-sm">{{ substr($p->user->name, 0, 2) }}</span>
+                                                    <span class="text-green-700 font-bold text-sm">{{ substr($p->user->name ?? '??', 0, 2) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
-                                                <div class="text-xs text-gray-500">{{ $p->user->email }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name ?? 'Tidak diketahui' }}</div>
+                                                <div class="text-xs text-gray-500">{{ $p->user->email ?? '-' }}</div>
                                             </div>
                                         </div>
                                         <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">Hadir</span>
@@ -171,12 +171,12 @@
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <div class="h-10 w-10 rounded-full bg-yellow-200 flex items-center justify-center">
-                                                    <span class="text-yellow-700 font-bold text-sm">{{ substr($p->user->name, 0, 2) }}</span>
+                                                    <span class="text-yellow-700 font-bold text-sm">{{ substr($p->user->name ?? '??', 0, 2) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
-                                                <div class="text-xs text-gray-500">{{ $p->user->email }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name ?? 'Tidak diketahui' }}</div>
+                                                <div class="text-xs text-gray-500">{{ $p->user->email ?? '-' }}</div>
                                             </div>
                                         </div>
                                         <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">Izin</span>
@@ -207,12 +207,12 @@
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <div class="h-10 w-10 rounded-full bg-blue-200 flex items-center justify-center">
-                                                    <span class="text-blue-700 font-bold text-sm">{{ substr($p->user->name, 0, 2) }}</span>
+                                                    <span class="text-blue-700 font-bold text-sm">{{ substr($p->user->name ?? '??', 0, 2) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
-                                                <div class="text-xs text-gray-500">{{ $p->user->email }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name ?? 'Tidak diketahui' }}</div>
+                                                <div class="text-xs text-gray-500">{{ $p->user->email ?? '-' }}</div>
                                             </div>
                                         </div>
                                         <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">Sakit</span>
@@ -243,12 +243,12 @@
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <div class="h-10 w-10 rounded-full bg-red-200 flex items-center justify-center">
-                                                    <span class="text-red-700 font-bold text-sm">{{ substr($p->user->name, 0, 2) }}</span>
+                                                    <span class="text-red-700 font-bold text-sm">{{ substr($p->user->name ?? '??', 0, 2) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
-                                                <div class="text-xs text-gray-500">{{ $p->user->email }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name ?? 'Tidak diketahui' }}</div>
+                                                <div class="text-xs text-gray-500">{{ $p->user->email ?? '-' }}</div>
                                             </div>
                                         </div>
                                         <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">Alpha</span>
