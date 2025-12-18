@@ -99,29 +99,23 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                     <div>
-                                        <p class="text-sm font-medium text-green-800">Sudah Absen</p>
-                                        <p class="text-xs text-green-600">{{ $todayPresensi->tanggal_akses->format('d M Y H:i') }}</p>
+                                        <p class="text-sm font-medium text-green-800">Kehadiran Anda sudah tercatat</p>
+                                        <p class="text-xs text-green-600">{{ $todayPresensi->tanggal_akses->format('d M Y H:i') }} · Status: {{ ucfirst($todayPresensi->status_kehadiran) }}</p>
                                     </div>
                                 </div>
                             </div>
                         @else
-                            <form action="{{ route('siswa.materi.absen', $materi) }}" method="POST" id="absenForm">
-                                @csrf
-                                <div class="space-y-3">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <div class="flex items-start">
+                                    <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 19a7 7 0 110-14 7 7 0 010 14z"></path>
+                                    </svg>
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Status Kehadiran</label>
-                                        <select name="status_kehadiran" class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <option value="hadir">Hadir</option>
-                                            <option value="izin">Izin</option>
-                                            <option value="sakit">Sakit</option>
-                                            <option value="alpha">Alpha</option>
-                                        </select>
+                                        <p class="text-sm font-medium text-blue-800">Menunggu Input Kehadiran</p>
+                                        <p class="text-xs text-blue-600">Kehadiran akan dicatat oleh admin atau mentor. Pastikan tetap hadir sesuai jadwal.</p>
                                     </div>
-                                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm">
-                                        Submit Absen
-                                    </button>
                                 </div>
-                            </form>
+                            </div>
                         @endif
                     </div>
 

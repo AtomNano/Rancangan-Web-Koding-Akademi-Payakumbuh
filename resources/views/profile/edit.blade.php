@@ -21,7 +21,10 @@
 
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+                    <h3 class="text-lg font-semibold text-gray-900">Pengelolaan Akun</h3>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Penghapusan akun dikelola oleh admin. Hubungi tim admin bila membutuhkan penonaktifan akun.
+                    </p>
                 </div>
             </div>
         </div>

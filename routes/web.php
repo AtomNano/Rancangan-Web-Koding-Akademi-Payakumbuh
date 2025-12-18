@@ -93,7 +93,6 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Notification routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -141,6 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('kelas/{kelas}/attendance/export', [KelasController::class, 'exportAttendance'])->name('kelas.attendance.export');
         Route::get('kelas/{kelas}/siswa/{user}/log/export', [KelasController::class, 'exportStudentLearningLog'])->name('kelas.student.log.export');
+        Route::get('kelas/{kelas}/siswa/{siswa}/progress', [\App\Http\Controllers\Admin\PertemuanController::class, 'studentProgress'])->name('kelas.student.progress');
         
         // Additional class routes
         Route::get('kelas/{kelas}/enroll', [KelasController::class, 'enrollForm'])->name('kelas.enroll');

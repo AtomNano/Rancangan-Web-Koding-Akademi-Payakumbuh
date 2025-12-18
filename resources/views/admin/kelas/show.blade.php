@@ -125,6 +125,7 @@
                                             <thead class="bg-gray-100 dark:bg-gray-100">
                                                 <tr>
                                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">ID Siswa</th>
                                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">Email</th>
                                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">Progress Individual</th>
                                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wider">Aksi</th>
@@ -134,6 +135,14 @@
                                                 @foreach ($studentsProgress as $studentData)
                                                     <tr>
                                                         <td class="px-6 py-4 whitespace-nowrap">{{ $studentData['student']->name }}</td>
+                                                        @php $displayId = $studentData['student']->student_id ?? $studentData['student']->id_siswa; @endphp
+                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                            @if($displayId)
+                                                                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700">{{ $displayId }}</span>
+                                                            @else
+                                                                <span class="text-gray-400 italic">Belum diisi</span>
+                                                            @endif
+                                                        </td>
                                                         <td class="px-6 py-4 whitespace-nowrap">{{ $studentData['student']->email }}</td>
                                                         <td class="px-6 py-4 whitespace-nowrap">
                                                             <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-200">
@@ -142,6 +151,7 @@
                                                             <p class="text-xs text-gray-600 dark:text-gray-600 mt-1">{{ $studentData['completed_materi_count'] }} dari {{ $studentData['total_approved_materi'] }} Materi ({{ $studentData['progress'] }}%)</p>
                                                         </td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                                                            <a href="{{ route('admin.kelas.student.progress', ['kelas' => $kelas->id, 'siswa' => $studentData['student']->id]) }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-600 dark:hover:text-blue-800">Lihat Progress</a>
                                                             <a href="{{ route('admin.kelas.student.log.export', ['kelas' => $kelas->id, 'user' => $studentData['student']->id]) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-600 dark:hover:text-indigo-800">Export Log Belajar</a>
                                                             <form action="{{ route('admin.kelas.unenroll', ['kelas' => $kelas->id, 'user' => $studentData['student']->id]) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin mengeluarkan siswa ini dari kelas?');">
                                                                 @csrf

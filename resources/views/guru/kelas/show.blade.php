@@ -148,14 +148,18 @@
                                         @endphp
                                         <tr class="hover:bg-indigo-50 transition-colors">
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="inline-flex items-center">
-                                                    @if($s->student_id)
-                                                        <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-indigo-100 mr-2">
-                                                            <span class="text-xs font-bold text-indigo-700">{{ substr($s->student_id, 0, 1) }}</span>
-                                                        </span>
-                                                        <span class="text-xs font-bold text-gray-700">{{ $s->student_id }}</span>
+                                                <div class="flex items-center">
+                                                    @php $displayId = $s->student_id ?? $s->id_siswa; @endphp
+                                                    @if($displayId)
+                                                        <div class="flex flex-col">
+                                                            <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-800 text-xs font-mono font-bold">
+                                                                {{ $displayId }}
+                                                            </span>
+                                                        </div>
                                                     @else
-                                                        <span class="text-xs text-gray-400 italic">-</span>
+                                                        <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-gray-100 text-gray-500 text-xs italic">
+                                                            Belum diisi
+                                                        </span>
                                                     @endif
                                                 </div>
                                             </td>
@@ -168,7 +172,14 @@
                                                     </div>
                                                     <div class="ml-4">
                                                         <div class="text-sm font-semibold text-gray-900">{{ $s->name }}</div>
-                                                        <div class="text-xs text-gray-500 mt-0.5">User ID: {{ $s->id }}</div>
+                                                        @php $displayId = $s->student_id ?? $s->id_siswa; @endphp
+                                                        <div class="text-xs text-gray-500 mt-0.5">
+                                                            @if($displayId)
+                                                                ID: <span class="font-semibold text-indigo-600">{{ $displayId }}</span>
+                                                            @else
+                                                                <span class="italic">ID belum diisi</span>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>

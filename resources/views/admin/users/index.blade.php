@@ -118,10 +118,10 @@
                 <thead class="bg-gradient-to-r from-gray-100 to-gray-50 border-b-2 border-gray-200">
                     <tr>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Pengguna</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sisa Sesi Belajar</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ID Siswa</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Peran</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Kelas</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sisa Sesi</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Bergabung</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Aksi</th>
@@ -150,7 +150,7 @@
                                     </div>
                                 </a>
                             </td>
-                            <!-- Sisa Sesi -->
+                            <!-- Sisa Sesi Belajar -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($user->role === 'siswa')
                                     @php
@@ -182,6 +182,7 @@
                                     <span class="text-gray-400 italic">-</span>
                                 @endif
                             </td>
+                            <!-- ID Siswa -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($user->role === 'siswa')
                                     @php
@@ -205,6 +206,7 @@
                                     <span class="text-gray-400 italic">-</span>
                                 @endif
                             </td>
+                            <!-- Peran -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $role_classes = [

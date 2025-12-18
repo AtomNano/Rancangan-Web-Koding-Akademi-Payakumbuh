@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <a href="{{ route('guru.kelas.show', $kelas) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white hover:bg-gray-100 text-indigo-600 transition-colors">
+                <a href="{{ route('admin.kelas.show', $kelas) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white hover:bg-gray-100 text-indigo-600 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
@@ -12,12 +12,17 @@
                     <p class="text-sm text-gray-500 mt-1">{{ $kelas->nama_kelas }} · {{ $siswa->name }}</p>
                 </div>
             </div>
+            <a href="{{ route('admin.kelas.student.log.export', ['kelas' => $kelas->id, 'user' => $siswa->id]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Export Log Belajar
+            </a>
         </div>
     </x-slot>
 
     <div class="py-8 bg-gradient-to-b from-gray-50 to-white min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Student Header Card -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
                 <div class="flex items-start justify-between mb-6">
                     <div class="flex items-center space-x-4">
@@ -39,7 +44,6 @@
                     </div>
                 </div>
 
-                <!-- Info Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                     <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4 border-l-4 border-indigo-500">
                         <p class="text-gray-600 text-xs font-semibold uppercase tracking-wide">Kelas</p>
@@ -50,7 +54,7 @@
                         <p class="text-gray-900 font-bold text-lg mt-1">{{ \Carbon\Carbon::parse($enrollment->created_at)->format('d/m/Y') }}</p>
                     </div>
                     <div class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-4 border-l-4 border-pink-500">
-                        <p class="text-gray-600 text-xs font-semibold uppercase tracking-wide">Mentor</p>
+                        <p class="text-gray-600 text-xs font-semibold uppercase tracking-wide">Mentor Utama</p>
                         <p class="text-gray-900 font-bold text-lg mt-1">{{ $kelas->guru->name ?? 'N/A' }}</p>
                     </div>
                     <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border-l-4 border-green-500">
@@ -60,7 +64,6 @@
                 </div>
             </div>
 
-            <!-- Statistics Cards -->
             @php
                 $totalPertemuan = count($learningLog);
                 $hadirCount = collect($learningLog)->where('status_kehadiran', 'hadir')->count();
@@ -71,7 +74,6 @@
             @endphp
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <!-- Total Pertemuan -->
                 <div class="bg-white rounded-xl shadow-md p-5 border border-gray-200 hover:shadow-lg transition-shadow">
                     <div class="flex items-center justify-between">
                         <div>
@@ -86,7 +88,6 @@
                     </div>
                 </div>
 
-                <!-- Hadir -->
                 <div class="bg-white rounded-xl shadow-md p-5 border border-gray-200 hover:shadow-lg transition-shadow">
                     <div class="flex items-center justify-between">
                         <div>
@@ -101,7 +102,6 @@
                     </div>
                 </div>
 
-                <!-- Izin/Sakit -->
                 <div class="bg-white rounded-xl shadow-md p-5 border border-gray-200 hover:shadow-lg transition-shadow">
                     <div class="flex items-center justify-between">
                         <div>
@@ -116,7 +116,6 @@
                     </div>
                 </div>
 
-                <!-- Kehadiran Percentage -->
                 <div class="bg-white rounded-xl shadow-md p-5 border border-gray-200 hover:shadow-lg transition-shadow">
                     <div class="flex items-center justify-between">
                         <div>
@@ -133,12 +132,11 @@
             </div>
         </div>
 
-        <!-- Learning Log Table -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
                 <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
                     <h2 class="text-lg font-bold text-gray-900">Riwayat Pembelajaran</h2>
-                    <p class="text-sm text-gray-600 mt-1">Detail pertemuan dan kehadiran siswa</p>
+                    <p class="text-sm text-gray-600 mt-1">Rincian pertemuan, mentor, dan kehadiran siswa</p>
                 </div>
 
                 @if(count($learningLog) > 0)
@@ -155,7 +153,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($learningLog as $log)
+                                @foreach($learningLog as $log)
                                     <tr class="hover:bg-indigo-50 transition-colors">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
                                             {{ $log['number'] }}
@@ -169,9 +167,9 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                             <div class="flex items-center">
                                                 <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2">
-                                                    <span class="text-xs font-bold text-indigo-600">{{ strtoupper(substr($log['nama_mentor'], 0, 1)) }}</span>
+                                                    <span class="text-xs font-bold text-indigo-600">{{ strtoupper(substr($log['nama_mentor'] ?? '-', 0, 1)) }}</span>
                                                 </div>
-                                                <span class="font-medium">{{ $log['nama_mentor'] }}</span>
+                                                <span class="font-medium">{{ $log['nama_mentor'] ?? '-' }}</span>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-700">
@@ -212,27 +210,15 @@
                                                         @break
                                                 @endswitch
                                             @else
-                                                <span class="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-full bg-gray-100 text-gray-800">
-                                                    -
-                                                </span>
+                                                <span class="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-full bg-gray-100 text-gray-800">-</span>
                                             @endif
                                         </td>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="px-6 py-12 text-center">
-                                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
-                                            <p class="text-gray-500 font-medium text-sm">Belum ada data pertemuan</p>
-                                        </td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Summary Stats at Bottom -->
                     <div class="px-6 py-5 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
                         <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-4">Ringkasan Kehadiran</p>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">

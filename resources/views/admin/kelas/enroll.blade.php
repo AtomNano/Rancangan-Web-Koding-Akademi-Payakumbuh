@@ -68,7 +68,15 @@
                                         @foreach ($availableStudents as $student)
                                             <div class="flex items-center mb-2">
                                                 <input type="checkbox" name="student_ids[]" id="student_{{ $student->id }}" value="{{ $student->id }}" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                                                <label for="student_{{ $student->id }}" class="ml-2 text-sm text-gray-900">{{ $student->name }} ({{ $student->email }})</label>
+                                                @php $displayId = $student->student_id ?? $student->id_siswa; @endphp
+                                                <label for="student_{{ $student->id }}" class="ml-2 text-sm text-gray-900">
+                                                    {{ $student->name }}
+                                                    @if($displayId)
+                                                        <span class="text-xs text-indigo-600 font-semibold">({{ $displayId }})</span>
+                                                    @else
+                                                        <span class="text-xs text-gray-500">({{ $student->email }})</span>
+                                                    @endif
+                                                </label>
                                             </div>
                                         @endforeach
                                     </div>

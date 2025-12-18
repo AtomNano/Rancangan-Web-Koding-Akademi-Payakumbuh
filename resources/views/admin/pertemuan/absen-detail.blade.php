@@ -141,8 +141,9 @@
                                             <div class="ml-3 flex-1">
                                                 <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
                                                 <div class="text-xs text-gray-500">
-                                                    @if($p->user->student_id)
-                                                        <span class="font-semibold text-green-600">{{ $p->user->student_id }}</span>
+                                                    @php $displayId = $p->user->student_id ?? $p->user->id_siswa; @endphp
+                                                    @if($displayId)
+                                                        <span class="font-semibold text-green-600">{{ $displayId }}</span>
                                                     @else
                                                         <span class="text-gray-400">-</span>
                                                     @endif
@@ -183,8 +184,9 @@
                                             <div class="ml-3 flex-1">
                                                 <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
                                                 <div class="text-xs text-gray-500">
-                                                    @if($p->user->student_id)
-                                                        <span class="font-semibold text-yellow-600">{{ $p->user->student_id }}</span>
+                                                    @php $displayId = $p->user->student_id ?? $p->user->id_siswa; @endphp
+                                                    @if($displayId)
+                                                        <span class="font-semibold text-yellow-600">{{ $displayId }}</span>
                                                     @else
                                                         <span class="text-gray-400">-</span>
                                                     @endif
@@ -225,8 +227,9 @@
                                             <div class="ml-3 flex-1">
                                                 <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
                                                 <div class="text-xs text-gray-500">
-                                                    @if($p->user->student_id)
-                                                        <span class="font-semibold text-blue-600">{{ $p->user->student_id }}</span>
+                                                    @php $displayId = $p->user->student_id ?? $p->user->id_siswa; @endphp
+                                                    @if($displayId)
+                                                        <span class="font-semibold text-blue-600">{{ $displayId }}</span>
                                                     @else
                                                         <span class="text-gray-400">-</span>
                                                     @endif
@@ -267,8 +270,9 @@
                                             <div class="ml-3 flex-1">
                                                 <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
                                                 <div class="text-xs text-gray-500">
-                                                    @if($p->user->student_id)
-                                                        <span class="font-semibold text-red-600">{{ $p->user->student_id }}</span>
+                                                    @php $displayId = $p->user->student_id ?? $p->user->id_siswa; @endphp
+                                                    @if($displayId)
+                                                        <span class="font-semibold text-red-600">{{ $displayId }}</span>
                                                     @else
                                                         <span class="text-gray-400">-</span>
                                                     @endif

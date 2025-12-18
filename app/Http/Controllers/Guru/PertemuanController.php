@@ -117,6 +117,7 @@ class PertemuanController extends Controller
 
         $siswa = \App\Models\User::whereIn('id', $enrollmentIds)
             ->where('role', 'siswa')
+            ->select('id', 'name', 'email', 'student_id', 'id_siswa', 'role')
             ->orderBy('name')
             ->get();
 
@@ -353,6 +354,7 @@ class PertemuanController extends Controller
             ->toArray();
         $siswa = User::whereIn('id', $siswa)
             ->where('role', 'siswa')
+            ->select('id', 'name', 'email', 'student_id', 'id_siswa', 'role')
             ->orderBy('name')
             ->get();
 

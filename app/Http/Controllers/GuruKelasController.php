@@ -108,6 +108,7 @@ class GuruKelasController extends Controller
         if (!empty($enrollmentIds)) {
             $siswa = \App\Models\User::whereIn('id', $enrollmentIds)
                 ->where('role', 'siswa')
+                ->select('id', 'name', 'email', 'student_id', 'id_siswa', 'no_telepon', 'sekolah', 'role')
                 ->orderBy('name')
                 ->get();
         }
@@ -117,6 +118,7 @@ class GuruKelasController extends Controller
             try {
                 $siswa = $kelas->students()
                     ->where('users.role', 'siswa')
+                    ->select('users.id', 'users.name', 'users.email', 'users.student_id', 'users.id_siswa', 'users.no_telepon', 'users.sekolah', 'users.role')
                     ->orderBy('name')
                     ->get();
             } catch (\Exception $e) {

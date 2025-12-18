@@ -167,19 +167,16 @@
                                             @endphp
                                             <tr data-student-text="{{ strtolower($s->name . ' ' . $s->email) }}">
                                                 <td class="px-6 py-4 whitespace-nowrap">
-                                                    @if($s->student_id)
+                                                    @php $displayId = $s->student_id ?? $s->id_siswa; @endphp
+                                                    @if($displayId)
                                                         <div class="flex items-center">
-                                                            <div class="flex-shrink-0 h-8 w-8">
-                                                                <div class="w-8 h-8 bg-indigo-100 rounded flex items-center justify-center">
-                                                                    <span class="text-indigo-700 font-bold text-xs">{{ substr($s->student_id, 0, 1) }}</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="ml-2">
-                                                                <div class="text-sm font-semibold text-indigo-600">{{ $s->student_id }}</div>
-                                                            </div>
+                                                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-indigo-100 mr-2">
+                                                                <span class="text-indigo-700 font-bold text-xs">{{ substr($displayId, 0, 1) }}</span>
+                                                            </span>
+                                                            <div class="text-sm font-semibold text-indigo-600">{{ $displayId }}</div>
                                                         </div>
                                                     @else
-                                                        <span class="text-sm text-gray-400 italic">-</span>
+                                                        <span class="text-xs text-gray-400 italic">Belum diisi</span>
                                                     @endif
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap">

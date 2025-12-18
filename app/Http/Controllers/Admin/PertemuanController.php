@@ -124,6 +124,7 @@ class PertemuanController extends Controller
 
         $siswa = User::whereIn('id', $enrollmentIds)
             ->where('role', 'siswa')
+            ->select('id', 'name', 'email', 'student_id', 'id_siswa', 'role')
             ->orderBy('name')
             ->get();
 
@@ -286,6 +287,7 @@ class PertemuanController extends Controller
             ->toArray();
         $siswa = User::whereIn('id', $siswa)
             ->where('role', 'siswa')
+            ->select('id', 'name', 'email', 'student_id', 'id_siswa', 'role')
             ->orderBy('name')
             ->get();
 
@@ -311,6 +313,49 @@ class PertemuanController extends Controller
             'izinList',
             'sakitList',
             'alphaList'
+        ));
+    }
+
+    /**
+     * Display individual student progress for admin review.
+     */
+    public function studentProgress(Request $request, Kelas $kelas, User $siswa)
+    {
+        $enrollment = Enrollment::where('kelas_id', $kelas->id)
+            ->where('user_id', $siswa->id)
+            ->firstOrFail();
+
+        $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
+            ->orderBy('tanggal_pertemuan')
+            ->orderBy('waktu_mulai')
+            ->with('guru')
+            ->get();
+
+        $presensiList = Presensi::where('user_id', $siswa->id)
+            ->whereIn('pertemuan_id', $pertemuans->pluck('id'))
+            ->get()
+            ->keyBy('pertemuan_id');
+
+        $learningLog = [];
+        foreach ($pertemuans as $index => $pertemuan) {
+            $presensi = $presensiList->get($pertemuan->id);
+
+            $learningLog[] = [
+                'number' => $index + 1,
+                'pertemuan' => $pertemuan,
+                'presensi' => $presensi,
+                'tanggal_belajar' => $pertemuan->tanggal_pertemuan,
+                'nama_mentor' => $pertemuan->guru ? $pertemuan->guru->name : 'Tidak diketahui',
+                'materi' => $pertemuan->materi,
+                'status_kehadiran' => $presensi ? $presensi->status_kehadiran : null,
+            ];
+        }
+
+        return view('admin.siswa.progress', compact(
+            'kelas',
+            'siswa',
+            'enrollment',
+            'learningLog'
         ));
     }
 }

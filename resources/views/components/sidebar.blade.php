@@ -14,7 +14,10 @@
      style="display: none;"></div>
 
 <!-- Sidebar -->
-<div :class="{
+<div @mouseenter="sidebarOpen = true" 
+     @mouseleave="if(window.innerWidth >= 768) sidebarOpen = false"
+     @click="sidebarOpen = true"
+     :class="{
     'translate-x-0': sidebarOpen,
     '-translate-x-full md:translate-x-0': !sidebarOpen,
     'w-60': sidebarOpen,

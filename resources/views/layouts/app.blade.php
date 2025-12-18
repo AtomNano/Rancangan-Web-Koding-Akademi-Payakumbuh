@@ -31,15 +31,12 @@
     <body class="font-sans antialiased bg-slate-50">
         <div x-data="{ sidebarOpen: false }" 
              x-init="
-                // Set default sidebar state based on screen size
-                if (window.innerWidth >= 768) {
-                    sidebarOpen = true;
-                }
-                // Update on resize
+                // Set default sidebar state - start collapsed on desktop, closed on mobile
+                sidebarOpen = false;
+                
+                // Update on resize - ensure sidebar is closed on mobile
                 window.addEventListener('resize', () => {
-                    if (window.innerWidth >= 768) {
-                        sidebarOpen = true;
-                    } else {
+                    if (window.innerWidth < 768) {
                         sidebarOpen = false;
                     }
                 });

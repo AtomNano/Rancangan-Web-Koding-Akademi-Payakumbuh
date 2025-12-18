@@ -167,9 +167,13 @@ class KelasController extends Controller
     public function enrollForm(Kelas $kelas)
     {
         $availableStudents = User::where('role', 'siswa')
+            ->select('id', 'name', 'email', 'student_id', 'id_siswa', 'role')
             ->whereDoesntHave('enrollments', function($query) use ($kelas) {
-                $query->where('kelas_id', $kelas->id);
+                $query->where('kelas_id', $kelas->id)
+                    ->whereIn('status', ['active', 'expiring']);
             })
+            ->orderByRaw('COALESCE(student_id, id_siswa)')
+            ->orderBy('name')
             ->get();
 
         return view('admin.kelas.enroll', compact('kelas', 'availableStudents'));
@@ -189,24 +193,66 @@ class KelasController extends Controller
 
         $targetSessions = $validated['duration_months'] * $validated['monthly_quota'];
 
+        $created = 0;
+        $reactivated = 0;
+
         foreach ($validated['student_ids'] as $studentId) {
             $student = User::find($studentId);
-            $kelas->enrollments()->create([
-                'user_id' => $studentId,
-                'status' => 'active',
-                'start_date' => $validated['start_date'],
-                'duration_months' => $validated['duration_months'],
-                'monthly_quota' => $validated['monthly_quota'],
-                'target_sessions' => $targetSessions,
-            ]);
-            // Log activity
+            $existingEnrollment = $kelas->enrollments()
+                ->where('user_id', $studentId)
+                ->latest('created_at')
+                ->first();
+
+            if ($existingEnrollment) {
+                $newTarget = $targetSessions;
+
+                if ($existingEnrollment->target_sessions) {
+                    $newTarget += (int) $existingEnrollment->target_sessions;
+                }
+
+                $existingEnrollment->update([
+                    'status' => 'active',
+                    'start_date' => $validated['start_date'],
+                    'duration_months' => $validated['duration_months'],
+                    'monthly_quota' => $validated['monthly_quota'],
+                    'target_sessions' => $newTarget,
+                    'last_session_notified_at' => null,
+                ]);
+
+                $existingEnrollment->syncSessionProgress();
+                $reactivated++;
+            } else {
+                $kelas->enrollments()->create([
+                    'user_id' => $studentId,
+                    'status' => 'active',
+                    'start_date' => $validated['start_date'],
+                    'duration_months' => $validated['duration_months'],
+                    'monthly_quota' => $validated['monthly_quota'],
+                    'target_sessions' => $targetSessions,
+                    'sessions_attended' => 0,
+                ]);
+                $created++;
+            }
+
             if ($student) {
                 ActivityLogger::logStudentEnrolled($kelas, $student);
             }
         }
 
+        $messageParts = [];
+        if ($created > 0) {
+            $messageParts[] = "$created siswa baru";
+        }
+        if ($reactivated > 0) {
+            $messageParts[] = "$reactivated siswa diperpanjang";
+        }
+
+        $message = empty($messageParts)
+            ? 'Perubahan enrollment berhasil disimpan.'
+            : 'Berhasil diproses: ' . implode(', ', $messageParts) . '.';
+
         return redirect()->route('admin.kelas.show', $kelas)
-            ->with('success', 'Siswa berhasil didaftarkan ke kelas.');
+            ->with('success', $message);
     }
 
     /**
