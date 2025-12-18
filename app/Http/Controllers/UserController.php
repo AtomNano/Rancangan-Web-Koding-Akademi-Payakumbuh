@@ -23,6 +23,9 @@ class UserController extends Controller
 
         $query = User::query();
 
+        // Eager-load enrolled classes with pivot fields for Sisa Sesi computation
+        $query->with('enrolledClasses');
+
         if ($role) {
             $query->where('role', $role);
         }

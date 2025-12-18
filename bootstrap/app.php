@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'siswa' => \App\Http\Middleware\SiswaMiddleware::class,
         ]);
         
+        // Trust reverse proxies (e.g., Hostinger/Cloudflare) so HTTPS and
+        // X-Forwarded headers are honored for secure cookies and CSRF/session.
+        $middleware->trustProxies(at: '*');
+        
         // Add middleware to increase POST size limits
         // Note: This runs early but upload_max_filesize and post_max_size
         // must be set in php.ini and server must be restarted

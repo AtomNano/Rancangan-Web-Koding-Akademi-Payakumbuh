@@ -121,6 +121,7 @@
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ID Siswa</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Peran</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Kelas</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sisa Sesi</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Bergabung</th>
                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Aksi</th>
@@ -140,9 +141,7 @@
                                         <div class="ml-4">
                                             <div class="text-sm font-semibold text-gray-900">{{ $user->name }}</div>
                                             <div class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</div>
-                                            @if($user->role === 'siswa' && $user->id_siswa)
-                                            <div class="text-xs text-indigo-600 font-bold mt-1">ID: {{ $user->id_siswa }}</div>
-                                            @elseif($user->role === 'admin' && $user->kode_admin)
+                                            @if($user->role === 'admin' && $user->kode_admin)
                                             <div class="text-xs text-purple-700 font-bold mt-1">{{ $user->kode_admin }}</div>
                                             @elseif($user->role === 'guru' && $user->kode_guru)
                                             <div class="text-xs text-green-700 font-bold mt-1">{{ $user->kode_guru }}</div>
@@ -151,17 +150,52 @@
                                     </div>
                                 </a>
                             </td>
+                            <!-- Sisa Sesi -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($user->role === 'siswa')
-                                    @if($user->student_id)
+                                    @php
+                                        $remainingSessions = null;
+                                        if ($user->enrolledClasses && $user->enrolledClasses->count() > 0) {
+                                            $remainingSessions = 0;
+                                            $hasTarget = false;
+                                            foreach ($user->enrolledClasses as $kelas) {
+                                                $ts = $kelas->pivot->target_sessions ?? null;
+                                                $sa = $kelas->pivot->sessions_attended ?? 0;
+                                                if (!is_null($ts)) {
+                                                    $hasTarget = true;
+                                                    $remainingSessions += max(0, (int)$ts - (int)$sa);
+                                                }
+                                            }
+                                            if (!$hasTarget) {
+                                                $remainingSessions = null;
+                                            }
+                                        }
+                                    @endphp
+                                    @if(!is_null($remainingSessions))
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+                                            {{ $remainingSessions }} sesi
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400 italic">-</span>
+                                    @endif
+                                @else
+                                    <span class="text-gray-400 italic">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($user->role === 'siswa')
+                                    @php
+                                        $displayIdSiswa = $user->student_id ?: $user->id_siswa;
+                                    @endphp
+                                    @if($displayIdSiswa)
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-8 w-8">
                                                 <div class="w-8 h-8 bg-indigo-100 rounded flex items-center justify-center">
-                                                    <span class="text-indigo-700 font-bold text-xs">{{ substr($user->student_id, 0, 1) }}</span>
+                                                    <span class="text-indigo-700 font-bold text-xs">{{ substr($displayIdSiswa, 0, 1) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3">
-                                                <div class="text-sm font-semibold text-indigo-600">{{ $user->student_id }}</div>
+                                                <div class="text-sm font-semibold text-indigo-600">{{ $displayIdSiswa }}</div>
                                             </div>
                                         </div>
                                     @else

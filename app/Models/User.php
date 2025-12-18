@@ -111,8 +111,15 @@ class User extends Authenticatable
     public function enrolledClasses()
     {
         return $this->belongsToMany(Kelas::class, 'enrollments', 'user_id', 'kelas_id')
-                    ->withPivot('status')
-                    ->withTimestamps();
+            ->withPivot(
+                'status',
+                'start_date',
+                'duration_months',
+                'monthly_quota',
+                'target_sessions',
+                'sessions_attended'
+            )
+            ->withTimestamps();
     }
 
     /**
