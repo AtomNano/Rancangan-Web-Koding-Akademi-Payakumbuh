@@ -51,8 +51,11 @@
                                     <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                                         <div class="p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg border border-indigo-100">
                                             <dt class="text-sm font-medium text-indigo-700">ID Siswa</dt>
-                                            @if($user->student_id)
-                                                <dd class="text-lg font-bold text-indigo-900 mt-1">{{ $user->student_id }}</dd>
+                                            @php
+                                                $displayIdSiswa = $user->student_id ?: $user->id_siswa;
+                                            @endphp
+                                            @if($displayIdSiswa)
+                                                <dd class="text-lg font-bold text-indigo-900 mt-1">{{ $displayIdSiswa }}</dd>
                                             @else
                                                 <dd class="text-sm text-gray-500 italic mt-1">-</dd>
                                             @endif

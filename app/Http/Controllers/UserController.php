@@ -410,6 +410,23 @@ class UserController extends Controller
                     ->whereIn('kelas_id', $idsToUpdate)
                     ->update($updatePayload);
             }
+
+            // Auto-generate id_siswa if missing and siswa now has at least one kelas
+            if ($request->role === 'siswa' && empty($user->id_siswa)) {
+                $kelasIdForId = null;
+                if (!empty($idsToAdd)) {
+                    $kelasIdForId = reset($idsToAdd);
+                } elseif (!empty($selectedKelasIds)) {
+                    $kelasIdForId = reset($selectedKelasIds);
+                } elseif (!empty($currentKelasIds)) {
+                    $kelasIdForId = reset($currentKelasIds);
+                }
+
+                if ($kelasIdForId) {
+                    $generated = \App\Models\User::generateIdSiswa($kelasIdForId);
+                    $user->update(['id_siswa' => $generated]);
+                }
+            }
         }
 
         // Log activity
