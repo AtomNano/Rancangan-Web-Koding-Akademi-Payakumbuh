@@ -67,7 +67,6 @@
                                     <option value="pdf" {{ old('file_type') === 'pdf' ? 'selected' : '' }}>PDF</option>
                                     <option value="video" {{ old('file_type') === 'video' ? 'selected' : '' }}>Video</option>
                                     <option value="document" {{ old('file_type') === 'document' ? 'selected' : '' }}>Dokumen (Word)</option>
-                                    <option value="link" {{ old('file_type') === 'link' ? 'selected' : '' }}>Link</option>
                                 </select>
                                 <x-input-error :messages="$errors->get('file_type')" class="mt-2" />
                             </div>

@@ -106,10 +106,10 @@ class Materi extends Model
 
     /**
      * Retrieve the model for route model binding.
-     * This ensures route model binding works correctly.
+     * This ensures route model binding works correctly and includes soft deleted records.
      */
     public function resolveRouteBinding($value, $field = null)
     {
-        return $this->where($field ?? $this->getRouteKeyName(), $value)->first();
+        return $this->withTrashed()->where($field ?? $this->getRouteKeyName(), $value)->first();
     }
 }

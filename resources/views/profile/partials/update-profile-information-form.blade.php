@@ -59,7 +59,23 @@
                 </div>
                 <div>
                     <h4 class="text-sm font-medium text-gray-500">Bidang Ajar</h4>
-                    <p class="mt-1 text-sm text-gray-900">{{ $user->bidang_ajar ?? '-' }}</p>
+                    @php
+                        $bidangAjar = $user->bidang_ajar;
+                        if (is_array($bidangAjar)) {
+                            $bidangAjar = implode(', ', array_filter($bidangAjar));
+                        }
+                    @endphp
+                    <p class="mt-1 text-sm text-gray-900">{{ $bidangAjar ?: '-' }}</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-medium text-gray-500">Hari Belajar</h4>
+                    @php
+                        $hariBelajar = $user->hari_belajar;
+                        if (is_array($hariBelajar)) {
+                            $hariBelajar = implode(', ', array_filter($hariBelajar));
+                        }
+                    @endphp
+                    <p class="mt-1 text-sm text-gray-900">{{ $hariBelajar ?: '-' }}</p>
                 </div>
                  <div>
                     <h4 class="text-sm font-medium text-gray-500">Tanggal Pendaftaran</h4>

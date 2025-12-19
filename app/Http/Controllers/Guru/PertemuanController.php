@@ -38,8 +38,8 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
+        // Tampilkan semua pertemuan di kelas ini (tidak hanya yang dibuat oleh guru login)
         $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
-            ->where('guru_id', $user->id)
             ->orderBy('tanggal_pertemuan', 'desc')
             ->orderBy('waktu_mulai', 'desc')
             ->withCount('presensi')
@@ -59,7 +59,9 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        return view('guru.pertemuan.create', compact('kelas'));
+        $gurus = User::where('role', 'guru')->orderBy('name')->get();
+
+        return view('guru.pertemuan.create', compact('kelas', 'gurus'));
     }
 
     /**
@@ -74,21 +76,24 @@ class PertemuanController extends Controller
         }
 
         $validated = $request->validate([
+            'guru_id' => 'required|exists:users,id',
             'judul_pertemuan' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'tanggal_pertemuan' => 'required|date',
             'waktu_mulai' => 'nullable|date_format:H:i',
             'waktu_selesai' => 'nullable|date_format:H:i|after:waktu_mulai',
+            'materi' => 'nullable|string|max:255',
         ]);
 
         $pertemuan = Pertemuan::create([
             'kelas_id' => $kelas->id,
-            'guru_id' => $user->id,
+            'guru_id' => $validated['guru_id'],
             'judul_pertemuan' => $validated['judul_pertemuan'],
             'deskripsi' => $validated['deskripsi'] ?? null,
             'tanggal_pertemuan' => $validated['tanggal_pertemuan'],
             'waktu_mulai' => $validated['waktu_mulai'] ?? null,
             'waktu_selesai' => $validated['waktu_selesai'] ?? null,
+            'materi' => $validated['materi'] ?? null,
         ]);
 
         return redirect()->route('guru.pertemuan.show', ['kelas' => $kelas->id, 'pertemuan' => $pertemuan->id])
@@ -106,7 +111,8 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
+        // Allow any guru with access to the class to view the pertemuan, even if created by guru lain
+        if ($pertemuan->kelas_id !== $kelas->id) {
             abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
         }
 
@@ -140,7 +146,8 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
+        // Allow class-authorized guru to input absen meski bukan pengajar yang membuat pertemuan
+        if ($pertemuan->kelas_id !== $kelas->id) {
             abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
         }
 
@@ -225,11 +232,14 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
+        // Allow class-authorized guru to mengedit pertemuan yang ada di kelasnya
+        if ($pertemuan->kelas_id !== $kelas->id) {
             abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
         }
 
-        return view('guru.pertemuan.edit', compact('kelas', 'pertemuan'));
+        $gurus = User::where('role', 'guru')->orderBy('name')->get();
+
+        return view('guru.pertemuan.edit', compact('kelas', 'pertemuan', 'gurus'));
     }
 
     /**
@@ -243,16 +253,19 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
+        // Allow class-authorized guru to memperbarui pertemuan di kelasnya
+        if ($pertemuan->kelas_id !== $kelas->id) {
             abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
         }
 
         $validated = $request->validate([
+            'guru_id' => 'required|exists:users,id',
             'judul_pertemuan' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'tanggal_pertemuan' => 'required|date',
             'waktu_mulai' => 'nullable|date_format:H:i',
             'waktu_selesai' => 'nullable|date_format:H:i|after:waktu_mulai',
+            'materi' => 'nullable|string|max:255',
         ]);
 
         $pertemuan->update($validated);
@@ -272,7 +285,8 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
+        // Allow class-authorized guru to menghapus pertemuan di kelasnya
+        if ($pertemuan->kelas_id !== $kelas->id) {
             abort(403, 'Anda tidak diizinkan menghapus pertemuan ini.');
         }
 
@@ -324,7 +338,6 @@ class PertemuanController extends Controller
         }
 
         $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
-            ->where('guru_id', $user->id)
             ->orderBy('tanggal_pertemuan', 'desc')
             ->orderBy('waktu_mulai', 'desc')
             ->withCount('presensi')
@@ -344,7 +357,7 @@ class PertemuanController extends Controller
             abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
         }
 
-        if ($pertemuan->kelas_id !== $kelas->id || $pertemuan->guru_id !== $user->id) {
+        if ($pertemuan->kelas_id !== $kelas->id) {
             abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
         }
 
@@ -401,7 +414,6 @@ class PertemuanController extends Controller
 
         // Get all pertemuans in this class
         $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
-            ->where('guru_id', $user->id)
             ->orderBy('tanggal_pertemuan')
             ->get();
 

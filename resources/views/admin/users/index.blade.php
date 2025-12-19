@@ -113,24 +113,24 @@
 
     <!-- Users Table -->
     <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
-        <div class="overflow-x-auto">
-            <table class="w-full divide-y divide-gray-200">
+        <div class="overflow-x-auto lg:overflow-x-visible">
+            <table class="min-w-full divide-y divide-gray-200 table-auto">
                 <thead class="bg-gradient-to-r from-gray-100 to-gray-50 border-b-2 border-gray-200">
                     <tr>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Pengguna</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sisa Sesi Belajar</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ID Siswa</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Peran</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Kelas</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Bergabung</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Aksi</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Pengguna</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sisa Sesi Belajar</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ID Siswa</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Peran</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Kelas</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Bergabung</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse ($users as $user)
                         <tr class="hover:bg-indigo-50 transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-4 py-4 align-top">
                                 <a href="{{ route('admin.users.show', $user->id) }}" class="hover:opacity-80 group">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
@@ -151,7 +151,7 @@
                                 </a>
                             </td>
                             <!-- Sisa Sesi Belajar -->
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-4 py-4 align-top">
                                 @if($user->role === 'siswa')
                                     @php
                                         $remainingSessions = null;
@@ -183,7 +183,7 @@
                                 @endif
                             </td>
                             <!-- ID Siswa -->
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-4 py-4 align-top">
                                 @if($user->role === 'siswa')
                                     @php
                                         $displayIdSiswa = $user->student_id ?: $user->id_siswa;
@@ -207,7 +207,7 @@
                                 @endif
                             </td>
                             <!-- Peran -->
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-4 py-4 align-top">
                                 @php
                                     $role_classes = [
                                         'admin' => 'bg-purple-100 text-purple-800',
@@ -219,9 +219,9 @@
                                     {{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : 'Siswa') }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-700">
+                            <td class="px-4 py-4 text-sm text-gray-700 align-top">
                                 @if($user->enrolledClasses->count() > 0)
-                                    <div class="flex flex-wrap gap-1.5">
+                                    <div class="flex flex-wrap gap-1.5 max-w-xs">
                                         @foreach($user->enrolledClasses as $kelas)
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 border border-indigo-200">
                                                 {{ $kelas->nama_kelas }}
@@ -232,7 +232,7 @@
                                     <span class="text-gray-400 italic">-</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-4 py-4 align-top">
                                 <div class="inline-flex items-center">
                                     @if($user->is_active)
                                         <div class="flex items-center">
@@ -247,11 +247,11 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
+                            <td class="px-4 py-4 text-sm font-medium text-gray-700 align-top">
                                 {{ $user->created_at->format('d/m/Y') }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center space-x-1">
+                            <td class="px-4 py-4 text-sm font-medium align-top">
+                                <div class="flex flex-wrap gap-2">
                                     <a href="{{ route('admin.users.edit', $user->id) }}" class="inline-flex items-center px-3 py-2 rounded-lg text-indigo-600 hover:text-white bg-indigo-50 hover:bg-indigo-600 transition-all duration-200 font-semibold text-xs" title="Edit">
                                         <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
                                         Edit

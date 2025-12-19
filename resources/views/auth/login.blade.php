@@ -115,9 +115,9 @@
             <form method="POST" action="{{ route('login') }}" class="space-y-6" id="loginForm">
                 @csrf
                 
-                <!-- Email Field -->
+                <!-- Email / Phone Field -->
                 <div>
-                    <label for="email" class="mb-2 block text-sm font-semibold text-gray-700">Email</label>
+                    <label for="email" class="mb-2 block text-sm font-semibold text-gray-700">Email atau Nomor Telepon</label>
                     <div class="relative">
                         <div class="input-icon-wrapper pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                             <svg class="input-icon h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,15 +125,16 @@
                             </svg>
                         </div>
                         <input 
-                            type="email" 
+                            type="text" 
                             id="email" 
                             name="email" 
                             value="{{ old('email') }}" 
-                            placeholder="nama@email.com"
+                            placeholder="nama@email.com atau 081234567890"
                             class="input-field block w-full rounded-xl border border-gray-300 bg-white py-3 pl-12 pr-4 text-black placeholder-gray-400 
                             transition-all duration-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm" 
                             required 
                             autofocus 
+                            autocomplete="username"
                         />
                     </div>
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />

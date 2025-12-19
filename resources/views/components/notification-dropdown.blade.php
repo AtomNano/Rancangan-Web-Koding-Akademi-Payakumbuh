@@ -103,7 +103,11 @@ document.addEventListener('alpine:init', () => {
         read: [],
         unreadCount: 0,
         fetchNotifications() {
-            fetch(fetchUrl)
+            fetch(fetchUrl, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     this.unread = data.unread;

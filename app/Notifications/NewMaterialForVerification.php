@@ -45,7 +45,8 @@ class NewMaterialForVerification extends Notification implements ShouldQueue
             'icon' => 'upload',
             'title' => 'Materi Baru Menunggu Verifikasi',
             'message' => $teacherName . ' telah mengunggah materi baru: "' . $this->materi->judul . '".',
-            'url' => route('admin.materi.show', $this->materi->id),
+            'materi_id' => $this->materi->id,
+            'materi_judul' => $this->materi->judul,
         ];
     }
 }
