@@ -86,7 +86,7 @@ class UserController extends Controller
     {
         $baseValidated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->whereNull('deleted_at')],
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
         ]);
@@ -194,47 +194,118 @@ class UserController extends Controller
             $userData['no_telepon'] = $guruValidated['no_telepon'] ?? null;
         }
 
-        $user = User::create($userData);
+        $metaKeys = ['_target_sessions', '_duration_months', '_monthly_quota', '_start_date'];
+        $metaValues = [];
+        foreach ($metaKeys as $key) {
+            if (array_key_exists($key, $userData)) {
+                $metaValues[$key] = $userData[$key];
+                unset($userData[$key]);
+            }
+        }
 
-        // Generate kode otomatis untuk admin dan guru
-        if ($request->role === 'admin') {
+        $existingUser = User::withTrashed()->where('email', $userData['email'])->first();
+        $wasRestored = false;
+        $oldValues = null;
+
+        if ($existingUser && $existingUser->trashed()) {
+            $wasRestored = true;
+            $oldValues = $existingUser->toArray();
+            $existingUser->restore();
+            $existingUser->forceFill($userData);
+            $existingUser->save();
+            $user = $existingUser;
+        } else {
+            $user = User::create($userData);
+        }
+
+        $enrollmentMeta = [
+            'start_date' => $metaValues['_start_date'] ?? null,
+            'duration_months' => $metaValues['_duration_months'] ?? null,
+            'monthly_quota' => $metaValues['_monthly_quota'] ?? null,
+            'target_sessions' => $metaValues['_target_sessions'] ?? null,
+        ];
+
+        // Generate kode otomatis untuk admin dan guru bila belum ada
+        if ($request->role === 'admin' && empty($user->kode_admin)) {
             $kodeAdmin = User::generateKodeAdmin();
             $user->update(['kode_admin' => $kodeAdmin]);
-        } elseif ($request->role === 'guru') {
+        } elseif ($request->role === 'guru' && empty($user->kode_guru)) {
             $kodeGuru = User::generateKodeGuru();
             $user->update(['kode_guru' => $kodeGuru]);
         }
 
+        $selectedKelas = collect();
         if (($request->role === 'siswa' || $request->role === 'guru') && !empty($request->bidang_ajar)) {
+            $selectedKelas = Kelas::whereIn('nama_kelas', $request->bidang_ajar)->get();
+            $selectedKelasIds = $selectedKelas->pluck('id')->toArray();
+
+            if (!empty($selectedKelasIds)) {
+                $user->enrollments()->whereNotIn('kelas_id', $selectedKelasIds)->delete();
+            }
+
             $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
-            foreach ($request->bidang_ajar as $bidangAjarItem) {
-                $kelas = Kelas::where('nama_kelas', $bidangAjarItem)->first();
-                if ($kelas) {
-                    $user->enrollments()->create([
+
+            foreach ($selectedKelas as $kelas) {
+                $enrollment = $user->enrollments()->where('kelas_id', $kelas->id)->first();
+
+                if ($enrollment) {
+                    $updatePayload = ['status' => $status];
+
+                    if ($request->role === 'siswa') {
+                        $updatePayload = array_merge($updatePayload, [
+                            'start_date' => $enrollmentMeta['start_date'],
+                            'duration_months' => $enrollmentMeta['duration_months'],
+                            'monthly_quota' => $enrollmentMeta['monthly_quota'],
+                            'target_sessions' => $enrollmentMeta['target_sessions'],
+                        ]);
+                    }
+
+                    $enrollment->update($updatePayload);
+                } else {
+                    $payload = [
                         'kelas_id' => $kelas->id,
                         'status' => $status,
-                        'start_date' => $userData['_start_date'] ?? null,
-                        'duration_months' => $userData['_duration_months'] ?? null,
-                        'monthly_quota' => $userData['_monthly_quota'] ?? null,
-                        'target_sessions' => $userData['_target_sessions'] ?? null,
                         'sessions_attended' => 0,
-                    ]);
+                    ];
 
-                    // Generate ID Siswa otomatis setelah enrollment dibuat
+                    if ($request->role === 'siswa') {
+                        $payload = array_merge($payload, [
+                            'start_date' => $enrollmentMeta['start_date'],
+                            'duration_months' => $enrollmentMeta['duration_months'],
+                            'monthly_quota' => $enrollmentMeta['monthly_quota'],
+                            'target_sessions' => $enrollmentMeta['target_sessions'],
+                        ]);
+                    }
+
+                    $user->enrollments()->create($payload);
+
                     if ($request->role === 'siswa' && !$user->id_siswa) {
                         $idSiswa = User::generateIdSiswa($kelas->id);
                         $user->update(['id_siswa' => $idSiswa]);
-                        break; // Generate ID berdasarkan kelas pertama
                     }
                 }
             }
         }
 
+        if ($request->role === 'siswa' && !$user->id_siswa && $user->enrollments()->exists()) {
+            $kelasId = $user->enrollments()->value('kelas_id');
+            if ($kelasId) {
+                $user->update(['id_siswa' => User::generateIdSiswa($kelasId)]);
+            }
+        }
+
         // Log activity
-        ActivityLogger::logUserCreated($user);
+        if ($wasRestored) {
+            $newValues = $user->fresh()->toArray();
+            ActivityLogger::logUserUpdated($user, $oldValues ?? [], $newValues);
+            $message = 'User berhasil dipulihkan dan diperbarui.';
+        } else {
+            ActivityLogger::logUserCreated($user);
+            $message = 'User berhasil dibuat.';
+        }
 
         return redirect()->route('admin.users.index', ['role' => $user->role])
-            ->with('success', 'User berhasil dibuat.');
+            ->with('success', $message);
     }
     /**
      * Display the specified resource.

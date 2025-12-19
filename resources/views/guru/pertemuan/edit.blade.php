@@ -32,6 +32,19 @@
 
                         <div class="space-y-6">
                             <div>
+                                <x-input-label for="guru_id" :value="__('Pengajar')" />
+                                <select id="guru_id" name="guru_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">-- Pilih Pengajar --</option>
+                                    @foreach($gurus as $g)
+                                        <option value="{{ $g->id }}" {{ old('guru_id', $pertemuan->guru_id) == $g->id ? 'selected' : '' }}>
+                                            {{ $g->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Pilih pengajar yang akan mengelola pertemuan ini</p>
+                            </div>
+
+                            <div>
                                 <x-input-label for="judul_pertemuan" :value="__('Judul Pertemuan')" />
                                 <x-text-input id="judul_pertemuan" 
                                               class="block mt-1 w-full" 

@@ -235,7 +235,7 @@ class MateriController extends Controller
         if ($materi instanceof Materi) {
             $materiModel = $materi;
         } else {
-            $materiModel = Materi::find($materi);
+            $materiModel = Materi::withTrashed()->find($materi);
         }
         
         if (!$materiModel) {

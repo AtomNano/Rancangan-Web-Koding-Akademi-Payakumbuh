@@ -19,12 +19,31 @@ class NotificationController extends Controller
 
         // Get some recent read notifications for context
         $readNotifications = $user->readNotifications()->latest()->limit(5)->get();
-        
-        return response()->json([
-            'unread' => $unreadNotifications,
-            'read' => $readNotifications,
-            'unread_count' => $unreadNotifications->count(),
-        ]);
+
+        // Generate URLs for notifications
+        $unreadNotifications->each(function ($notification) {
+            if (isset($notification->data['materi_id']) && !isset($notification->data['url'])) {
+                $notification->data['url'] = route('admin.materi.show', $notification->data['materi_id']);
+            }
+        });
+
+        $readNotifications->each(function ($notification) {
+            if (isset($notification->data['materi_id']) && !isset($notification->data['url'])) {
+                $notification->data['url'] = route('admin.materi.show', $notification->data['materi_id']);
+            }
+        });
+
+        // Return JSON for API/AJAX/fetch requests; otherwise redirect to dashboard
+        if (request()->expectsJson() || request()->wantsJson() || request()->ajax()) {
+            return response()->json([
+                'unread' => $unreadNotifications,
+                'read' => $readNotifications,
+                'unread_count' => $unreadNotifications->count(),
+            ]);
+        }
+
+        // For direct browser hits, avoid showing raw JSON and send users to their dashboard
+        return redirect()->route('dashboard');
     }
 
     /**

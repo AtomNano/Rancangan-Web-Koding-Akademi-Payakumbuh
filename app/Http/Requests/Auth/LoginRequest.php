@@ -3,9 +3,11 @@
 namespace App\Http\Requests\Auth;
 
 use App\Helpers\TurnstileHelper;
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -28,7 +30,24 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'email' => ['required', 'string', 'email'],
+            'email' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $value = trim((string) $value);
+
+                    if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                        return;
+                    }
+
+                    $digits = preg_replace('/\D+/', '', $value);
+
+                    if (strlen($digits) < 8) {
+                        $fail('Masukkan email atau nomor telepon yang valid.');
+                    }
+                },
+            ],
             'password' => ['required', 'string'],
         ];
 
@@ -67,12 +86,30 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        $loginInput = trim((string) $this->input('email'));
+        $password = (string) $this->input('password');
+        $remember = $this->boolean('remember');
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
+        if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+            if (! Auth::attempt(['email' => $loginInput, 'password' => $password], $remember)) {
+                RateLimiter::hit($this->throttleKey());
+
+                throw ValidationException::withMessages([
+                    'email' => trans('auth.failed'),
+                ]);
+            }
+        } else {
+            $user = $this->findUserByPhone($loginInput);
+
+            if (! $user || ! Hash::check($password, $user->password)) {
+                RateLimiter::hit($this->throttleKey());
+
+                throw ValidationException::withMessages([
+                    'email' => trans('auth.failed'),
+                ]);
+            }
+
+            Auth::login($user, $remember);
         }
 
         /*
@@ -119,7 +156,65 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $loginInput = trim((string) $this->input('email'));
+
+        return Str::transliterate(Str::lower($loginInput).'|'.$this->ip());
+    }
+
+    /**
+     * Find a user by phone number considering different formatting variants.
+     */
+    protected function findUserByPhone(string $value): ?User
+    {
+        $candidates = $this->phoneCandidates($value);
+
+        if (empty($candidates)) {
+            return null;
+        }
+
+        return User::whereIn('no_telepon', $candidates)->first();
+    }
+
+    /**
+     * Build possible variants for a phone number (raw, digits, international).
+     */
+    protected function phoneCandidates(string $value): array
+    {
+        $raw = trim($value);
+        $digits = preg_replace('/\D+/', '', $raw);
+
+        $variants = [];
+
+        if ($raw !== '') {
+            $variants[] = $raw;
+        }
+
+        if ($digits !== '') {
+            $variants[] = $digits;
+            $variants[] = '+' . $digits;
+
+            if (Str::startsWith($digits, '0')) {
+                $withoutZero = ltrim($digits, '0');
+                if ($withoutZero !== '') {
+                    $variants[] = '0' . $withoutZero;
+                    $variants[] = '62' . $withoutZero;
+                    $variants[] = '+62' . $withoutZero;
+                }
+            } elseif (Str::startsWith($digits, '62')) {
+                $local = substr($digits, 2);
+                if ($local !== '') {
+                    $variants[] = '0' . $local;
+                    $variants[] = '+62' . $local;
+                    $variants[] = '62' . $local;
+                }
+            } elseif (Str::startsWith($digits, '8')) {
+                $variants[] = '0' . $digits;
+                $variants[] = '62' . $digits;
+                $variants[] = '+62' . $digits;
+            }
+        }
+
+        return array_values(array_unique(array_filter($variants)));
     }
 
     /**
