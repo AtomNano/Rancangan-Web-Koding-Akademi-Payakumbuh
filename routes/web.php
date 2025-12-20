@@ -329,5 +329,3 @@ require __DIR__.'/auth.php';
 Route::get('/admin/backup/debug-list-files', [App\Http\Controllers\Admin\BackupController::class, 'debugListFiles']);
 
 // Alias untuk kompatibilitas link sidebar lama: arahkan ke halaman pilih kelas pertemuan
-Route::get('/admin/pertemuan/select', [\App\Http\Controllers\Admin\PertemuanController::class, 'selectKelas'])
-    ->name('admin.pertemuan.select');
