@@ -189,7 +189,7 @@
                         </div>
                         <div class="flex-1">
                             <p class="text-sm text-slate-900 font-medium">
-                                <b>{{ $activity->user->name }}</b> {{ $activity->description }}
+                                <b>{{ $activity->user?->name ?? 'Unknown User' }}</b> {{ $activity->description }}
                             </p>
                             <p class="text-xs text-slate-500 mt-1">{{ $activity->created_at->diffForHumans() }}</p>
                         </div>

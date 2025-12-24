@@ -123,17 +123,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's active status, considering their role and enrollment duration.
+     * Get the user's active status from the status column (active/inactive).
      *
      * @return bool
      */
     public function getIsActiveAttribute()
     {
-        // Admins and teachers are always considered active.
-        if (!$this->isSiswa()) {
+        // Check the status column first (active/inactive)
+        if ($this->getAttribute('status') === 'active') {
             return true;
         }
 
+        // For backward compatibility with enrollment-based logic for siswa
+        if (!$this->isSiswa()) {
+            return $this->getAttribute('status') === 'active';
+        }
+
+        // For siswa, also check enrollment validity
         $enrollments = $this->enrollments()
             ->whereIn('status', ['active', 'expiring'])
             ->get();
