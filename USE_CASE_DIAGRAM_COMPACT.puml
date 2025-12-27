@@ -1,0 +1,190 @@
+@startuml "E-Learning Coding Akademi - Use Case Diagram (Compact)"
+
+' Vertical layout
+top to bottom direction
+scale 1.2
+
+title E-Learning Coding Akademi Payakumbuh\nUse Case Diagram v2.0 (Compact)\nVerified - December 2025
+
+' ============ ACTORS ============
+:ADMIN\n(Pengurus): as Admin
+:GURU\n(Teacher): as Guru
+:SISWA\n(Student): as Siswa
+actor "Google\nOAuth" as Google
+
+' ============ SYSTEM BOUNDARY ============
+rectangle "E-Learning System" #WhiteSmoke {
+    
+    ' === AUTHENTICATION ===
+    rectangle "Autentikasi" #FFFFE0 {
+        (Login) as login
+        (Google OAuth\nLogin) as oauth
+        (Logout) as logout
+        (Update\nPassword) as passwd
+    }
+    
+    ' === ADMIN SECTION ===
+    rectangle "ADMIN Features" #FFE4E1 {
+        
+        rectangle "Manajemen Pengguna" {
+            (CRUD Users\n+ Activate/Deactivate) as admin_user
+        }
+        
+        rectangle "Manajemen Kelas" {
+            (CRUD Kelas) as admin_class
+            (Enroll/Unenroll\nSiswa) as admin_enroll
+            (Export Attendance) as admin_export
+        }
+        
+        rectangle "Manajemen Pertemuan" {
+            (CRUD Pertemuan) as admin_meeting
+            (Kelola Absensi) as admin_absen
+        }
+        
+        rectangle "Verifikasi Materi" {
+            (View Materi) as admin_view_mat
+            (Approve/Reject\nMateri) as admin_verify
+            (Remind Guru) as admin_remind
+        }
+        
+        rectangle "Monitoring & Backup" {
+            (Dashboard &\nStatistik) as admin_dash
+            (Activity Logs) as admin_logs
+            (Backup &\nExport Data) as admin_backup
+        }
+    }
+    
+    ' === GURU SECTION ===
+    rectangle "GURU Features" #E0F2FF {
+        
+        rectangle "Manajemen Materi" {
+            (Upload &\nKelola Materi) as guru_material
+            (View Status\nVerifikasi) as guru_status
+        }
+        
+        rectangle "Manajemen Pertemuan" {
+            (CRUD Pertemuan) as guru_meeting
+            (Input Absensi) as guru_absen
+        }
+        
+        rectangle "Monitoring" {
+            (View Kelas\n& Siswa) as guru_class
+            (Monitor Progress\nSiswa) as guru_monitor
+            (Dashboard Guru) as guru_dash
+        }
+    }
+    
+    ' === SISWA SECTION ===
+    rectangle "SISWA Features" #E0FFE0 {
+        
+        rectangle "Akses Pembelajaran" {
+            (View Kelas\nyang Diikuti) as siswa_class
+            (View & Open\nMateri) as siswa_material
+            (Download Materi) as siswa_download
+        }
+        
+        rectangle "Progress & Absensi" {
+            (Track Progress\n& Complete Materi) as siswa_progress
+            (Update PDF\nProgress) as siswa_pdf
+            (Submit Absensi) as siswa_absen
+        }
+        
+        rectangle "Dashboard" {
+            (Dashboard Siswa) as siswa_dash
+        }
+    }
+    
+    ' === SHARED FEATURES ===
+    rectangle "Shared Features" #F5F5F5 {
+        (Notifikasi) as notif
+        (Edit Profile) as profile
+    }
+}
+
+' ============ ADMIN CONNECTIONS ============
+Admin --> login
+Admin --> logout
+Admin --> admin_user
+Admin --> admin_class
+Admin --> admin_enroll
+Admin --> admin_export
+Admin --> admin_meeting
+Admin --> admin_absen
+Admin --> admin_view_mat
+Admin --> admin_verify
+Admin --> admin_remind
+Admin --> admin_dash
+Admin --> admin_logs
+Admin --> admin_backup
+Admin --> notif
+Admin --> profile
+Admin --> passwd
+
+' ============ GURU CONNECTIONS ============
+Guru --> login
+Guru --> logout
+Guru --> guru_material
+Guru --> guru_status
+Guru --> guru_meeting
+Guru --> guru_absen
+Guru --> guru_class
+Guru --> guru_monitor
+Guru --> guru_dash
+Guru --> notif
+Guru --> profile
+Guru --> passwd
+
+' ============ SISWA CONNECTIONS ============
+Siswa --> login
+Siswa --> logout
+Siswa --> siswa_class
+Siswa --> siswa_material
+Siswa --> siswa_download
+Siswa --> siswa_progress
+Siswa --> siswa_pdf
+Siswa --> siswa_absen
+Siswa --> siswa_dash
+Siswa --> notif
+Siswa --> profile
+Siswa --> passwd
+
+' ============ RELATIONSHIPS ============
+login .> oauth : <<include>>
+oauth ..> Google : <<uses>>
+admin_verify .> notif : <<notify>>
+guru_material .> notif : <<notify>>
+
+' ============ NOTES ============
+note right of Admin
+  <b>ADMIN</b>
+  • Full control sistem
+  • Kelola users & kelas
+  • Verifikasi materi
+  • Pertemuan & absensi
+  • Backup data
+end note
+
+note right of Guru
+  <b>GURU</b>
+  • Upload materi
+  • Kelola pertemuan
+  • Input absensi
+  • Monitor siswa
+end note
+
+note right of Siswa
+  <b>SISWA</b>
+  • Akses materi
+  • Track progress
+  • Submit absensi
+end note
+
+legend bottom
+  <b>E-Learning Coding Akademi Payakumbuh</b>
+  Version: 2.10 | Laravel 11 | MySQL
+  <b>New Features:</b> ⭐ Meeting & Attendance ⭐ Google OAuth
+  ⭐ PDF Progress Tracking ⭐ Notification System
+  Status: ✅ Verified with Implementation (Dec 2025)
+end legend
+
+@enduml

@@ -1,0 +1,124 @@
+@startuml
+title Use Case Diagram - E-Learning Coding Payakumbuh
+
+' ===== KONFIGURASI LAYOUT =====
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+' ===== ACTORS =====
+actor Admin as admin
+actor Guru as guru
+actor Siswa as siswa
+
+' ===== SYSTEM BOUNDARY =====
+package "E-Learning Coding Payakumbuh System" {
+
+    ' ===== FITUR UMUM / COMMON =====
+    rectangle "Autentikasi & Umum" #LightGray {
+        usecase "UC-01\nLogin ke Sistem" as UC01
+        usecase "UC-02\nLogout" as UC02
+        usecase "UC-03\nMelihat Dashboard" as UC03
+        usecase "UC-04\nMengelola Profile" as UC04
+        usecase "UC-05\nMelihat Notifikasi" as UC05
+    }
+
+    ' ===== MODUL ADMIN =====
+    rectangle "Modul Admin" #LightCoral {
+        usecase "UC-A1\nKelola Data Pengguna" as UCA1
+        usecase "UC-A2\nKelola Kelas" as UCA2
+        usecase "UC-A3\nEnroll/Unenroll Siswa" as UCA3
+        usecase "UC-A4\nKelola Pertemuan" as UCA4
+        usecase "UC-A5\nKelola Absensi" as UCA5
+        usecase "UC-A6\nVerifikasi Materi" as UCA6
+        usecase "UC-A7\nAnalytics Dashboard" as UCA7
+        usecase "UC-A8\nBackup & Export Data" as UCA8
+        usecase "UC-A9\nMonitor Progress Siswa" as UCA9
+    }
+
+    ' ===== MODUL GURU =====
+    rectangle "Modul Guru" #LightBlue {
+        usecase "UC-G1\nLihat Kelas Diampu" as UCG1
+        usecase "UC-G2\nUpload Materi" as UCG2
+        usecase "UC-G3\nKelola Materi" as UCG3
+        usecase "UC-G4\nKelola Pertemuan" as UCG4
+        usecase "UC-G5\nInput Absensi" as UCG5
+        usecase "UC-G6\nLaporan Kemajuan Siswa" as UCG6
+        usecase "UC-G7\nExport Learning Log" as UCG7
+    }
+
+    ' ===== MODUL SISWA =====
+    rectangle "Modul Siswa" #LightGreen {
+        usecase "UC-S1\nLihat Kelas Diikuti" as UCS1
+        usecase "UC-S2\nAkses Materi Pembelajaran" as UCS2
+        usecase "UC-S3\nTrack Progress Materi" as UCS3
+        usecase "UC-S4\nPantau Progress Pembelajaran" as UCS4
+        usecase "UC-S5\nLihat Riwayat Kehadiran" as UCS5
+    }
+}
+
+' ===== RELATIONSHIPS - ADMIN =====
+admin -down-> UC01
+admin -down-> UC02
+admin -down-> UC03
+admin -down-> UC04
+admin -down-> UC05
+
+admin -down-> UCA1
+admin -down-> UCA2
+admin -down-> UCA3
+admin -down-> UCA4
+admin -down-> UCA5
+admin -down-> UCA6
+admin -down-> UCA7
+admin -down-> UCA8
+admin -down-> UCA9
+
+' ===== RELATIONSHIPS - GURU =====
+guru -down-> UC01
+guru -down-> UC02
+guru -down-> UC03
+guru -down-> UC04
+guru -down-> UC05
+
+guru -down-> UCG1
+guru -down-> UCG2
+guru -down-> UCG3
+guru -down-> UCG4
+guru -down-> UCG5
+guru -down-> UCG6
+guru -down-> UCG7
+
+' ===== RELATIONSHIPS - SISWA =====
+siswa -down-> UC01
+siswa -down-> UC02
+siswa -down-> UC03
+siswa -down-> UC04
+siswa -down-> UC05
+
+siswa -down-> UCS1
+siswa -down-> UCS2
+siswa -down-> UCS3
+siswa -down-> UCS4
+siswa -down-> UCS5
+
+' ===== KETERANGAN =====
+note right of admin
+  <b>ADMIN</b>
+  Administrator sistem
+  dengan akses penuh
+end note
+
+note right of guru
+  <b>GURU</b>
+  Pengajar yang mengelola
+  kelas dan materi
+end note
+
+note right of siswa
+  <b>SISWA</b>
+  Peserta didik yang
+  mengakses pembelajaran
+end note
+
+@enduml
