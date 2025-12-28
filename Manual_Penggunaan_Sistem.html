@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Penggunaan Sistem E-Learning - Coding Akademi Payakumbuh</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: #1e293b;
+            background: #ffffff;
+            font-size: 11pt;
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm 20mm;
+        }
+
+        /* Cover Page */
+        .cover-page {
+            page-break-after: always;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            color: white;
+            padding: 40mm;
+            margin: -15mm -20mm 0;
+        }
+
+        .cover-logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cover-title {
+            font-size: 32pt;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cover-subtitle {
+            font-size: 18pt;
+            font-weight: 400;
+            color: #94a3b8;
+            margin-bottom: 40px;
+        }
+
+        .cover-info {
+            margin-top: 60px;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .cover-info p {
+            margin: 8px 0;
+            color: #cbd5e1;
+        }
+
+        /* Table of Contents */
+        .toc {
+            page-break-after: always;
+            padding-top: 20mm;
+        }
+
+        .toc h2 {
+            font-size: 18pt;
+            color: #0f172a;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3b82f6;
+        }
+
+        .toc-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 10px 0;
+            border-bottom: 1px dotted #e2e8f0;
+        }
+
+        .toc-item.main {
+            font-weight: 600;
+            font-size: 11pt;
+        }
+
+        .toc-item.sub {
+            padding-left: 25px;
+            font-size: 10pt;
+            color: #64748b;
+        }
+
+        /* Headings */
+        h1 {
+            font-size: 20pt;
+            color: #0f172a;
+            margin: 25px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        h2 {
+            font-size: 14pt;
+            color: #1e40af;
+            margin: 20px 0 12px;
+        }
+
+        h3 {
+            font-size: 12pt;
+            color: #334155;
+            margin: 15px 0 10px;
+        }
+
+        h4 {
+            font-size: 11pt;
+            color: #475569;
+            margin: 12px 0 8px;
+        }
+
+        /* Paragraphs */
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Boxes */
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Steps */
+        .steps {
+            counter-reset: step;
+            margin: 15px 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            counter-increment: step;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .step-number::before {
+            content: counter(step);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .feature-card h4 {
+            color: #1e40af;
+            margin-top: 0;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 9pt;
+            font-weight: 500;
+        }
+
+        .badge-primary {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Code/Input */
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 10pt;
+        }
+
+        /* Page breaks */
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* Screenshots and Images */
+        .screenshot {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+        }
+
+        .screenshot-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot-caption {
+            text-align: center;
+            font-size: 9pt;
+            color: #64748b;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            color: #64748b;
+            font-size: 9pt;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                font-size: 10pt;
+            }
+
+            .cover-page {
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Cover Page -->
+        <div class="cover-page">
+            <div class="cover-logo">📚</div>
+            <h1 class="cover-title">Manual Penggunaan Sistem</h1>
+            <p class="cover-subtitle">Platform E-Learning Coding Akademi Payakumbuh</p>
+
+            <div class="cover-info">
+                <p><strong>Versi:</strong> 2.10</p>
+                <p><strong>Tanggal:</strong> 28 Desember 2025</p>
+                <p><strong>Dokumen:</strong> Panduan Pengguna</p>
+            </div>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2>📑 Daftar Isi</h2>
+
+            <div class="toc-item main">1. Pendahuluan <span>3</span></div>
+            <div class="toc-item sub">1.1 Tentang Sistem</div>
+            <div class="toc-item sub">1.2 Fitur Utama</div>
+
+            <div class="toc-item main">2. Persyaratan Sistem <span>4</span></div>
+
+            <div class="toc-item main">3. Memulai Aplikasi <span>5</span></div>
+            <div class="toc-item sub">3.1 Login & Logout</div>
+            <div class="toc-item sub">3.2 Reset Kata Sandi</div>
+
+            <div class="toc-item main">4. Panduan untuk Admin <span>6</span></div>
+            <div class="toc-item sub">4.1 Dashboard Admin</div>
+            <div class="toc-item sub">4.2 Manajemen Pengguna</div>
+            <div class="toc-item sub">4.3 Manajemen Kelas</div>
+            <div class="toc-item sub">4.4 Verifikasi Materi</div>
+            <div class="toc-item sub">4.5 Laporan & Export</div>
+            <div class="toc-item sub">4.6 Backup Data</div>
+
+            <div class="toc-item main">5. Panduan untuk Guru <span>12</span></div>
+            <div class="toc-item sub">5.1 Dashboard Guru</div>
+            <div class="toc-item sub">5.2 Mengelola Materi</div>
+            <div class="toc-item sub">5.3 Memantau Siswa</div>
+
+            <div class="toc-item main">6. Panduan untuk Siswa <span>15</span></div>
+            <div class="toc-item sub">6.1 Dashboard Siswa</div>
+            <div class="toc-item sub">6.2 Mengakses Materi</div>
+            <div class="toc-item sub">6.3 Progress Pembelajaran</div>
+
+            <div class="toc-item main">7. FAQ & Troubleshooting <span>18</span></div>
+        </div>
+
+        <!-- Section 1: Pendahuluan -->
+        <div class="page-break">
+            <h1>1. Pendahuluan</h1>
+
+            <h2>1.1 Tentang Sistem</h2>
+            <p>
+                Platform E-Learning <strong>"Materi Online"</strong> adalah sistem pembelajaran digital yang dirancang
+                untuk mendukung proses belajar mengajar di Coding Akademi Payakumbuh. Sistem ini memfasilitasi interaksi
+                antara tiga peran utama: <strong>Admin</strong>, <strong>Guru</strong>, dan <strong>Siswa</strong>.
+            </p>
+
+            <div class="info-box">
+                <strong>ℹ️ Informasi:</strong> Sistem ini dibangun menggunakan framework Laravel dengan antarmuka modern
+                dan responsif untuk pengalaman pengguna yang optimal.
+            </div>
+
+            <h2>1.2 Fitur Utama</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>👥 Manajemen Pengguna</h4>
+                    <p>Pendaftaran, pengelolaan, dan pengaturan hak akses untuk Admin, Guru, dan Siswa.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📚 Manajemen Kelas</h4>
+                    <p>Pembuatan kelas, penugasan guru, dan pendaftaran siswa ke kelas.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📄 Materi Pembelajaran</h4>
+                    <p>Upload materi PDF dan video dengan sistem verifikasi oleh admin.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📊 Tracking Progress</h4>
+                    <p>Pemantauan kemajuan belajar siswa secara real-time dengan progress bar visual.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Presensi Digital</h4>
+                    <p>Pencatatan kehadiran siswa per pertemuan dengan berbagai status.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📥 Export & Backup</h4>
+                    <p>Export laporan ke Excel dan backup database untuk keamanan data.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Persyaratan Sistem -->
+        <div class="page-break">
+            <h1>2. Persyaratan Sistem</h1>
+
+            <h2>2.1 Untuk Pengguna</h2>
+            <table>
+                <tr>
+                    <th>Komponen</th>
+                    <th>Minimum</th>
+                    <th>Rekomendasi</th>
+                </tr>
+                <tr>
+                    <td><strong>Browser</strong></td>
+                    <td>Chrome 80+, Firefox 75+, Edge 80+</td>
+                    <td>Chrome/Edge versi terbaru</td>
+                </tr>
+                <tr>
+                    <td><strong>Koneksi Internet</strong></td>
+                    <td>1 Mbps</td>
+                    <td>5 Mbps atau lebih</td>
+                </tr>
+                <tr>
+                    <td><strong>Resolusi Layar</strong></td>
+                    <td>1024 x 768</td>
+                    <td>1920 x 1080</td>
+                </tr>
+            </table>
+
+            <h2>2.2 Format File yang Didukung</h2>
+            <table>
+                <tr>
+                    <th>Jenis</th>
+                    <th>Format</th>
+                    <th>Ukuran Maksimum</th>
+                </tr>
+                <tr>
+                    <td>Dokumen</td>
+                    <td>PDF</td>
+                    <td>10 MB</td>
+                </tr>
+                <tr>
+                    <td>Video</td>
+                    <td>MP4, WebM</td>
+                    <td>50 MB</td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Perhatian:</strong> File yang melebihi ukuran maksimum tidak dapat diupload. Kompres file
+                terlebih dahulu jika diperlukan.
+            </div>
+        </div>
+
+        <!-- Section 3: Memulai Aplikasi -->
+        <div class="page-break">
+            <h1>3. Memulai Aplikasi</h1>
+
+            <h2>3.1 Mengakses Sistem</h2>
+            <p>Buka browser dan akses URL sistem e-learning. Anda akan melihat <strong>Landing Page</strong> dengan
+                informasi tentang Coding Akademi Payakumbuh.</p>
+
+            <h2>3.2 Login ke Sistem</h2>
+
+            <div class="screenshot-container">
+                <img src="images/login page.png" alt="Halaman Login" class="screenshot">
+                <p class="screenshot-caption">Gambar 3.1 - Tampilan Halaman Login</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"Masuk"</strong> di pojok kanan atas halaman</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Masukkan <strong>Email</strong> dan <strong>Kata Sandi</strong> Anda</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"Login"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Sistem akan mengarahkan Anda ke <strong>Dashboard</strong> sesuai peran
+                        (Admin/Guru/Siswa)</div>
+                </div>
+            </div>
+
+            <h2>3.3 Lupa Kata Sandi</h2>
+            <p>Jika Anda lupa kata sandi, sistem <strong>tidak menyediakan fitur reset password otomatis</strong>. Reset
+                kata sandi hanya dapat dilakukan oleh <strong>Admin</strong>.</p>
+
+            <div class="warning-box">
+                <strong>⚠️ Penting:</strong> Untuk keamanan, reset password hanya dapat dilakukan oleh Administrator
+                sistem.
+            </div>
+
+            <h3>Langkah-langkah Reset Password:</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Hubungi <strong>Administrator</strong> sistem melalui kontak yang tersedia
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Berikan informasi akun Anda (Nama dan Email yang terdaftar)</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Admin akan melakukan reset password dan memberikan kata sandi baru kepada
+                        Anda</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Login dengan kata sandi baru yang diberikan oleh Admin</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content"><strong>Segera ubah kata sandi</strong> Anda melalui menu
+                        <strong>Profil</strong> setelah login
+                    </div>
+                </div>
+            </div>
+
+            <h2>3.4 Logout dari Sistem</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik nama profil Anda di pojok kanan atas</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Pilih <strong>"Logout"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Anda akan diarahkan kembali ke halaman login</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Panduan Admin -->
+        <div class="page-break">
+            <h1>4. Panduan untuk Admin</h1>
+
+            <h2>4.1 Dashboard Admin</h2>
+            <p>Setelah login sebagai Admin, dashboard menampilkan:</p>
+            <ul>
+                <li><strong>Statistik:</strong> Total guru, siswa, dan kelas aktif</li>
+                <li><strong>Menu navigasi:</strong> Akses ke berbagai fitur manajemen</li>
+                <li><strong>Notifikasi:</strong> Materi yang menunggu verifikasi</li>
+            </ul>
+
+            <div class="screenshot-container">
+                <img src="images/dasboard admin.png" alt="Dashboard Admin" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.1 - Tampilan Dashboard Admin</p>
+            </div>
+
+            <h2>4.2 Manajemen Guru</h2>
+
+            <h3>Melihat Daftar Guru</h3>
+            <ol>
+                <li>Buka menu <strong>"Manajemen Guru"</strong> atau klik <strong>"Guru"</strong> di sidebar</li>
+                <li>Akan tampil tabel dengan kolom: Nama, Email, Bidang Ajar</li>
+            </ol>
+
+            <div class="screenshot-container">
+                <img src="images/dasboard kelola pengguna.png" alt="Manajemen Pengguna" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.2 - Halaman Manajemen Pengguna (Guru dan Siswa)</p>
+            </div>
+
+            <h3>Menambah Guru Baru</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"+ Tambah Guru"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Isi form dengan detail berikut:</div>
+                </div>
+            </div>
+
+            <h4>Field yang Harus Diisi:</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Nama Lengkap</strong></td>
+                    <td>Nama lengkap guru sesuai identitas</td>
+                    <td>Budi Santoso, S.Pd</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Email</strong></td>
+                    <td>Email aktif untuk login ke sistem</td>
+                    <td>budi.santoso@email.com</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Kode Guru</strong></td>
+                    <td>Akan di-generate otomatis oleh sistem dengan format GURU-NNNN</td>
+                    <td>GURU-0001, GURU-0002</td>
+                    <td><span class="badge badge-info">Otomatis</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>No. Telepon / WhatsApp</strong></td>
+                    <td>Nomor telepon dengan format +62 (tanpa 0 di depan)</td>
+                    <td>+62 81234567890</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><strong>Kelas yang Diajar</strong></td>
+                    <td>Pilih satu atau lebih kelas menggunakan checkbox</td>
+                    <td>Web Development, Python, UI/UX</td>
+                    <td><span class="badge badge-danger">Wajib (min. 1)</span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><strong>Kata Sandi</strong></td>
+                    <td>Password untuk login, minimal 8 karakter</td>
+                    <td>**********</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><strong>Konfirmasi Kata Sandi</strong></td>
+                    <td>Ulangi password yang sama untuk verifikasi</td>
+                    <td>**********</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Catatan Penting:</strong>
+                <ul>
+                    <li>Kode Guru akan otomatis dibuat dengan format: <code>GURU-NNNN</code></li>
+                    <li>Nomor telepon harus diisi tanpa angka 0 di depan (contoh: 81234567890, bukan 081234567890)</li>
+                    <li>Password minimal 8 karakter dan harus sama dengan konfirmasi password</li>
+                    <li>Guru dapat mengajar lebih dari satu kelas</li>
+                </ul>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"Simpan"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Sistem akan menampilkan notifikasi sukses dan kembali ke halaman daftar
+                        guru</div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/tambah guru.png" alt="Form Tambah Guru" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.3 - Form Tambah Guru Baru</p>
+            </div>
+
+            <h3>Mengedit Data Guru</h3>
+            <ol>
+                <li>Klik ikon <strong>✏️ Edit</strong> pada baris guru yang ingin diubah</li>
+                <li>Ubah data yang diperlukan</li>
+                <li>Klik <strong>"Update"</strong></li>
+            </ol>
+
+            <h3>Menghapus Guru</h3>
+            <ol>
+                <li>Klik ikon <strong>🗑️ Hapus</strong> pada baris guru</li>
+                <li>Konfirmasi penghapusan pada dialog yang muncul</li>
+            </ol>
+
+            <h3>Mengaktifkan/Menonaktifkan Guru</h3>
+            <ol>
+                <li>Klik tombol toggle status <strong>Aktif/Nonaktif</strong></li>
+                <li>Guru yang dinonaktifkan tidak dapat login ke sistem</li>
+            </ol>
+
+            <h3>Reset Password Pengguna</h3>
+            <p>Admin dapat mereset password untuk Guru atau Siswa yang lupa kata sandi mereka.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Buka halaman <strong>Manajemen Pengguna</strong> (Guru atau Siswa)</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik ikon <strong>✏️ Edit</strong> pada pengguna yang akan direset
+                        passwordnya</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Di form edit, masukkan <strong>Password Baru</strong> pada field password
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik <strong>"Update"</strong> untuk menyimpan</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Informasikan password baru kepada pengguna tersebut</div>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Perhatian:</strong> Menonaktifkan guru tidak menghapus data mereka, hanya mencegah akses
+                login.
+            </div>
+        </div>
+
+        <!-- Section 4 continued -->
+        <div class="page-break">
+            <h2>4.3 Manajemen Siswa</h2>
+
+            <h3>Melihat Daftar Siswa</h3>
+            <ol>
+                <li>Buka menu <strong>"Manajemen Siswa"</strong> atau klik <strong>"Siswa"</strong> di sidebar</li>
+                <li>Akan tampil tabel dengan kolom: Nama, Email, NIS</li>
+            </ol>
+
+            <h3>Menambah Siswa Baru</h3>
+            <p>Form tambah siswa memiliki <strong>31 field</strong> yang dibagi dalam <strong>5 kategori</strong>.
+                Pastikan mengisi semua field yang wajib diisi.</p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"+ Tambah Siswa"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Isi form sesuai kategori berikut:</div>
+                </div>
+            </div>
+
+            <h4>A. INFORMASI DASAR</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Nama Lengkap</strong></td>
+                    <td>Nama lengkap siswa sesuai identitas</td>
+                    <td>Ahmad Rizki Pratama</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Email</strong></td>
+                    <td>Email aktif untuk login</td>
+                    <td>ahmad.rizki@email.com</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>ID Siswa</strong></td>
+                    <td>Akan di-generate otomatis dengan format: NNN-KODEKELASNUM2-MMYYYY</td>
+                    <td>001-01-122025</td>
+                    <td><span class="badge badge-info">Otomatis</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>No. Telepon / WhatsApp</strong></td>
+                    <td>Format: +62 tanpa 0 di depan</td>
+                    <td>+62 81234567890</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><strong>Tanggal Lahir</strong></td>
+                    <td>Pilih dari kalender (minimal 5 tahun yang lalu)</td>
+                    <td>15 Januari 2010</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><strong>Jenis Kelamin</strong></td>
+                    <td>Pilih: Laki-laki atau Perempuan</td>
+                    <td>Laki-laki</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+            </table>
+
+            <h4>B. ALAMAT LENGKAP</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><strong>Jalan / Nama Jalan</strong></td>
+                    <td>Nama jalan dan nomor rumah</td>
+                    <td>Jl. Sudirman No. 123</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><strong>Provinsi</strong></td>
+                    <td>Pilih dari dropdown</td>
+                    <td>Sumatera Barat</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td><strong>Kota / Kabupaten</strong></td>
+                    <td>Akan muncul setelah pilih provinsi</td>
+                    <td>Kota Payakumbuh</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td><strong>Kecamatan</strong></td>
+                    <td>Akan muncul setelah pilih kota</td>
+                    <td>Payakumbuh Barat</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td><strong>Kelurahan / Desa</strong></td>
+                    <td>Akan muncul setelah pilih kecamatan</td>
+                    <td>Balai Nan Duo</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+            </table>
+            <p class="text-sm text-gray-600"><em>Catatan: Alamat lengkap akan otomatis terbentuk dari kombinasi semua
+                    field di atas.</em></p>
+
+            <h4>C. INFORMASI AKADEMIK</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td><strong>Tanggal Pendaftaran</strong></td>
+                    <td>Tanggal siswa mendaftar</td>
+                    <td>28 Desember 2025</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td><strong>Nama Sekolah</strong></td>
+                    <td>Sekolah formal siswa saat ini</td>
+                    <td>SD Negeri 01 Payakumbuh</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td><strong>Kelas</strong></td>
+                    <td>Pilih dari dropdown (SD/SMP/SMA/Umum/Mahasiswa)</td>
+                    <td>Kelas 5 SD</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td><strong>Bidang Ajar (Kelas)</strong></td>
+                    <td>Pilih kelas yang diikuti (checkbox, bisa lebih dari 1)</td>
+                    <td>Web Development, Python</td>
+                    <td><span class="badge badge-danger">Wajib (min. 1)</span></td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td><strong>Durasi Program</strong></td>
+                    <td>Pilih: 1 Bulan, 3 Bulan, 6 Bulan, atau 12 Bulan</td>
+                    <td>3 Bulan</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td><strong>Tanggal Mulai Paket Sesi</strong></td>
+                    <td>Tanggal sesi pertama dimulai</td>
+                    <td>1 Januari 2026</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td><strong>Kuota Sesi per Bulan</strong></td>
+                    <td>Pilih: 4x atau 8x per bulan</td>
+                    <td>8x per bulan</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>19</td>
+                    <td><strong>Target Total Sesi</strong></td>
+                    <td>Otomatis dihitung: Durasi × Kuota</td>
+                    <td>24 sesi (3 × 8)</td>
+                    <td><span class="badge badge-info">Otomatis</span></td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td><strong>Hari Belajar</strong></td>
+                    <td>Pilih hari (checkbox, bisa lebih dari 1)</td>
+                    <td>Senin, Rabu, Jumat</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>21</td>
+                    <td><strong>Status Pendaftaran</strong></td>
+                    <td>Pilih: Aktif atau Tidak Aktif</td>
+                    <td>Aktif</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+            </table>
+
+            <h4>D. INFORMASI PEMBAYARAN</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>22</td>
+                    <td><strong>Metode Pembayaran</strong></td>
+                    <td>Pilih: Transfer Bank atau Tunai (Cash)</td>
+                    <td>Transfer Bank</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td><strong>Status Promo / Diskon</strong></td>
+                    <td>Pilih jika ada promo: Promo Saudara Gratis, Early Bird, Referral, Beasiswa</td>
+                    <td>Promo Early Bird</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>24</td>
+                    <td><strong>Biaya Pendaftaran</strong></td>
+                    <td>Biaya sekali bayar di awal</td>
+                    <td>Rp. 150.000</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>25</td>
+                    <td><strong>Biaya Angsuran</strong></td>
+                    <td>Biaya per periode</td>
+                    <td>Rp. 1.250.000</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>26</td>
+                    <td><strong>Total Biaya</strong></td>
+                    <td>Otomatis: Pendaftaran + Angsuran</td>
+                    <td>Rp. 1.400.000</td>
+                    <td><span class="badge badge-info">Otomatis</span></td>
+                </tr>
+                <tr>
+                    <td>27</td>
+                    <td><strong>Tipe Diskon</strong></td>
+                    <td>Pilih: Persentase (%) atau Potongan Tetap (Rp)</td>
+                    <td>Persentase (%)</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>28</td>
+                    <td><strong>Nilai Diskon</strong></td>
+                    <td>Masukkan nilai diskon</td>
+                    <td>10 (untuk 10%)</td>
+                    <td><span class="badge badge-warning">Opsional</span></td>
+                </tr>
+                <tr>
+                    <td>29</td>
+                    <td><strong>Total Setelah Diskon</strong></td>
+                    <td>Otomatis dihitung setelah diskon</td>
+                    <td>Rp. 1.260.000</td>
+                    <td><span class="badge badge-info">Otomatis</span></td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>💡 Contoh Perhitungan Diskon:</strong>
+                <ul>
+                    <li><strong>Tipe: Persentase (%)</strong>, Nilai: 10
+                        <br>Total: Rp. 1.400.000 → Diskon: Rp. 140.000 → <strong>Total Setelah Diskon: Rp.
+                            1.260.000</strong>
+                    </li>
+                    <li><strong>Tipe: Potongan Tetap (Rp)</strong>, Nilai: 200000
+                        <br>Total: Rp. 1.400.000 → Diskon: Rp. 200.000 → <strong>Total Setelah Diskon: Rp.
+                            1.200.000</strong>
+                    </li>
+                </ul>
+            </div>
+
+            <h4>E. INFORMASI MASUK (LOGIN)</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>30</td>
+                    <td><strong>Kata Sandi</strong></td>
+                    <td>Password untuk login (minimal 8 karakter)</td>
+                    <td>**********</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>31</td>
+                    <td><strong>Konfirmasi Kata Sandi</strong></td>
+                    <td>Ulangi password yang sama</td>
+                    <td>**********</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Catatan Penting:</strong>
+                <ul>
+                    <li>ID Siswa akan otomatis dibuat dengan format: <code>NNN-KODEKELASNUM2-MMYYYY</code></li>
+                    <li>Target total sesi dihitung otomatis: <strong>Durasi (bulan) × Kuota per bulan</strong></li>
+                    <li>Akun akan otomatis nonaktif setelah target sesi tercapai</li>
+                    <li>Alamat lengkap terbentuk otomatis dari kombinasi Jalan, Kelurahan, Kecamatan, Kota, dan Provinsi
+                    </li>
+                    <li>Total Biaya dan Total Setelah Diskon dihitung otomatis oleh sistem</li>
+                </ul>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"Simpan"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Sistem akan menampilkan notifikasi sukses dan kembali ke halaman daftar
+                        siswa</div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/tambah siswa.png" alt="Form Tambah Siswa" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.4 - Form Tambah Siswa Baru</p>
+            </div>
+
+
+            <h2>4.4 Manajemen Kelas</h2>
+
+            <h3>Membuat Kelas Baru</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"+ Buat Kelas Baru"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Isi form dengan detail berikut:</div>
+                </div>
+            </div>
+
+            <h4>Field yang Harus Diisi:</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Nama Kelas</strong></td>
+                    <td>Nama kelas yang deskriptif dan jelas</td>
+                    <td>Web Development Dasar</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Guru Pengajar</strong></td>
+                    <td>Pilih guru dari dropdown yang akan mengajar kelas ini</td>
+                    <td>Budi Santoso, S.Pd</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Bidang</strong></td>
+                    <td>Pilih bidang: Coding, Desain, Robotik, Umum, atau Mahasiswa</td>
+                    <td>Coding</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>Deskripsi</strong></td>
+                    <td>Penjelasan singkat tentang materi yang akan dipelajari di kelas</td>
+                    <td>Belajar HTML, CSS, JavaScript untuk pemula</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Catatan Penting:</strong>
+                <ul>
+                    <li>Nama kelas harus unik dan belum digunakan</li>
+                    <li>Guru yang dipilih harus sudah terdaftar di sistem</li>
+                    <li>Bidang akan mempengaruhi kategori kelas di sistem</li>
+                    <li>Deskripsi akan ditampilkan kepada siswa saat melihat detail kelas</li>
+                </ul>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"Simpan Kelas"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Sistem akan membuat kelas baru dan kembali ke halaman daftar kelas</div>
+                </div>
+            </div>
+
+            <h3>Mendaftarkan Siswa ke Kelas (Enroll)</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Buka detail kelas dengan klik nama kelas</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tab <strong>"Daftar Siswa"</strong> atau tombol <strong>"Daftarkan
+                            Siswa"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Pilih satu atau lebih siswa dari daftar</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik <strong>"Enroll"</strong></div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/daftarkan siswa ke kelas.png" alt="Daftarkan Siswa ke Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.8 - Form Mendaftarkan Siswa ke Kelas (Enroll)</p>
+            </div>
+
+            <h3>Mengeluarkan Siswa dari Kelas (Unenroll)</h3>
+            <ol>
+                <li>Di halaman detail kelas, lihat tab <strong>"Daftar Siswa"</strong></li>
+                <li>Klik tombol <strong>"Keluarkan"</strong> pada siswa yang akan dikeluarkan</li>
+                <li>Konfirmasi tindakan</li>
+            </ol>
+
+            <h3>Mengelola Siswa di Kelas</h3>
+            <ol>
+                <li>Klik nama kelas untuk masuk ke detail kelas</li>
+                <li>Pilih tab <strong>"Siswa"</strong></li>
+                <li>Klik <strong>"+ Tambah Siswa"</strong> untuk menambahkan siswa ke kelas</li>
+                <li>Pilih siswa dari dropdown dan klik <strong>"Tambahkan"</strong></li>
+            </ol>
+
+            <div class="screenshot-container">
+                <img src="images/page kelas.png" alt="Manajemen Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.5 - Halaman Manajemen Kelas</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/tambah kelas.png" alt="Form Tambah Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.6 - Form Tambah Kelas Baru</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/detail kelas.png" alt="Detail Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.7 - Detail Kelas dan Daftar Siswa</p>
+            </div>
+        </div>
+
+        <!-- Section 4 continued -->
+        <div class="page-break">
+            <h2>4.5 Manajemen Pertemuan</h2>
+
+            <h3>Membuat Pertemuan Baru</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Buka detail kelas</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tab <strong>"Pertemuan"</strong> lalu <strong>"+ Tambah
+                            Pertemuan"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Isi form dengan detail berikut:</div>
+                </div>
+            </div>
+
+            <h4>Field yang Harus Diisi:</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Tanggal</strong></td>
+                    <td>Tanggal pertemuan dilaksanakan (pilih dari kalender)</td>
+                    <td>5 Januari 2026</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Pertemuan Ke-</strong></td>
+                    <td>Nomor urut pertemuan (angka)</td>
+                    <td>1, 2, 3, dst.</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Topik</strong></td>
+                    <td>Topik atau judul materi yang akan dibahas</td>
+                    <td>Pengenalan HTML</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>Deskripsi</strong></td>
+                    <td>Detail lengkap materi yang akan dipelajari</td>
+                    <td>Mempelajari tag dasar HTML, struktur dokumen, dan elemen-elemen penting</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Catatan Penting:</strong>
+                <ul>
+                    <li>Nomor pertemuan harus urut dan tidak boleh duplikat dalam satu kelas</li>
+                    <li>Tanggal pertemuan sebaiknya diatur sesuai jadwal kelas</li>
+                    <li>Topik dan deskripsi akan ditampilkan kepada siswa</li>
+                    <li>Setelah pertemuan dibuat, Anda dapat menginput absensi siswa</li>
+                </ul>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"Simpan"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Pertemuan baru akan muncul di daftar pertemuan kelas</div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/page absen admin.png" alt="Manajemen Pertemuan" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.8 - Halaman Manajemen Pertemuan dan Absensi</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/tambah pertemuan absen.png" alt="Form Tambah Pertemuan" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.9 - Form Tambah Pertemuan Baru</p>
+            </div>
+
+            <h3>Input Absensi Siswa</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Buka pertemuan yang ingin diinput absensinya</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Akan tampil daftar siswa</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Pilih status untuk setiap siswa:
+                        <ul>
+                            <li><span class="badge badge-success">H</span> - Hadir</li>
+                            <li><span class="badge badge-primary">I</span> - Izin</li>
+                            <li><span class="badge badge-warning">S</span> - Sakit</li>
+                            <li><span class="badge badge-danger">A</span> - Alpha (Tanpa keterangan)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik <strong>"Simpan Presensi"</strong></div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/input absen.png" alt="Input Absensi" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.10 - Form Input Absensi Siswa</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/detail absen di per hari.png" alt="Detail Absensi" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.11 - Detail Absensi Per Hari</p>
+            </div>
+
+            <h2>4.6 Verifikasi Materi</h2>
+
+            <div class="screenshot-container">
+                <img src="images/materi pending.png" alt="Materi Pending" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.12 - Daftar Materi Menunggu Verifikasi</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/review materi.png" alt="Review Materi" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.13 - Halaman Review Materi</p>
+            </div>
+
+            <h3>Melihat Materi Menunggu Verifikasi</h3>
+            <ol>
+                <li>Buka menu <strong>"Verifikasi Materi"</strong></li>
+                <li>Akan tampil daftar materi berstatus <span class="badge badge-warning">Pending</span></li>
+            </ol>
+
+            <h3>Menyetujui Materi</h3>
+            <ol>
+                <li>Review materi dengan klik judul atau tombol <strong>"Lihat"</strong></li>
+                <li>Jika materi sesuai, klik tombol <strong>"✓ Setujui"</strong></li>
+                <li>Status materi berubah menjadi <span class="badge badge-success">Approved</span></li>
+            </ol>
+
+            <h3>Menolak Materi</h3>
+            <ol>
+                <li>Jika materi tidak sesuai, klik tombol <strong>"✗ Tolak"</strong></li>
+                <li>Isi <strong>alasan penolakan</strong> di form yang muncul</li>
+                <li>Klik <strong>"Kirim"</strong></li>
+                <li>Guru akan menerima notifikasi penolakan beserta alasannya</li>
+            </ol>
+        </div>
+
+        <!-- Section 4 continued -->
+        <div class="page-break">
+            <h2>4.7 Laporan & Export</h2>
+
+            <h3>Export Absensi ke Excel</h3>
+            <ol>
+                <li>Buka halaman kelas atau menu <strong>"Laporan Presensi"</strong></li>
+                <li>Filter berdasarkan kelas, guru, atau rentang waktu (opsional)</li>
+                <li>Klik tombol <strong>"📥 Export Absensi"</strong></li>
+                <li>File Excel akan terunduh otomatis</li>
+            </ol>
+
+            <h3>Export Learning Log Siswa</h3>
+            <ol>
+                <li>Buka halaman siswa atau menu <strong>"Laporan"</strong></li>
+                <li>Klik tombol <strong>"📥 Export Learning Log"</strong></li>
+                <li>File Excel akan terunduh otomatis</li>
+            </ol>
+
+            <h3>Export Log Aktivitas</h3>
+            <ol>
+                <li>Buka menu <strong>"Laporan"</strong> → <strong>"Log Aktivitas"</strong></li>
+                <li>Klik tombol <strong>"📥 Export Log Aktivitas"</strong></li>
+                <li>File Excel akan terunduh</li>
+            </ol>
+
+            <h2>4.8 Backup Data</h2>
+
+            <h3>Melakukan Backup Manual</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Buka menu <strong>"Backup Data"</strong> di dashboard</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"🔄 Backup Sekarang"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Pilih jenis backup:
+                        <ul>
+                            <li><strong>Database:</strong> Backup seluruh database</li>
+                            <li><strong>Users:</strong> Export data pengguna</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik <strong>"Mulai Backup"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Tunggu proses selesai dan unduh file backup</div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/backup page.png" alt="Halaman Backup" class="screenshot">
+                <p class="screenshot-caption">Gambar 4.14 - Halaman Backup dan Restore Data</p>
+            </div>
+
+            <h3>Download Semua Materi</h3>
+            <ol>
+                <li>Buka menu <strong>"Backup Data"</strong></li>
+                <li>Klik tombol <strong>"📦 Download Semua Materi"</strong></li>
+                <li>Sistem akan mengompres semua file menjadi ZIP</li>
+                <li>File ZIP akan terunduh otomatis</li>
+            </ol>
+
+            <div class="success-box">
+                <strong>✅ Tips:</strong> Lakukan backup secara berkala (minimal mingguan) untuk mencegah kehilangan
+                data.
+            </div>
+        </div>
+
+        <!-- Section 5: Panduan Guru -->
+        <div class="page-break">
+            <h1>5. Panduan untuk Guru</h1>
+
+            <h2>5.1 Dashboard Guru</h2>
+            <p>Setelah login sebagai Guru, dashboard menampilkan:</p>
+            <ul>
+                <li><strong>Daftar Kelas</strong> yang Anda ampu</li>
+                <li><strong>Statistik</strong> siswa dan materi per kelas</li>
+                <li><strong>Notifikasi</strong> terbaru</li>
+            </ul>
+
+            <div class="screenshot-container">
+                <img src="images/dashboard guru.png" alt="Dashboard Guru" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.1 - Tampilan Dashboard Guru</p>
+            </div>
+
+            <h2>5.2 Melihat Kelas yang Diampu</h2>
+            <ol>
+                <li>Di dashboard, lihat daftar kelas Anda</li>
+                <li>Klik nama kelas untuk melihat detail</li>
+            </ol>
+
+            <div class="screenshot-container">
+                <img src="images/guru detail kelas.png" alt="Detail Kelas Guru" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.2 - Detail Kelas yang Diampu</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru list siswa di kelas.png" alt="Daftar Siswa di Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.3 - Daftar Siswa di Kelas</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru list materi di kelas.png" alt="Daftar Materi di Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.4 - Daftar Materi di Kelas</p>
+            </div>
+
+            <h2>5.3 Mengelola Materi</h2>
+
+            <h3>Menambahkan Materi Baru</h3>
+
+            <div class="screenshot-container">
+                <img src="images/guru upload materi baru.png" alt="Upload Materi" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.5 - Form Upload Materi Baru</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru detail materi upload.png" alt="Detail Materi Upload" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.6 - Detail Materi yang Diupload</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"+ Upload Materi"</strong> di dashboard atau halaman
+                        kelas</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Isi form dengan detail berikut:</div>
+                </div>
+            </div>
+
+            <h4>Field yang Harus Diisi:</h4>
+            <table>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Field</th>
+                    <th>Keterangan</th>
+                    <th>Contoh</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Judul Materi</strong></td>
+                    <td>Judul yang deskriptif dan jelas</td>
+                    <td>Pengenalan HTML dan CSS</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Deskripsi</strong></td>
+                    <td>Penjelasan singkat tentang isi materi</td>
+                    <td>Materi ini membahas dasar-dasar HTML dan CSS untuk pemula</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Pilih Kelas</strong></td>
+                    <td>Pilih kelas yang akan menerima materi (dropdown)</td>
+                    <td>Web Development Dasar (Coding)</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>Tipe File</strong></td>
+                    <td>Pilih: PDF, Video, atau Dokumen (Word)</td>
+                    <td>PDF</td>
+                    <td><span class="badge badge-danger">Wajib</span></td>
+                </tr>
+                <tr>
+                    <td>5a</td>
+                    <td><strong>File</strong></td>
+                    <td>Upload file PDF atau Dokumen (maksimal 10 MB)</td>
+                    <td>materi_html.pdf</td>
+                    <td><span class="badge badge-danger">Wajib (jika bukan video)</span></td>
+                </tr>
+                <tr>
+                    <td>5b</td>
+                    <td><strong>Link YouTube</strong></td>
+                    <td>Tempelkan link video YouTube (jika tipe Video)</td>
+                    <td>https://www.youtube.com/watch?v=abc123</td>
+                    <td><span class="badge badge-danger">Wajib (jika video)</span></td>
+                </tr>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Catatan Penting:</strong>
+                <ul>
+                    <li><strong>Ukuran File Maksimal:</strong>
+                        <ul>
+                            <li>PDF: 10 MB</li>
+                            <li>Dokumen (Word): 10 MB</li>
+                            <li>Video: Gunakan link YouTube (tidak upload langsung)</li>
+                        </ul>
+                    </li>
+                    <li>Hanya kelas yang Anda ajar yang akan muncul di dropdown</li>
+                    <li>Jika memilih <strong>Video</strong>, field upload file akan diganti dengan field Link YouTube
+                    </li>
+                    <li>Materi yang diupload akan berstatus <span class="badge badge-warning">Pending</span> dan
+                        menunggu verifikasi Admin</li>
+                    <li>Setelah diverifikasi Admin, materi akan berstatus <span
+                            class="badge badge-success">Approved</span> dan tampil ke siswa</li>
+                </ul>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tombol <strong>"Upload Materi"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Tunggu proses upload selesai (akan ada progress bar)</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Status materi otomatis <span class="badge badge-warning">Pending</span>
+                        menunggu verifikasi Admin</div>
+                </div>
+            </div>
+
+            <h3>Melihat Status Materi</h3>
+            <ol>
+                <li>Buka menu <strong>"Materi Saya"</strong> atau tab <strong>"Materi"</strong> di kelas</li>
+                <li>Setiap materi menampilkan status:</li>
+            </ol>
+
+            <table>
+                <tr>
+                    <th>Status</th>
+                    <th>Ikon</th>
+                    <th>Keterangan</th>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">Pending</span></td>
+                    <td>🟡</td>
+                    <td>Menunggu verifikasi admin</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-success">Approved</span></td>
+                    <td>🟢</td>
+                    <td>Sudah disetujui, tampil ke siswa</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-danger">Rejected</span></td>
+                    <td>🔴</td>
+                    <td>Ditolak, perlu revisi</td>
+                </tr>
+            </table>
+
+            <h3>Mengedit Materi</h3>
+            <ol>
+                <li>Klik ikon <strong>✏️ Edit</strong> pada materi yang ingin diubah</li>
+                <li>Ubah informasi yang diperlukan</li>
+                <li>Klik <strong>"Update"</strong></li>
+            </ol>
+
+            <div class="screenshot-container">
+                <img src="images/guru list manajemen materi.png" alt="Daftar Materi Guru" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.7 - Daftar Manajemen Materi</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru materi yang di upload dan pending.png" alt="Materi Pending" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.8 - Materi yang Diupload dan Menunggu Verifikasi</p>
+            </div>
+
+            <h3>Menghapus Materi</h3>
+            <ol>
+                <li>Klik ikon <strong>🗑️ Hapus</strong> pada materi</li>
+                <li>Konfirmasi penghapusan</li>
+            </ol>
+        </div>
+
+        <!-- Section 5 continued -->
+        <div class="page-break">
+            <h2>5.4 Memantau Progress Siswa</h2>
+
+            <h3>Melihat Progress Pembelajaran</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Buka kelas yang ingin dipantau</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik tab <strong>"Progress Siswa"</strong> atau menu <strong>"Pemantauan
+                            Progres"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Akan tampil tabel dengan informasi:
+                        <ul>
+                            <li>Nama siswa</li>
+                            <li>Jumlah materi yang sudah diakses</li>
+                            <li>Persentase penyelesaian</li>
+                            <li>Status (Selesai/Belum)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Visualisasi Data</h3>
+            <ul>
+                <li>Dashboard menampilkan grafik progress kelas</li>
+                <li>Lihat statistik rata-rata progress per kelas</li>
+            </ul>
+
+            <div class="screenshot-container">
+                <img src="images/guru detail progres siswa.png" alt="Progress Siswa" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.9 - Detail Progress Siswa di Kelas</p>
+            </div>
+
+            <h2>5.5 Melihat Kehadiran Siswa</h2>
+
+            <h3>Laporan Kehadiran</h3>
+            <ol>
+                <li>Buka kelas dan pilih tab <strong>"Kehadiran"</strong></li>
+                <li>Akan tampil rekap kehadiran per pertemuan</li>
+                <li>Filter berdasarkan rentang waktu jika diperlukan</li>
+            </ol>
+
+            <div class="screenshot-container">
+                <img src="images/guru pilih kelas absen.png" alt="Pilih Kelas Absen" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.10 - Pilih Kelas untuk Absensi</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru input absen.png" alt="Input Absen" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.11 - Form Input Absensi Siswa</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru edit absen.png" alt="Edit Absen" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.12 - Edit Absensi</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru detail absen.png" alt="Detail Absen" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.13 - Detail Absensi</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/guru detail absen dikelas.png" alt="Detail Absen di Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 5.14 - Detail Absensi di Kelas</p>
+            </div>
+
+            <h3>Export Laporan</h3>
+            <ol>
+                <li>Klik tombol <strong>"📥 Export Kehadiran"</strong></li>
+                <li>File Excel akan terunduh</li>
+            </ol>
+
+            <div class="info-box">
+                <strong>ℹ️ Catatan:</strong> Laporan kehadiran dapat difilter berdasarkan kelas dan periode waktu
+                tertentu untuk analisis yang lebih spesifik.
+            </div>
+        </div>
+
+        <!-- Section 6: Panduan Siswa -->
+        <div class="page-break">
+            <h1>6. Panduan untuk Siswa</h1>
+
+            <h2>6.1 Dashboard Siswa</h2>
+            <p>Setelah login sebagai Siswa, dashboard menampilkan:</p>
+            <ul>
+                <li><strong>Daftar Kelas</strong> yang Anda ikuti</li>
+                <li><strong>Progress Bar</strong> pembelajaran per kelas</li>
+                <li><strong>Notifikasi</strong> (termasuk pengingat kelas akan berakhir)</li>
+            </ul>
+
+            <div class="screenshot-container">
+                <img src="images/dasboard siswa.png" alt="Dashboard Siswa" class="screenshot">
+                <p class="screenshot-caption">Gambar 6.1 - Tampilan Dashboard Siswa dengan Progress Bar</p>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/siswa dasboard progress detail.png" alt="Progress Siswa" class="screenshot">
+                <p class="screenshot-caption">Gambar 6.2 - Dashboard dengan Detail Progress Pembelajaran</p>
+            </div>
+
+            <h2>6.2 Mengakses Kelas</h2>
+
+            <h3>Melihat Daftar Kelas</h3>
+            <ol>
+                <li>Di dashboard, lihat semua kelas yang Anda ikuti</li>
+                <li>Setiap kelas menampilkan:
+                    <ul>
+                        <li>Nama kelas</li>
+                        <li>Nama guru pengampu</li>
+                        <li>Progress pembelajaran</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Membuka Kelas</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Dari dashboard, klik kartu kelas yang ingin diakses</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Akan tampil detail kelas dengan daftar materi</div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/siswa dasboard detail kelas dan materi.png" alt="Detail Kelas Siswa"
+                    class="screenshot">
+                <p class="screenshot-caption">Gambar 6.3 - Dashboard Detail Kelas dan Materi</p>
+            </div>
+
+            <h2>6.3 Mengakses Materi Pembelajaran</h2>
+
+            <h3>Melihat Daftar Materi</h3>
+            <ol>
+                <li>Di halaman kelas, lihat tab <strong>"Materi"</strong></li>
+                <li>Hanya materi yang sudah <span class="badge badge-success">Approved</span> yang ditampilkan</li>
+                <li>Materi diurutkan berdasarkan tanggal upload</li>
+            </ol>
+
+            <div class="screenshot-container">
+                <img src="images/siswa detail materi kelas.png" alt="Detail Materi Kelas" class="screenshot">
+                <p class="screenshot-caption">Gambar 6.4 - Detail Daftar Materi di Kelas</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik judul materi PDF</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">PDF akan terbuka di viewer bawaan</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Navigasi halaman dengan tombol <strong>◀ ▶</strong> atau scroll</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content"><strong>Progress otomatis tersimpan</strong> saat Anda berpindah halaman
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Saat membuka lagi, Anda akan melanjutkan dari halaman terakhir</div>
+                </div>
+            </div>
+
+            <h3>Menonton Materi Video</h3>
+            <ol>
+                <li>Klik judul materi video</li>
+                <li>Video akan diputar di player bawaan</li>
+                <li>Gunakan kontrol play/pause dan volume</li>
+            </ol>
+
+            <div class="success-box">
+                <strong>✅ Tips:</strong> Progress membaca PDF tersimpan otomatis! Anda tidak perlu khawatir kehilangan
+                posisi baca meskipun browser tertutup.
+            </div>
+        </div>
+
+        <!-- Section 6 continued -->
+        <div class="page-break">
+            <h2>6.4 Melihat Progress Pembelajaran</h2>
+
+            <h3>Progress Bar</h3>
+            <ol>
+                <li>Di dashboard atau halaman kelas, lihat <strong>Progress Bar</strong></li>
+                <li>Bar menunjukkan persentase materi yang sudah dipelajari</li>
+                <li>Progress diupdate otomatis saat Anda menyelesaikan materi</li>
+            </ol>
+
+            <h3>Detail Progress</h3>
+            <ol>
+                <li>Buka halaman kelas</li>
+                <li>Klik tab <strong>"Progress Saya"</strong></li>
+                <li>Akan tampil detail:
+                    <ul>
+                        <li>✅ Materi yang sudah selesai</li>
+                        <li>⬜ Materi yang belum dipelajari</li>
+                        <li>📊 Persentase keseluruhan</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="screenshot-container">
+                <img src="images/siswa dasboard progress detail.png" alt="Progress Siswa" class="screenshot">
+                <p class="screenshot-caption">Gambar 6.6 - Halaman Progress Belajar Siswa</p>
+            </div>
+
+            <h2>6.5 Melihat Status Pembayaran</h2>
+            <ol>
+                <li>Klik profil Anda di pojok kanan atas</li>
+                <li>Pilih <strong>"Profil"</strong> atau <strong>"My Profile"</strong></li>
+                <li>Di bagian informasi, lihat status:
+                    <ul>
+                        <li><span class="badge badge-success">Lunas</span> - Pembayaran sudah lengkap</li>
+                        <li><span class="badge badge-danger">Belum Lunas</span> - Masih ada tunggakan</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h2>6.6 Notifikasi</h2>
+
+            <h3>Melihat Notifikasi</h3>
+            <ol>
+                <li>Klik ikon <strong>🔔</strong> di navbar</li>
+                <li>Akan tampil daftar notifikasi terbaru</li>
+            </ol>
+
+            <h3>Notifikasi Kelas Akan Berakhir</h3>
+            <ul>
+                <li>Anda akan menerima notifikasi otomatis beberapa hari sebelum kelas berakhir</li>
+                <li>Notifikasi berisi nama kelas dan tanggal berakhir</li>
+            </ul>
+
+            <h3>Menandai Notifikasi Sudah Dibaca</h3>
+            <ol>
+                <li>Klik notifikasi untuk membuka detail</li>
+                <li>Atau klik <strong>"Tandai Semua Dibaca"</strong></li>
+            </ol>
+
+            <h2>6.7 Mengubah Kata Sandi</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Buka menu profil</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik <strong>"Ubah Kata Sandi"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Masukkan:
+                        <ul>
+                            <li>Kata sandi lama</li>
+                            <li>Kata sandi baru</li>
+                            <li>Konfirmasi kata sandi baru</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik <strong>"Simpan"</strong></div>
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <img src="images/siswa pengaturan akun.png" alt="Pengaturan Akun Siswa" class="screenshot">
+                <p class="screenshot-caption">Gambar 6.7 - Halaman Pengaturan Akun Siswa</p>
+            </div>
+        </div>
+
+        <!-- Section 7: FAQ & Troubleshooting -->
+        <div class="page-break">
+            <h1>7. FAQ & Troubleshooting</h1>
+
+            <h2>7.1 Pertanyaan Umum (FAQ)</h2>
+
+            <h3>Q: Saya lupa kata sandi, bagaimana cara reset?</h3>
+            <p><strong>A:</strong> Klik "Lupa Kata Sandi?" di halaman login, masukkan email, dan ikuti instruksi di
+                email yang dikirim.</p>
+
+            <h3>Q: Mengapa materi yang saya upload tidak tampil ke siswa?</h3>
+            <p><strong>A:</strong> Materi harus diverifikasi oleh Admin terlebih dahulu. Cek status materi di menu
+                "Materi Saya".</p>
+
+            <h3>Q: Bagaimana cara mengganti email?</h3>
+            <p><strong>A:</strong> Hubungi Admin untuk mengubah email akun Anda.</p>
+
+            <h3>Q: Apakah progress saya tersimpan jika browser tertutup?</h3>
+            <p><strong>A:</strong> Ya, progress membaca PDF dan video tersimpan otomatis.</p>
+
+            <h2>7.2 Masalah Umum</h2>
+
+            <h3>Tidak Bisa Login</h3>
+            <ol>
+                <li>Pastikan email dan kata sandi benar (perhatikan huruf besar/kecil)</li>
+                <li>Cek Caps Lock keyboard</li>
+                <li>Coba reset kata sandi</li>
+                <li>Hubungi Admin jika akun mungkin dinonaktifkan</li>
+            </ol>
+
+            <h3>Materi Tidak Bisa Dibuka</h3>
+            <ol>
+                <li>Pastikan koneksi internet stabil</li>
+                <li>Coba refresh halaman (F5)</li>
+                <li>Clear cache browser</li>
+                <li>Coba browser lain</li>
+            </ol>
+
+            <h3>File Tidak Bisa Diupload</h3>
+            <ol>
+                <li>Cek ukuran file (maksimal 50 MB)</li>
+                <li>Pastikan format file didukung (PDF, MP4, WebM)</li>
+                <li>Coba kompres file sebelum upload</li>
+            </ol>
+
+            <h3>Halaman Error / Tidak Tampil</h3>
+            <ol>
+                <li>Refresh halaman (F5 atau Ctrl+R)</li>
+                <li>Clear cache browser (Ctrl+Shift+Delete)</li>
+                <li>Coba logout dan login kembali</li>
+                <li>Hubungi Admin jika masalah berlanjut</li>
+            </ol>
+        </div>
+
+        <!-- Lampiran -->
+        <div class="page-break">
+            <h1>📎 Lampiran</h1>
+
+            <h2>A. Shortcut Keyboard</h2>
+            <table>
+                <tr>
+                    <th>Fungsi</th>
+                    <th>Shortcut</th>
+                </tr>
+                <tr>
+                    <td>Refresh halaman</td>
+                    <td><code>F5</code> / <code>Ctrl+R</code></td>
+                </tr>
+                <tr>
+                    <td>Clear cache</td>
+                    <td><code>Ctrl+Shift+Delete</code></td>
+                </tr>
+                <tr>
+                    <td>Halaman sebelumnya</td>
+                    <td><code>Alt+←</code></td>
+                </tr>
+                <tr>
+                    <td>Halaman selanjutnya</td>
+                    <td><code>Alt+→</code></td>
+                </tr>
+            </table>
+
+            <h2>B. Ikon Status Materi</h2>
+            <table>
+                <tr>
+                    <th>Ikon</th>
+                    <th>Status</th>
+                    <th>Keterangan</th>
+                </tr>
+                <tr>
+                    <td>🟡</td>
+                    <td><span class="badge badge-warning">Pending</span></td>
+                    <td>Menunggu verifikasi admin</td>
+                </tr>
+                <tr>
+                    <td>🟢</td>
+                    <td><span class="badge badge-success">Approved</span></td>
+                    <td>Sudah disetujui, tampil ke siswa</td>
+                </tr>
+                <tr>
+                    <td>🔴</td>
+                    <td><span class="badge badge-danger">Rejected</span></td>
+                    <td>Ditolak, perlu revisi</td>
+                </tr>
+            </table>
+
+            <h2>C. Ikon Status Kehadiran</h2>
+            <table>
+                <tr>
+                    <th>Kode</th>
+                    <th>Status</th>
+                    <th>Warna</th>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-success">H</span></td>
+                    <td>Hadir</td>
+                    <td>Hijau</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-primary">I</span></td>
+                    <td>Izin</td>
+                    <td>Biru</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">S</span></td>
+                    <td>Sakit</td>
+                    <td>Kuning</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-danger">A</span></td>
+                    <td>Alpha (Tanpa Keterangan)</td>
+                    <td>Merah</td>
+                </tr>
+            </table>
+
+            <h2>D. Kontak Support</h2>
+            <p>Jika Anda mengalami masalah yang tidak dapat diselesaikan:</p>
+            <ul>
+                <li>📧 <strong>Email:</strong> support@codingakademi.id</li>
+                <li>📞 <strong>Telepon:</strong> (0752) XXXXXXX</li>
+                <li>🏢 <strong>Alamat:</strong> Coding Akademi Payakumbuh, Sumatera Barat</li>
+            </ul>
+
+            <div class="footer">
+                <p><strong>© 2025 Coding Akademi Payakumbuh</strong></p>
+                <p>Platform E-Learning Materi Online v2.10</p>
+                <p><em>Dokumen ini dibuat untuk keperluan internal dan pelatihan pengguna sistem.</em></p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
