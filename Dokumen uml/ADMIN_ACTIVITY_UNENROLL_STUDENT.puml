@@ -1,0 +1,114 @@
+@startuml "Admin Activity - Unenroll Student"
+
+title Admin Activity Diagram\\nKeluarkan Siswa dari Kelas (Unenroll)\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Kelas";
+:Pilih kelas;
+:Lihat detail kelas;
+
+|System|
+:Load data kelas;
+:Load daftar siswa enrolled;
+:Tampilkan daftar siswa;
+note right
+  Setiap siswa menampilkan:
+  • Nama siswa
+  • NIS
+  • Email
+  • Tanggal enrolled
+  • Tombol "Keluarkan"
+end note
+
+|Admin|
+:Cari siswa yang akan dikeluarkan;
+:Klik tombol "Keluarkan" pada siswa;
+
+|System|
+:Load data siswa & progress;
+:Hitung progress siswa di kelas;
+:Tampilkan modal konfirmasi;
+note right
+  **Konfirmasi Unenroll:**
+  "Keluarkan siswa dari kelas?
+  
+  Siswa: [nama siswa]
+  Kelas: [nama kelas]
+  
+  Data yang akan terhapus:
+  • Enrollment record
+  • Progress materi ([X]% completed)
+  • Riwayat presensi
+  
+  Siswa tidak akan bisa:
+  • Akses kelas ini
+  • Lihat materi kelas ini
+  
+  Tindakan ini tidak dapat dibatalkan!"
+end note
+
+|Admin|
+if (Konfirmasi unenroll?) then (Ya)
+  :Klik "Ya, Keluarkan";
+  
+  |System|
+  :Mulai proses unenroll;
+  
+  :Hapus progress materi siswa;
+  note right
+    DELETE FROM materi_progress
+    WHERE user_id = [siswa_id]
+    AND materi_id IN
+    (SELECT id FROM materi
+     WHERE kelas_id = [kelas_id])
+  end note
+  
+  :Hapus presensi siswa;
+  note right
+    DELETE FROM presensi
+    WHERE user_id = [siswa_id]
+    AND pertemuan_id IN
+    (SELECT id FROM pertemuan
+     WHERE kelas_id = [kelas_id])
+  end note
+  
+  :Hapus enrollment record;
+  note right
+    DELETE FROM enrollments
+    WHERE user_id = [siswa_id]
+    AND kelas_id = [kelas_id]
+  end note
+  
+  :Log aktivitas;
+  note right
+    **Activity Log:**
+    • User: Admin
+    • Action: Unenrolled Student
+    • Student: [nama siswa]
+    • Class: [nama kelas]
+    • Timestamp: [waktu]
+  end note
+  
+  |Admin|
+  :Tampilkan notifikasi sukses;
+  note right
+    "Siswa berhasil dikeluarkan
+    dari kelas!"
+  end note
+  :Refresh halaman detail kelas;
+  :Siswa tidak muncul di daftar enrolled;
+  
+else (Tidak)
+  :Klik "Batal";
+  :Tutup modal konfirmasi;
+  :Kembali ke detail kelas;
+  note right
+    Siswa tetap enrolled
+  end note
+endif
+
+stop
+
+@enduml

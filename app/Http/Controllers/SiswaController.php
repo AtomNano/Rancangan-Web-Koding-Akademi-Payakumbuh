@@ -17,15 +17,24 @@ class SiswaController extends Controller
     {
         $user = Auth::user();
         $enrolledClasses = $user->enrolledClasses()->withCount('materi')->get();
-        
-        // --- Logic to dispatch expiring class notifications ---
+
+        // --- Collect expiring classes for dashboard display ---
         $daysBeforeNotification = 7; // Notify 7 days before expiration
-        
+        $expiringClasses = [];
+
         foreach ($user->enrollments()->where('status', 'active')->with('kelas')->get() as $enrollment) {
             $expirationDate = $enrollment->getExpirationDate();
             $daysUntil = $enrollment->getDaysUntilExpiration();
-            
+
             if ($expirationDate && $daysUntil !== null && $daysUntil >= 0 && $daysUntil <= $daysBeforeNotification) {
+                // Add to expiring classes list for dashboard display
+                $expiringClasses[] = [
+                    'kelas' => $enrollment->kelas,
+                    'enrollment' => $enrollment,
+                    'expiration_date' => $expirationDate,
+                    'days_until' => $daysUntil,
+                ];
+
                 // Check if a similar notification already exists and is unread
                 $notificationExists = $user->unreadNotifications()
                     ->where('type', 'App\Notifications\ClassExpirationReminder')
@@ -38,8 +47,11 @@ class SiswaController extends Controller
                 }
             }
         }
-        
-        return view('siswa.dashboard', compact('enrolledClasses'));
+
+        // Sort expiring classes by days until expiration (most urgent first)
+        usort($expiringClasses, fn($a, $b) => $a['days_until'] <=> $b['days_until']);
+
+        return view('siswa.dashboard', compact('enrolledClasses', 'expiringClasses'));
     }
 
     /**
@@ -48,7 +60,7 @@ class SiswaController extends Controller
     public function showClass(Kelas $kelas)
     {
         $user = Auth::user();
-        
+
         // Check if student is enrolled in this class
         if (!$user->enrolledClasses->contains($kelas)) {
             abort(403, 'Anda tidak terdaftar di kelas ini.');
@@ -56,9 +68,12 @@ class SiswaController extends Controller
 
         $materi = $kelas->materi()
             ->where('status', 'approved')
-            ->with(['uploadedBy', 'progress' => function($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
+            ->with([
+                'uploadedBy',
+                'progress' => function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                }
+            ])
             ->paginate(10);
 
         return view('siswa.kelas.show', compact('kelas', 'materi'));
@@ -70,26 +85,26 @@ class SiswaController extends Controller
     public function showMateri($materi)
     {
         $user = Auth::user();
-        
+
         // Handle route model binding or direct ID
         if ($materi instanceof Materi) {
             $materiModel = $materi;
         } else {
             $materiModel = Materi::find($materi);
         }
-        
+
         if (!$materiModel) {
             abort(404, 'Materi tidak ditemukan.');
         }
-        
+
         $materiModel->load(['kelas', 'uploadedBy']);
-        
+
         // Check if student is enrolled in the class
         // Use enrollment check instead of relationship
         $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
             ->where('kelas_id', $materiModel->kelas_id)
             ->exists();
-        
+
         if (!$isEnrolled) {
             abort(403, 'Anda tidak terdaftar di kelas ini.');
         }
@@ -111,23 +126,23 @@ class SiswaController extends Controller
     public function completeMateri($materi)
     {
         $user = Auth::user();
-        
+
         // Handle route model binding or direct ID
         if ($materi instanceof Materi) {
             $materiModel = $materi;
         } else {
             $materiModel = Materi::find($materi);
         }
-        
+
         if (!$materiModel) {
             abort(404, 'Materi tidak ditemukan.');
         }
-        
+
         // Check if student is enrolled in the class
         $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
             ->where('kelas_id', $materiModel->kelas_id)
             ->exists();
-        
+
         if (!$isEnrolled) {
             abort(403, 'Anda tidak terdaftar di kelas ini.');
         }
@@ -160,35 +175,35 @@ class SiswaController extends Controller
     {
         $user = Auth::user();
         $enrolledClasses = $user->enrolledClasses()->with('materi')->get();
-        
+
         $progress = [];
         foreach ($enrolledClasses as $kelas) {
             $totalMateri = $kelas->materi()->where('status', 'approved')->count();
-            
+
             // Hitung materi yang sudah selesai berdasarkan MateriProgress
             $completedMateri = \App\Models\MateriProgress::where('user_id', $user->id)
-                ->whereHas('materi', function($query) use ($kelas) {
+                ->whereHas('materi', function ($query) use ($kelas) {
                     $query->where('kelas_id', $kelas->id)->where('status', 'approved');
                 })
                 ->where('is_completed', true)
                 ->count();
-            
+
             // Hitung rata-rata progres dari semua materi yang sudah dibaca
             $progressData = \App\Models\MateriProgress::where('user_id', $user->id)
-                ->whereHas('materi', function($query) use ($kelas) {
+                ->whereHas('materi', function ($query) use ($kelas) {
                     $query->where('kelas_id', $kelas->id)->where('status', 'approved');
                 })
                 ->get();
-            
+
             $averageProgress = 0;
             if ($progressData->count() > 0) {
                 $averageProgress = $progressData->avg('progress_percentage');
             }
-            
+
             // Gunakan rata-rata progres jika ada, jika tidak gunakan persentase materi selesai
-            $percentage = $totalMateri > 0 ? 
+            $percentage = $totalMateri > 0 ?
                 ($progressData->count() > 0 ? round($averageProgress, 1) : round(($completedMateri / $totalMateri) * 100, 1)) : 0;
-            
+
             $progress[] = [
                 'kelas' => $kelas,
                 'total_materi' => $totalMateri,
@@ -208,23 +223,23 @@ class SiswaController extends Controller
     public function submitAbsen(Request $request, $materi)
     {
         $user = Auth::user();
-        
+
         // Handle route model binding or direct ID
         if ($materi instanceof Materi) {
             $materiModel = $materi;
         } else {
             $materiModel = Materi::find($materi);
         }
-        
+
         if (!$materiModel) {
             abort(404, 'Materi tidak ditemukan.');
         }
-        
+
         // Check if student is enrolled in the class
         $isEnrolled = \App\Models\Enrollment::where('user_id', $user->id)
             ->where('kelas_id', $materiModel->kelas_id)
             ->exists();
-        
+
         if (!$isEnrolled) {
             abort(403, 'Anda tidak terdaftar di kelas ini.');
         }
@@ -234,7 +249,7 @@ class SiswaController extends Controller
         ]);
 
         $today = now()->toDateString();
-        
+
         // Check if attendance already recorded for today
         $existingAttendance = Presensi::where('user_id', $user->id)
             ->where('materi_id', $materiModel->id)
@@ -278,7 +293,7 @@ class SiswaController extends Controller
         // This is a simplified version. In a real application, you might want
         // to create a separate table to track material completion
         return Presensi::where('user_id', $user->id)
-            ->whereHas('materi', function($query) use ($kelas) {
+            ->whereHas('materi', function ($query) use ($kelas) {
                 $query->where('kelas_id', $kelas->id);
             })
             ->distinct('materi_id')

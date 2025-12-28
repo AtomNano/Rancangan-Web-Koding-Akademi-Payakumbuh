@@ -3,51 +3,53 @@
 title E-Learning Coding Akademi Payakumbuh\nUse Case Diagram v2.0 (Simplified)\nVerified - December 2025
 
 left to right direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
 
 ' Actors
 actor "ADMIN" as Admin #E74C3C
 actor "GURU" as Guru #3498DB  
 actor "SISWA" as Siswa #2ECC71
 
-rectangle "E-Learning System" {
+rectangle "E-Learning System" as System {
     
     ' ===== AUTHENTICATION =====
-    package "Autentikasi" {
-        (Login) as Login
-        (Login dengan\nGoogle OAuth) as OAuth
-        (Logout) as Logout
+    package "Autentikasi" as AuthPkg {
+      usecase "Login" as Login
+      usecase "Login dengan\nGoogle OAuth" as OAuth
+      usecase "Logout" as Logout
     }
     
     ' ===== ADMIN =====
-    package "Admin Functions" #FFE6E6 {
-        (Kelola Pengguna\n(CRUD, Activate/Deactivate)) as AdminUser
-        (Kelola Kelas\n(CRUD, Enroll/Unenroll)) as AdminClass
-        (Kelola Pertemuan\n& Absensi) as AdminMeeting
-        (Verifikasi Materi\n(Approve/Reject/Remind)) as AdminVerify
-        (Monitoring\n(Dashboard, Logs,\nProgress)) as AdminMonitor
-        (Backup & Export\n(Users, DB, Materials)) as AdminBackup
+    package "Admin Functions" as AdminPkg #FFE6E6 {
+      usecase "Kelola Pengguna\n(CRUD, Activate/Deactivate)" as AdminUser
+      usecase "Kelola Kelas\n(CRUD, Enroll/Unenroll)" as AdminClass
+      usecase "Kelola Pertemuan\n& Absensi" as AdminMeeting
+      usecase "Verifikasi Materi\n(Approve/Reject/Remind)" as AdminVerify
+      usecase "Monitoring\n(Dashboard, Logs,\nProgress)" as AdminMonitor
+      usecase "Backup & Export\n(Users, DB, Materials)" as AdminBackup
     }
     
     ' ===== GURU =====
-    package "Guru Functions" #E6F3FF {
-        (Kelola Materi\n(Upload/Edit/Delete)) as GuruMaterial
-        (Kelola Pertemuan\n& Input Absensi) as GuruMeeting
-        (Kelola Kelas\n(View Students,\nExport Logs)) as GuruClass
-        (Monitor Progress\nSiswa) as GuruMonitor
+    package "Guru Functions" as GuruPkg #E6F3FF {
+      usecase "Kelola Materi\n(Upload/Edit/Delete)" as GuruMaterial
+      usecase "Kelola Pertemuan\n& Input Absensi" as GuruMeeting
+      usecase "Kelola Kelas\n(View Students,\nExport Logs)" as GuruClass
+      usecase "Monitor Progress\nSiswa" as GuruMonitor
     }
     
     ' ===== SISWA =====
-    package "Siswa Functions" #E6FFE6 {
-        (Akses Kelas\n& Materi) as SiswaAccess
-        (Progress Pembelajaran\n(Complete, Track PDF)) as SiswaProgress
-        (Submit Absensi) as SiswaAbsen
-        (View Dashboard) as SiswaDashboard
+    package "Siswa Functions" as SiswaPkg #E6FFE6 {
+      usecase "Akses Kelas\n& Materi" as SiswaAccess
+      usecase "Progress Pembelajaran\n(Complete, Track PDF)" as SiswaProgress
+      usecase "Submit Absensi" as SiswaAbsen
+      usecase "View Dashboard" as SiswaDashboard
     }
     
     ' ===== SHARED =====
-    package "Shared Features" {
-        (Notifikasi) as Notification
-        (Edit Profile) as Profile
+    package "Shared Features" as SharedPkg {
+      usecase "Notifikasi" as Notification
+      usecase "Edit Profile" as Profile
     }
 }
 
@@ -114,7 +116,7 @@ note right of Siswa
   • View dashboard
 end note
 
-note bottom of "E-Learning System"
+note bottom of System
   **Platform E-Learning Coding Akademi Payakumbuh**
   Version 2.10 | Laravel 11 | MySQL
   

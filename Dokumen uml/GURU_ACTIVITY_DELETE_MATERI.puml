@@ -1,0 +1,92 @@
+@startuml "Guru Activity - Delete Materi"
+
+title Guru Activity Diagram\\nHapus Materi Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+|Guru|
+start
+:Login ke sistem;
+:Buka menu "Materi Saya";
+:Lihat daftar materi;
+
+|System|
+:Tampilkan daftar materi guru;
+
+|Guru|
+:Pilih materi yang akan dihapus;
+:Klik tombol "Hapus";
+
+|System|
+:Cek status materi;
+:Hitung siswa yang sudah akses;
+:Tampilkan modal konfirmasi;
+note right
+  **Konfirmasi Hapus:**
+  "Hapus materi ini?
+  
+  Materi: [judul]
+  Kelas: [nama kelas]
+  Status: [status]
+  
+  Data yang akan terhapus:
+  • File materi
+  • Progress siswa ([X] siswa)
+  
+  Tindakan ini tidak dapat dibatalkan!"
+end note
+
+|Guru|
+if (Konfirmasi hapus?) then (Ya)
+  :Klik "Ya, Hapus";
+  
+  |System|
+  :Mulai proses penghapusan;
+  
+  :Hapus progress siswa;
+  note right
+    DELETE FROM materi_progress
+    WHERE materi_id = [id]
+  end note
+  
+  :Hapus file dari storage;
+  note right
+    Hapus file fisik:
+    storage/app/public/materi/[file]
+  end note
+  
+  :Hapus record materi dari database;
+  note right
+    DELETE FROM materi
+    WHERE id = [id]
+  end note
+  
+  :Log aktivitas;
+  note right
+    **Activity Log:**
+    • User: Guru
+    • Action: Deleted Material
+    • Material: [judul]
+    • Class: [nama kelas]
+    • Students Affected: [jumlah]
+    • Timestamp: [waktu]
+  end note
+  
+  |Guru|
+  :Tampilkan notifikasi sukses;
+  note right
+    "Materi berhasil dihapus!"
+  end note
+  :Redirect ke daftar materi;
+  :Materi tidak muncul di daftar;
+  
+else (Tidak)
+  :Klik "Batal";
+  :Tutup modal konfirmasi;
+  :Kembali ke daftar materi;
+  note right
+    Materi tidak dihapus
+  end note
+endif
+
+stop
+
+@enduml

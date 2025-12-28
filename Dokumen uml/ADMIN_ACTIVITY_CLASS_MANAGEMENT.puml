@@ -1,0 +1,97 @@
+@startuml "Admin Activity - Class Management Overview"
+
+title Admin Activity Diagram\\nKelola Kelas - Overview\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Kelola Kelas";
+
+partition "Pilih Operasi" {
+  :Pilih aksi yang akan dilakukan;
+}
+
+split
+  -> Buat Kelas;
+  :Isi form kelas;
+  :Pilih guru;
+  |System|
+  :Simpan ke DB;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Edit Kelas;
+  :Pilih kelas;
+  :Edit data;
+  |System|
+  :Update DB;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Hapus Kelas;
+  :Pilih kelas;
+  :Konfirmasi;
+  |System|
+  :Hapus + cascade;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Enroll Siswa;
+  :Pilih kelas;
+  :Pilih siswa;
+  |System|
+  :Tambah enrollment;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Unenroll Siswa;
+  :Pilih kelas;
+  :Pilih siswa;
+  :Konfirmasi;
+  |System|
+  :Hapus enrollment;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Export Data;
+  :Pilih kelas;
+  :Pilih jenis export;
+  |System|
+  :Generate Excel;
+  |Admin|
+  :Download file;
+  
+split again
+  -> Lihat Daftar;
+  :Tampilkan list kelas;
+  :Lihat detail;
+end split
+
+stop
+
+note right
+  **Class Management Operations:**
+  • Buat Kelas Baru
+  • Edit Kelas
+  • Hapus Kelas
+  • Enroll Siswa
+  • Unenroll Siswa
+  • Export Absensi/Learning Log
+  • Lihat Daftar Kelas
+  
+  **Detail diagrams:**
+  • ADMIN_ACTIVITY_CREATE_CLASS.puml
+  • ADMIN_ACTIVITY_EDIT_CLASS.puml
+  • ADMIN_ACTIVITY_DELETE_CLASS.puml
+  • ADMIN_ACTIVITY_ENROLL_STUDENT.puml
+  • ADMIN_ACTIVITY_UNENROLL_STUDENT.puml
+  • ADMIN_ACTIVITY_EXPORT_ATTENDANCE.puml
+  • ADMIN_ACTIVITY_EXPORT_LEARNING_LOG.puml
+end note
+
+@enduml

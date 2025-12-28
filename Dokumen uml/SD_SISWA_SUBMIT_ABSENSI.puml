@@ -1,0 +1,48 @@
+@startuml "SD - Siswa Submit Absensi"
+
+title Sequence Diagram\\nSiswa Submit Absensi\\nE-Learning Coding Akademi Payakumbuh
+
+actor Siswa
+participant "materiView" as View
+participant "SiswaController" as Controller
+participant "Presensi" as Presensi
+
+Siswa -> View: pilihStatus()
+activate View
+
+View -> Controller: submitAbsensi(status)
+activate Controller
+
+alt status valid
+    Controller -> Presensi: checkExisting()
+    activate Presensi
+    Presensi --> Controller: existingData
+    deactivate Presensi
+    
+    alt already exists
+        Controller -> Presensi: update()
+        activate Presensi
+        Presensi --> Controller: success
+        deactivate Presensi
+    else not exists
+        Controller -> Presensi: create()
+        activate Presensi
+        Presensi --> Controller: success
+        deactivate Presensi
+    end
+    
+    Controller --> View: sendSuccessNotif()
+    deactivate Controller
+    
+    View --> Siswa: displayNotif()
+    deactivate View
+    
+else status invalid
+    Controller --> View: sendErrorNotif()
+    deactivate Controller
+    
+    View --> Siswa: displayNotif()
+    deactivate View
+end
+
+@enduml

@@ -1,0 +1,109 @@
+@startuml "Siswa Activity - Akses Materi"
+
+title Siswa Activity Diagram\\nAkses Materi Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+|Siswa|
+start
+:Login ke sistem;
+:Buka dashboard;
+
+|System|
+:Load daftar kelas enrolled;
+:Tampilkan daftar kelas;
+
+|Siswa|
+:Pilih kelas;
+:Klik "Lihat Kelas";
+
+|System|
+:Load materi kelas (approved only);
+:Tampilkan daftar materi;
+note right
+  Hanya materi dengan
+  status "approved" yang
+  ditampilkan
+end note
+
+|Siswa|
+:Pilih materi yang akan dipelajari;
+:Klik "Buka Materi";
+
+|System|
+:Load data materi;
+:Cek jenis file;
+
+if (Jenis file?) then (PDF)
+  :Tampilkan PDF viewer;
+  note right
+    **PDF Viewer Features:**
+    • Embedded PDF.js
+    • Navigation controls
+    • Zoom in/out
+    • Page counter
+    • Progress tracking
+  end note
+  
+  |Siswa|
+  :Baca materi PDF;
+  :Navigasi antar halaman;
+  
+  |System|
+  :Track halaman yang dibaca;
+  note right
+    Auto-save progress setiap
+    ganti halaman via AJAX
+  end note
+  
+  :Update current_page;
+  :Hitung progress_percentage;
+  note right
+    progress = (current_page / total_pages) × 100
+  end note
+  
+  if (Selesai baca semua halaman?) then (Ya)
+    :Auto set is_completed = true;
+    :Set completed_at = timestamp;
+  endif
+  
+else (Video)
+  :Tampilkan video player;
+  note right
+    **Video Player Features:**
+    • HTML5 video player
+    • Play/Pause controls
+    • Volume control
+    • Fullscreen mode
+  end note
+  
+  |Siswa|
+  :Tonton video materi;
+  
+  |System|
+  :Track video progress (optional);
+endif
+
+|Siswa|
+if (Selesai belajar?) then (Ya)
+  :Klik "Tandai Selesai";
+  
+  |System|
+  :Set is_completed = true;
+  :Set completed_at = timestamp;
+  :Update progress_percentage = 100;
+  :Log aktivitas;
+  
+  |Siswa|
+  :Tampilkan notifikasi;
+  note right
+    "Materi berhasil diselesaikan!
+    Progress Anda: 100%"
+  end note
+  
+else (Belum)
+  :Tutup materi;
+  :Progress tersimpan otomatis;
+endif
+
+stop
+
+@enduml

@@ -1,0 +1,106 @@
+@startuml "Admin Activity - Edit User"
+
+title Admin Activity Diagram\\nEdit Data Pengguna\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Pengguna";
+:Lihat daftar user;
+
+if (Filter user?) then (Ya)
+  :Pilih filter role;
+  note right
+    Filter by:
+    • Semua
+    • Admin
+    • Guru
+    • Siswa
+  end note
+  |System|
+  :Tampilkan user sesuai filter;
+else (Tidak)
+  |System|
+  :Tampilkan semua user;
+endif
+
+|Admin|
+:Cari user yang akan diedit;
+:Klik tombol "Edit" pada user;
+
+|System|
+:Load data user dari database;
+:Tampilkan form edit user;
+note right
+  Form sudah terisi dengan
+  data user yang ada
+end note
+
+|Admin|
+:Ubah data yang diperlukan;
+note right
+  **Data yang bisa diubah:**
+  • Nama Lengkap
+  • Email
+  • Password (optional)
+  • NIS/NIP
+  • No. Telepon
+  • Role (dengan hati-hati)
+end note
+
+if (Ubah password?) then (Ya)
+  :Isi password baru;
+  :Konfirmasi password baru;
+else (Tidak)
+  :Skip password (tidak diubah);
+endif
+
+:Klik tombol "Update";
+
+|System|
+:Validasi input data;
+
+if (Email sudah digunakan\\nuser lain?) then (Ya)
+  :Tampilkan error\\n"Email sudah digunakan";
+  |Admin|
+  stop
+else (Tidak)
+  if (NIS sudah digunakan\\nuser lain?\\n(untuk siswa)) then (Ya)
+    :Tampilkan error\\n"NIS sudah digunakan";
+    |Admin|
+    stop
+  else (Tidak)
+    if (Password diubah?) then (Ya)
+      if (Password < 8 karakter?) then (Ya)
+        :Tampilkan error\\n"Password minimal 8 karakter";
+        |Admin|
+        stop
+      else (Tidak)
+        :Hash password baru;
+      endif
+    endif
+    
+    :Update data user di database;
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Updated User
+      • Details: [nama user]
+      • Changes: [field yang diubah]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Data user berhasil diupdate!"
+    end note
+    :Redirect ke halaman daftar user;
+    :Lihat perubahan data user;
+  endif
+endif
+
+stop
+
+@enduml

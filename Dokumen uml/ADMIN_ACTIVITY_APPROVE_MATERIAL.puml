@@ -1,0 +1,131 @@
+@startuml "Admin Activity - Approve Material"
+
+title Admin Activity Diagram\\nApprove Materi Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Verifikasi Materi";
+
+|System|
+:Query materi dengan status pending;
+:Tampilkan daftar materi pending;
+note right
+  Setiap materi menampilkan:
+  • Judul materi
+  • Kelas
+  • Guru yang upload
+  • Tanggal upload
+  • Tombol aksi
+end note
+
+|Admin|
+if (Ada materi pending?) then (Ya)
+  :Pilih materi untuk direview;
+  :Klik "Lihat Detail";
+  
+  |System|
+  :Load data materi lengkap;
+  :Tampilkan detail materi;
+  note right
+    **Detail Materi:**
+    • Judul
+    • Deskripsi
+    • Kelas
+    • Guru
+    • Tanggal upload
+    • File (PDF/Video)
+    • Preview/Download
+  end note
+  
+  |Admin|
+  :Review informasi materi;
+  :Download/Preview file materi;
+  :Periksa konten materi;
+  
+  if (Materi sesuai?) then (Ya)
+    :Klik tombol "Approve";
+    
+    |System|
+    :Tampilkan form approve;
+    note right
+      Form berisi:
+      • Catatan admin (opsional)
+      • Tombol konfirmasi
+    end note
+    
+    |Admin|
+    if (Tambah catatan?) then (Ya)
+      :Isi catatan untuk guru;
+      note right
+        Contoh:
+        "Materi bagus dan lengkap.
+        Sudah disetujui."
+      end note
+    else (Tidak)
+      :Skip catatan;
+    endif
+    
+    :Klik "Konfirmasi Approve";
+    
+    |System|
+    :Update status materi = "approved";
+    :Simpan catatan admin (jika ada);
+    :Set approved_at = timestamp;
+    :Set approved_by = admin ID;
+    
+    :Kirim notifikasi ke guru;
+    note right
+      **Notifikasi ke Guru:**
+      Subject: "Materi Disetujui"
+      
+      "Materi Anda telah disetujui
+      dan dapat diakses oleh siswa.
+      
+      Materi: [judul]
+      Kelas: [nama kelas]
+      
+      Catatan Admin: [catatan]"
+    end note
+    
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Approved Material
+      • Material: [judul]
+      • Teacher: [nama guru]
+      • Class: [nama kelas]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Materi berhasil diapprove!
+      Siswa sudah bisa mengakses
+      materi ini."
+    end note
+    
+    :Materi hilang dari list pending;
+    :Materi muncul di list approved;
+    
+  else (Tidak sesuai)
+    :Pilih "Reject" atau "Remind";
+    note right
+      Admin bisa reject atau
+      kirim reminder ke guru
+    end note
+  endif
+  
+else (Tidak)
+  :Tampilkan pesan;
+  note right
+    "Tidak ada materi yang
+    menunggu verifikasi"
+  end note
+endif
+
+stop
+
+@enduml

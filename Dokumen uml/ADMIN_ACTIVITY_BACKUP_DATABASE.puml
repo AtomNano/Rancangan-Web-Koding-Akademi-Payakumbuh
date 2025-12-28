@@ -1,0 +1,134 @@
+@startuml "Admin Activity - Backup Database"
+
+title Admin Activity Diagram\\nBackup Database\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Backup & Export";
+
+|System|
+:Tampilkan halaman backup;
+:Tampilkan statistik database;
+note right
+  **Statistik:**
+  • Total users
+  • Total kelas
+  • Total materi
+  • Total pertemuan
+  • Database size
+  • Last backup date
+end note
+
+|Admin|
+:Klik tombol "Backup Database";
+
+|System|
+:Tampilkan modal konfirmasi;
+note right
+  **Konfirmasi Backup:**
+  "Backup database sekarang?
+  
+  Proses ini akan:
+  • Membuat SQL dump database
+  • Menyimpan ke server hosting
+  • Memakan waktu beberapa menit
+  
+  Database tetap bisa diakses
+  selama proses backup."
+end note
+
+|Admin|
+if (Konfirmasi backup?) then (Ya)
+  :Klik "Ya, Backup Sekarang";
+  
+  |System|
+  :Tampilkan loading indicator;
+  note right
+    "Sedang membackup database...
+    Mohon tunggu."
+  end note
+  
+  :Jalankan Artisan command;
+  note right
+    php artisan backup:run --only-db
+    --disable-notifications
+  end note
+  
+  :Mulai proses backup;
+  
+  if (Backup berhasil?) then (Ya)
+    :Generate SQL dump file;
+    note right
+      Filename format:
+      [app-name]-[timestamp].sql
+      
+      Contoh:
+      elearning-2025-12-27-210000.sql
+    end note
+    
+    :Compress file (zip);
+    :Simpan ke storage server;
+    note right
+      Location:
+      storage/app/backups/
+      atau
+      Server hosting backup folder
+    end note
+    
+    :Update last backup timestamp;
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Database Backup
+      • Filename: [nama file]
+      • Size: [ukuran file]
+      • Status: Success
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Backup database berhasil!
+      
+      File: [nama file]
+      Size: [ukuran]
+      Location: Server hosting
+      
+      File tersimpan di server
+      penyedia hosting Anda."
+    end note
+    
+  else (Gagal)
+    :Log error;
+    note right
+      **Error Log:**
+      • User: Admin
+      • Action: Database Backup
+      • Status: Failed
+      • Error: [pesan error]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi error;
+    note right
+      "Backup database gagal!
+      
+      Error: [pesan error]
+      
+      Silakan coba lagi atau
+      hubungi administrator."
+    end note
+  endif
+  
+else (Tidak)
+  :Klik "Batal";
+  :Kembali ke halaman backup;
+endif
+
+stop
+
+@enduml

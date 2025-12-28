@@ -1,0 +1,103 @@
+@startuml "Guru Activity - Upload Materi"
+
+title Guru Activity Diagram\\nUpload Materi Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+|Guru|
+start
+:Login ke sistem;
+:Buka menu "Materi Saya";
+:Klik "Upload Materi Baru";
+
+|System|
+:Tampilkan form upload;
+:Load daftar kelas guru;
+
+|Guru|
+:Pilih kelas tujuan;
+:Isi judul materi;
+note right
+  Contoh:
+  • "Pengenalan HTML & CSS"
+  • "JavaScript Fundamentals"
+  • "Database Design"
+end note
+
+:Isi deskripsi materi;
+note right
+  Deskripsi berisi:
+  • Tujuan pembelajaran
+  • Topik yang dibahas
+  • Prasyarat (jika ada)
+end note
+
+:Pilih jenis file;
+if (Jenis file?) then (PDF)
+  :Upload file PDF;
+  note right
+    Max size: 50MB
+    Format: .pdf
+  end note
+else (Video)
+  :Upload file video;
+  note right
+    Max size: 50MB
+    Format: .mp4, .avi, .mkv
+  end note
+endif
+
+:Klik "Upload";
+
+|System|
+:Validasi file;
+
+if (File size > 50MB?) then (Ya)
+  :Tampilkan error\\n"File terlalu besar";
+  |Guru|
+  stop
+else (Tidak)
+  if (Format file valid?) then (Ya)
+    :Upload file ke storage;
+    :Generate file path;
+    :Simpan data materi ke database;
+    :Set status = "pending";
+    :Set uploaded_by = guru ID;
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Guru
+      • Action: Uploaded Material
+      • Material: [judul]
+      • Class: [nama kelas]
+      • Status: Pending
+      • Timestamp: [waktu]
+    end note
+    
+    :Kirim notifikasi ke admin;
+    note right
+      **Notifikasi ke Admin:**
+      "Materi baru menunggu verifikasi
+      
+      Guru: [nama guru]
+      Materi: [judul]
+      Kelas: [nama kelas]"
+    end note
+    
+    |Guru|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Materi berhasil diupload!
+      Menunggu verifikasi admin."
+    end note
+    :Redirect ke daftar materi;
+    :Lihat materi dengan status "Pending";
+    
+  else (Tidak)
+    :Tampilkan error\\n"Format file tidak valid";
+    |Guru|
+    stop
+  endif
+endif
+
+stop
+
+@enduml

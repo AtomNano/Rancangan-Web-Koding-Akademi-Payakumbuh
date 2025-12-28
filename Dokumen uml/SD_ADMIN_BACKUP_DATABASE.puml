@@ -1,0 +1,31 @@
+@startuml "SD - Admin Backup Database"
+
+title Sequence Diagram\\nAdmin Backup Database\\nE-Learning Coding Akademi Payakumbuh
+
+actor Admin
+participant "backupPage" as Page
+participant "BackupController" as Controller
+participant "Artisan" as Artisan
+
+Admin -> Page: klikBackup()
+activate Page
+
+Page -> Controller: backupDatabase()
+activate Controller
+
+Controller -> Artisan: runBackupCommand()
+activate Artisan
+
+Artisan -> Artisan: mysqldump()
+Artisan -> Artisan: saveToStorage()
+
+Artisan --> Controller: backupSuccess()
+deactivate Artisan
+
+Controller --> Page: sendSuccessNotif()
+deactivate Controller
+
+Page --> Admin: displayNotif()
+deactivate Page
+
+@enduml

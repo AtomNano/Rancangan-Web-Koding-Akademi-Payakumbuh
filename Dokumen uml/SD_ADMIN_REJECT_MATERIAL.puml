@@ -1,0 +1,59 @@
+@startuml "SD - Admin Reject Material"
+
+title Sequence Diagram\\nAdmin Reject Materi\\nE-Learning Coding Akademi Payakumbuh
+
+actor Admin
+participant "materiList" as List
+participant "MateriController" as Controller
+participant "Materi" as Materi
+participant "Notification" as Notif
+
+Admin -> List: klikReject()
+activate List
+
+List -> Controller: rejectMaterial(materi_id)
+activate Controller
+
+Controller -> Materi: find(id)
+activate Materi
+Materi --> Controller: materiData
+deactivate Materi
+
+Controller --> List: displayRejectForm()
+deactivate Controller
+
+List --> Admin: displayRejectForm()
+deactivate List
+
+Admin -> List: submitReason(reason)
+activate List
+
+List -> Controller: saveRejection(reason)
+activate Controller
+
+alt reason valid
+    Controller -> Materi: updateStatus('rejected')
+    activate Materi
+    Materi --> Controller: success
+    deactivate Materi
+    
+    Controller -> Notif: sendToGuru()
+    activate Notif
+    Notif --> Controller: sent
+    deactivate Notif
+    
+    Controller --> List: sendSuccessNotif()
+    deactivate Controller
+    
+    List --> Admin: displayNotif()
+    deactivate List
+    
+else reason empty
+    Controller --> List: sendErrorNotif()
+    deactivate Controller
+    
+    List --> Admin: displayNotif()
+    deactivate List
+end
+
+@enduml

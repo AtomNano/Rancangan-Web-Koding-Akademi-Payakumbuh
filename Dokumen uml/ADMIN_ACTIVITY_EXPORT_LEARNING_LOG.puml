@@ -1,0 +1,116 @@
+@startuml "Admin Activity - Export Learning Log"
+
+title Admin Activity Diagram\\nExport Learning Log Siswa (Excel)\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Kelas";
+:Pilih kelas;
+:Lihat daftar siswa enrolled;
+
+|System|
+:Load data siswa di kelas;
+:Tampilkan daftar siswa;
+
+|Admin|
+:Pilih siswa untuk export;
+:Klik tombol "Export Learning Log";
+
+|System|
+:Mulai generate Excel;
+:Query data siswa;
+:Query data kelas;
+:Query data presensi siswa;
+:Query data progress materi siswa;
+
+:Buat struktur Excel;
+note right
+  **Sheet 1: Info Siswa**
+  • Nama Siswa
+  • NIS
+  • Email
+  • Kelas
+  • Guru Pengajar
+  
+  **Sheet 2: Riwayat Absensi**
+  • No
+  • Tanggal
+  • Pertemuan Ke-
+  • Topik
+  • Status Kehadiran
+  
+  **Sheet 3: Progress Materi**
+  • No
+  • Judul Materi
+  • Tanggal Akses Pertama
+  • Tanggal Akses Terakhir
+  • Progress (%)
+  • Status (Completed/In Progress)
+end note
+
+:Generate Sheet 1 - Info Siswa;
+:Isi data profil siswa;
+
+:Generate Sheet 2 - Riwayat Absensi;
+repeat
+  :Ambil data pertemuan;
+  :Ambil presensi siswa;
+  :Isi row dengan data absensi;
+repeat while (Masih ada pertemuan?) is (Ya)
+->Tidak;
+
+:Hitung statistik absensi;
+note right
+  • Total Pertemuan
+  • Total Hadir
+  • Total Izin
+  • Total Sakit
+  • Total Alpha
+  • % Kehadiran
+end note
+
+:Generate Sheet 3 - Progress Materi;
+repeat
+  :Ambil data materi kelas;
+  :Ambil progress siswa;
+  
+  if (Siswa pernah akses?) then (Ya)
+    :Isi data progress;
+  else (Tidak)
+    :Isi "Belum diakses";
+  endif
+  
+repeat while (Masih ada materi?) is (Ya)
+->Tidak;
+
+:Hitung statistik progress;
+note right
+  • Total Materi
+  • Materi Completed
+  • Materi In Progress
+  • Materi Not Started
+  • % Completion
+end note
+
+:Format Excel (border, color, etc);
+:Set column width auto;
+:Generate filename;
+note right
+  Format:
+  learning-log-[nama-siswa]-[nama-kelas]-[timestamp].xlsx
+  
+  Contoh:
+  learning-log-john-doe-web-dev-2025-12-27.xlsx
+end note
+
+:Download file Excel;
+
+|Admin|
+:File berhasil didownload;
+:Buka file Excel;
+:Lihat learning log lengkap siswa;
+
+stop
+
+@enduml

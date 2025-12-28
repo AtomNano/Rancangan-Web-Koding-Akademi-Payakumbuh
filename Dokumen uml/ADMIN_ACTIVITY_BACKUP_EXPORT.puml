@@ -1,0 +1,195 @@
+@startuml "Admin Activity - Backup & Export Overview"
+
+title Admin Activity Diagram\\nBackup & Export Data - Overview\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Backup & Export";
+
+partition "Pilih Jenis Backup/Export" {
+  :Pilih operasi yang akan dilakukan;
+}
+
+split
+  -> Export Users;
+  :Pilih role (Admin/Guru/Siswa);
+  |System|
+  :Query users by role;
+  :Generate Excel file;
+  |Admin|
+  :Download file;
+  
+split again
+  -> Export Logs;
+  :Klik "Export Log Aktivitas";
+  |System|
+  :Query activity logs;
+  :Generate Excel file;
+  |Admin|
+  :Download file;
+  
+split again
+  -> Backup Database;
+  :Klik "Backup Database";
+  :Konfirmasi backup;
+  |System|
+  :Run Artisan command;
+  :Generate SQL dump;
+  :Simpan ke server;
+  |Admin|
+  :Backup sukses;
+  
+split again
+  -> Download All Materials;
+  :Klik "Download Semua Materi";
+  :Konfirmasi download;
+  |System|
+  :Scan folder materi;
+  :Buat ZIP archive;
+  :Compress semua file;
+  |Admin|
+  :Download ZIP file;
+  
+split again
+  -> Lihat Dashboard;
+  :Tampilkan halaman backup;
+  :Lihat statistik data;
+end split
+
+stop
+
+note right
+  **Backup & Export Operations:**
+  • Export Users (by role)
+  • Export Activity Logs
+  • Backup Database (SQL dump)
+  • Download All Materials (ZIP)
+  • Lihat Dashboard Backup
+  
+  **File Formats:**
+  • Excel: .xlsx
+  • Database: .sql
+  • Materials: .zip
+  
+  **Detail diagram:**
+  • ADMIN_ACTIVITY_BACKUP_DATABASE.puml
+end note
+
+@enduml
+
+
+title Admin Activity Diagram\\nBackup & Export Data\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Backup & Export";
+
+if (Pilih jenis backup/export?) then (Export Users)
+  :Klik "Export Data Pengguna";
+  :Pilih role (Admin/Guru/Siswa);
+  
+  |System|
+  :Query users by role;
+  :Generate Excel file;
+  note right
+    Format: data-{role}-{timestamp}.xlsx
+    Contoh: data-guru-2025-12-27-143000.xlsx
+  end note
+  :Download file;
+  
+  |Admin|
+  :File berhasil didownload;
+
+elseif (Export Logs) then
+  :Klik "Export Log Aktivitas";
+  
+  |System|
+  :Query activity logs;
+  :Generate Excel file;
+  note right
+    Format: data-log-aktivitas-{timestamp}.xlsx
+    Berisi semua aktivitas user
+  end note
+  :Download file;
+  
+  |Admin|
+  :File berhasil didownload;
+
+elseif (Backup Database) then
+  :Klik "Backup Database";
+  :Konfirmasi backup;
+  
+  if (Konfirmasi?) then (Ya)
+    |System|
+    :Jalankan Artisan command;
+    note right
+      php artisan backup:run --only-db
+    end note
+    :Generate SQL dump;
+    :Simpan ke storage server;
+    :Log aktivitas;
+    
+    |Admin|
+    :Tampilkan pesan sukses;
+    note right
+      "Backup database berhasil.
+      File tersimpan di server hosting."
+    end note
+  else (Tidak)
+    stop
+  endif
+
+elseif (Download All Materials) then
+  :Klik "Download Semua Materi";
+  :Konfirmasi download;
+  
+  if (Konfirmasi?) then (Ya)
+    |System|
+    :Scan folder storage/materi;
+    if (Ada file materi?) then (Ya)
+      :Buat ZIP archive;
+      note right
+        Format: semua-materi-{timestamp}.zip
+        Berisi semua file PDF/Video
+      end note
+      
+      repeat
+        :Tambahkan file ke ZIP;
+      repeat while (Masih ada file?) is (Ya)
+      ->Tidak;
+      
+      :Finalize ZIP file;
+      :Download file;
+      
+      |Admin|
+      :File ZIP berhasil didownload;
+      
+    else (Tidak)
+      :Tampilkan error;
+      note right
+        "Tidak ada file materi
+        yang ditemukan"
+      end note
+      stop
+    endif
+  else (Tidak)
+    stop
+  endif
+
+else (Lihat Dashboard Backup)
+  :Tampilkan halaman backup;
+  :Lihat statistik data;
+  note right
+    Statistik:
+    • Total users
+    • Total materi
+    • Total logs
+    • Last backup date
+  end note
+endif
+
+stop
+
+@enduml

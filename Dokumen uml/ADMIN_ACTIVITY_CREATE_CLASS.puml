@@ -1,0 +1,80 @@
+@startuml "Admin Activity - Create Class"
+
+title Admin Activity Diagram\\nBuat Kelas Baru\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Kelas";
+:Klik tombol "Buat Kelas Baru";
+
+|System|
+:Tampilkan form buat kelas;
+:Load daftar guru untuk dropdown;
+
+|Admin|
+:Isi nama kelas;
+note right
+  Contoh:
+  • "Web Development Dasar"
+  • "Python Programming"
+  • "Mobile App Development"
+end note
+
+:Isi deskripsi kelas;
+note right
+  Deskripsi singkat tentang:
+  • Materi yang akan dipelajari
+  • Target pembelajaran
+  • Durasi kelas (opsional)
+end note
+
+:Pilih guru pengajar;
+note right
+  Dropdown berisi daftar
+  semua guru yang aktif
+end note
+
+:Klik tombol "Simpan";
+
+|System|
+:Validasi input data;
+
+if (Nama kelas kosong?) then (Ya)
+  :Tampilkan error\\n"Nama kelas wajib diisi";
+  |Admin|
+  stop
+else (Tidak)
+  if (Guru belum dipilih?) then (Ya)
+    :Tampilkan error\\n"Pilih guru pengajar";
+    |Admin|
+    stop
+  else (Tidak)
+    :Buat record kelas baru;
+    :Set guru_id = guru yang dipilih;
+    :Set created_at = timestamp;
+    :Simpan ke database;
+    :Generate kelas ID;
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Created Class
+      • Details: [nama kelas]
+      • Teacher: [nama guru]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Kelas berhasil dibuat!"
+    end note
+    :Redirect ke halaman detail kelas;
+    :Lihat kelas baru (belum ada siswa);
+  endif
+endif
+
+stop
+
+@enduml

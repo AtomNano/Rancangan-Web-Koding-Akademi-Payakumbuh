@@ -1,0 +1,79 @@
+@startuml "Siswa Activity - Lihat Progress"
+
+title Siswa Activity Diagram\\nLihat Progress Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+|Siswa|
+start
+:Login ke sistem;
+:Buka menu "Progress Saya";
+
+|System|
+:Load semua kelas enrolled;
+:Load progress materi per kelas;
+:Load riwayat absensi;
+:Hitung statistik;
+:Tampilkan halaman progress;
+
+|Siswa|
+:Lihat overview progress;
+note right
+  **Overview:**
+  • Total kelas enrolled
+  • Total materi available
+  • Total materi completed
+  • Overall progress %
+end note
+
+partition "Per Kelas" {
+  :Pilih kelas untuk detail;
+  
+  |System|
+  :Load detail progress kelas;
+  :Tampilkan data kelas;
+  
+  |Siswa|
+  :Lihat informasi kelas;
+  note right
+    **Info Kelas:**
+    • Nama kelas
+    • Guru pengajar
+    • Total materi: [X]
+    • Completed: [X]
+    • Progress: [X]%
+  end note
+  
+  :Lihat daftar materi;
+  note right
+    **Status Materi:**
+    ✅ Completed (green)
+    📖 In Progress (yellow)
+    ⏳ Not Started (gray)
+    
+    Setiap materi menampilkan:
+    • Judul materi
+    • Progress %
+    • Last accessed
+  end note
+  
+  :Lihat riwayat absensi;
+  note right
+    **Riwayat Absensi:**
+    • Total pertemuan: [X]
+    • Hadir: [X]
+    • Izin: [X]
+    • Sakit: [X]
+    • Alpha: [X]
+    • % Kehadiran: [X]%
+  end note
+}
+
+if (Klik materi?) then (Ya)
+  :Redirect ke materi;
+  :Lanjut belajar;
+else (Tidak)
+  :Tetap di halaman progress;
+endif
+
+stop
+
+@enduml

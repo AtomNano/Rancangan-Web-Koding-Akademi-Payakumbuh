@@ -1,0 +1,132 @@
+@startuml "Admin Activity - Reject Material"
+
+title Admin Activity Diagram\\nReject Materi Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Verifikasi Materi";
+
+|System|
+:Query materi dengan status pending;
+:Tampilkan daftar materi pending;
+
+|Admin|
+:Pilih materi untuk direview;
+:Klik "Lihat Detail";
+
+|System|
+:Load data materi lengkap;
+:Tampilkan detail materi;
+
+|Admin|
+:Review informasi materi;
+:Download/Preview file materi;
+:Periksa konten materi;
+
+if (Materi tidak sesuai?) then (Ya)
+  :Klik tombol "Reject";
+  
+  |System|
+  :Tampilkan form reject;
+  note right
+    **Form Reject:**
+    • Alasan penolakan (WAJIB)
+    • Saran perbaikan (opsional)
+    • Tombol konfirmasi
+  end note
+  
+  |Admin|
+  :Isi alasan penolakan;
+  note right
+    **Contoh Alasan:**
+    • "Materi tidak sesuai dengan
+      silabus kelas"
+    • "File rusak/tidak bisa dibuka"
+    • "Konten tidak lengkap"
+    • "Format file tidak sesuai"
+  end note
+  
+  if (Tambah saran perbaikan?) then (Ya)
+    :Isi saran untuk guru;
+    note right
+      Contoh:
+      "Mohon tambahkan contoh
+      praktik dan latihan soal"
+    end note
+  else (Tidak)
+    :Skip saran;
+  endif
+  
+  :Klik "Konfirmasi Reject";
+  
+  |System|
+  :Validasi input;
+  
+  if (Alasan kosong?) then (Ya)
+    :Tampilkan error;
+    note right
+      "Alasan penolakan wajib diisi
+      untuk feedback ke guru"
+    end note
+    |Admin|
+    stop
+  else (Tidak)
+    :Update status materi = "rejected";
+    :Simpan alasan penolakan;
+    :Simpan saran (jika ada);
+    :Set rejected_at = timestamp;
+    :Set rejected_by = admin ID;
+    
+    :Kirim notifikasi ke guru;
+    note right
+      **Notifikasi ke Guru:**
+      Subject: "Materi Ditolak"
+      
+      "Materi Anda ditolak dan perlu
+      diperbaiki.
+      
+      Materi: [judul]
+      Kelas: [nama kelas]
+      
+      Alasan Penolakan:
+      [alasan admin]
+      
+      Saran Perbaikan:
+      [saran admin]
+      
+      Silakan upload ulang setelah
+      diperbaiki."
+    end note
+    
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Rejected Material
+      • Material: [judul]
+      • Teacher: [nama guru]
+      • Class: [nama kelas]
+      • Reason: [alasan]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Materi berhasil direject.
+      Guru akan menerima notifikasi
+      dengan alasan penolakan."
+    end note
+    
+    :Materi hilang dari list pending;
+    :Materi muncul di list rejected;
+  endif
+  
+else (Tidak)
+  :Pilih "Approve" atau "Remind";
+endif
+
+stop
+
+@enduml

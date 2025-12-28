@@ -1,0 +1,121 @@
+@startuml "Admin Activity - Activate Deactivate User"
+
+title Admin Activity Diagram\\nAktifkan/Nonaktifkan Pengguna\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Pengguna";
+:Lihat daftar user;
+
+|System|
+:Tampilkan daftar user;
+note right
+  Setiap user menampilkan:
+  • Nama
+  • Email
+  • Role
+  • Status (Aktif/Tidak Aktif)
+  • Tombol toggle status
+end note
+
+|Admin|
+:Cari user yang akan diubah statusnya;
+
+if (Status user saat ini?) then (Aktif)
+  :Klik tombol "Nonaktifkan";
+  
+  |System|
+  :Tampilkan modal konfirmasi;
+  note right
+    **Konfirmasi Nonaktifkan:**
+    "Nonaktifkan user [nama]?
+    
+    User tidak akan bisa:
+    • Login ke sistem
+    • Akses semua fitur
+    
+    Data user tetap tersimpan
+    dan bisa diaktifkan kembali."
+  end note
+  
+  |Admin|
+  if (Konfirmasi?) then (Ya)
+    :Klik "Ya, Nonaktifkan";
+    
+    |System|
+    :Set is_active = false;
+    :Update database;
+    :Logout user jika sedang login;
+    note right
+      Invalidate session user
+      jika sedang aktif
+    end note
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Deactivated User
+      • Details: [nama user]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "User berhasil dinonaktifkan!"
+    end note
+    :Status user berubah jadi\\n"Tidak Aktif" (merah);
+    
+  else (Tidak)
+    :Klik "Batal";
+    :Status tetap aktif;
+  endif
+
+else (Tidak Aktif)
+  :Klik tombol "Aktifkan";
+  
+  |System|
+  :Tampilkan modal konfirmasi;
+  note right
+    **Konfirmasi Aktifkan:**
+    "Aktifkan user [nama]?
+    
+    User akan bisa:
+    • Login ke sistem
+    • Akses semua fitur
+      sesuai role-nya"
+  end note
+  
+  |Admin|
+  if (Konfirmasi?) then (Ya)
+    :Klik "Ya, Aktifkan";
+    
+    |System|
+    :Set is_active = true;
+    :Update database;
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Activated User
+      • Details: [nama user]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "User berhasil diaktifkan!"
+    end note
+    :Status user berubah jadi\\n"Aktif" (hijau);
+    
+  else (Tidak)
+    :Klik "Batal";
+    :Status tetap tidak aktif;
+  endif
+endif
+
+stop
+
+@enduml

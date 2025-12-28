@@ -1,0 +1,102 @@
+@startuml "Guru Activity - Overview"
+
+title Guru Activity Diagram\\nKelola Materi & Absensi - Overview\\nE-Learning Coding Akademi Payakumbuh
+
+|Guru|
+start
+:Login ke sistem;
+
+partition "Pilih Menu" {
+  :Pilih operasi yang akan dilakukan;
+}
+
+split
+  -> Kelola Materi;
+  
+  split
+    -> Upload Materi;
+    :Pilih kelas;
+    :Isi form materi;
+    :Upload file (PDF/Video);
+    |System|
+    :Validasi & simpan;
+    :Set status = pending;
+    :Notifikasi admin;
+    |Guru|
+    :Menunggu verifikasi;
+    
+  split again
+    -> Edit Materi;
+    :Pilih materi;
+    :Edit data/file;
+    |System|
+    :Update & set pending;
+    :Notifikasi admin;
+    |Guru|
+    :Menunggu verifikasi;
+    
+  split again
+    -> Hapus Materi;
+    :Pilih materi;
+    :Konfirmasi;
+    |System|
+    :Hapus file & progress;
+    |Guru|
+    :Sukses;
+  end split
+  
+split again
+  -> Kelola Absensi;
+  :Pilih kelas;
+  :Pilih pertemuan;
+  :Input status per siswa;
+  |System|
+  :Simpan presensi;
+  :Hitung statistik;
+  |Guru|
+  :Lihat hasil;
+  
+split again
+  -> Lihat Kelas;
+  :Pilih kelas yang diajar;
+  |System|
+  :Load data kelas & siswa;
+  |Guru|
+  :Lihat daftar siswa;
+  :Lihat progress siswa;
+  
+split again
+  -> Monitor Progress;
+  :Pilih kelas;
+  :Pilih siswa;
+  |System|
+  :Load progress & absensi;
+  |Guru|
+  :Lihat riwayat belajar;
+end split
+
+stop
+
+note right
+  **Guru Operations:**
+  
+  **Kelola Materi:**
+  • Upload Materi Baru
+  • Edit Materi
+  • Hapus Materi
+  
+  **Kelola Absensi:**
+  • Input Absensi Siswa
+  
+  **Monitor:**
+  • Lihat Kelas yang Diajar
+  • Monitor Progress Siswa
+  
+  **Detail diagrams:**
+  • GURU_ACTIVITY_UPLOAD_MATERI.puml
+  • GURU_ACTIVITY_EDIT_MATERI.puml
+  • GURU_ACTIVITY_DELETE_MATERI.puml
+  • GURU_ACTIVITY_INPUT_ABSENSI.puml
+end note
+
+@enduml

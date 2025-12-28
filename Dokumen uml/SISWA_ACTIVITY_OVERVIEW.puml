@@ -1,0 +1,100 @@
+@startuml "Siswa Activity - Overview"
+
+title Siswa Activity Diagram\\nAkses Pembelajaran - Overview\\nE-Learning Coding Akademi Payakumbuh
+
+|Siswa|
+start
+:Login ke sistem;
+:Buka dashboard;
+
+partition "Pilih Aktivitas" {
+  :Pilih apa yang akan dilakukan;
+}
+
+split
+  -> Akses Materi;
+  :Pilih kelas;
+  :Pilih materi;
+  |System|
+  :Load materi (approved only);
+  
+  if (Jenis file?) then (PDF)
+    :Tampilkan PDF viewer;
+    |Siswa|
+    :Baca materi;
+    |System|
+    :Track progress per halaman;
+    :Auto-save progress;
+  else (Video)
+    :Tampilkan video player;
+    |Siswa|
+    :Tonton video;
+  endif
+  
+  |Siswa|
+  :Tandai selesai (optional);
+  |System|
+  :Set completed = true;
+  
+split again
+  -> Submit Absensi;
+  :Akses materi;
+  :Lihat form absensi;
+  :Pilih status kehadiran;
+  |System|
+  :Simpan presensi;
+  |Siswa|
+  :Absensi tersimpan;
+  
+split again
+  -> Lihat Progress;
+  :Buka menu "Progress Saya";
+  |System|
+  :Load semua kelas enrolled;
+  :Load progress & absensi;
+  :Hitung statistik;
+  |Siswa|
+  :Lihat overview progress;
+  :Lihat detail per kelas;
+  note right
+    Per kelas menampilkan:
+    • Total materi
+    • Completed materi
+    • Progress %
+    • Riwayat absensi
+  end note
+  
+split again
+  -> Lihat Dashboard;
+  :Tampilkan dashboard;
+  |System|
+  :Load statistik pembelajaran;
+  |Siswa|
+  :Lihat kelas enrolled;
+  :Lihat progress keseluruhan;
+end split
+
+stop
+
+note right
+  **Siswa Operations:**
+  
+  **Pembelajaran:**
+  • Akses Materi (PDF/Video)
+  • Progress Tracking Otomatis
+  • Tandai Materi Selesai
+  
+  **Absensi:**
+  • Submit Absensi per Materi
+  
+  **Monitoring:**
+  • Lihat Progress Pembelajaran
+  • Lihat Dashboard
+  
+  **Detail diagrams:**
+  • SISWA_ACTIVITY_AKSES_MATERI.puml
+  • SISWA_ACTIVITY_SUBMIT_ABSENSI.puml
+  • SISWA_ACTIVITY_LIHAT_PROGRESS.puml
+end note
+
+@enduml
