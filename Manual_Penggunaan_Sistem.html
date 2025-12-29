@@ -100,11 +100,8 @@
         }
 
         .toc-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            padding: 10px 0;
-            border-bottom: 1px dotted #e2e8f0;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .toc-item.main {
@@ -115,7 +112,29 @@
         .toc-item.sub {
             padding-left: 25px;
             font-size: 10pt;
-            color: #64748b;
+        }
+
+        .toc-item a {
+            color: #1e40af;
+            text-decoration: none;
+            display: block;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .toc-item a:hover {
+            background: #eff6ff;
+            color: #1e3a8a;
+            padding-left: 12px;
+        }
+
+        .toc-item.main a {
+            color: #0f172a;
+        }
+
+        .toc-item.main a:hover {
+            color: #1e40af;
         }
 
         /* Headings */
@@ -381,42 +400,98 @@
         <div class="toc">
             <h2>📑 Daftar Isi</h2>
 
-            <div class="toc-item main">1. Pendahuluan <span>3</span></div>
-            <div class="toc-item sub">1.1 Tentang Sistem</div>
-            <div class="toc-item sub">1.2 Fitur Utama</div>
+            <div class="toc-item main"><a href="#section-1">1. Pendahuluan</a></div>
+            <div class="toc-item sub"><a href="#section-1-1">1.1 Tentang Sistem</a></div>
+            <div class="toc-item sub"><a href="#section-1-2">1.2 Fitur Utama</a></div>
 
-            <div class="toc-item main">2. Persyaratan Sistem <span>4</span></div>
+            <div class="toc-item main"><a href="#section-2">2. Persyaratan Sistem</a></div>
+            <div class="toc-item sub"><a href="#section-2-1">2.1 Untuk Pengguna</a></div>
+            <div class="toc-item sub"><a href="#section-2-2">2.2 Format File yang Didukung</a></div>
 
-            <div class="toc-item main">3. Memulai Aplikasi <span>5</span></div>
-            <div class="toc-item sub">3.1 Login & Logout</div>
-            <div class="toc-item sub">3.2 Reset Kata Sandi</div>
+            <div class="toc-item main"><a href="#section-3">3. Memulai Aplikasi</a></div>
+            <div class="toc-item sub"><a href="#section-3-1">3.1 Mengakses Sistem</a></div>
+            <div class="toc-item sub"><a href="#section-3-2">3.2 Login ke Sistem</a></div>
+            <div class="toc-item sub"><a href="#section-3-3">3.3 Lupa Kata Sandi (Hubungi Admin)</a></div>
+            <div class="toc-item sub"><a href="#section-3-4">3.4 Logout dari Sistem</a></div>
 
-            <div class="toc-item main">4. Panduan untuk Admin <span>6</span></div>
-            <div class="toc-item sub">4.1 Dashboard Admin</div>
-            <div class="toc-item sub">4.2 Manajemen Pengguna</div>
-            <div class="toc-item sub">4.3 Manajemen Kelas</div>
-            <div class="toc-item sub">4.4 Verifikasi Materi</div>
-            <div class="toc-item sub">4.5 Laporan & Export</div>
-            <div class="toc-item sub">4.6 Backup Data</div>
+            <div class="toc-item main"><a href="#section-4">4. Panduan untuk Admin</a></div>
+            <div class="toc-item sub"><a href="#section-4-1">4.1 Dashboard Admin</a></div>
+            <div class="toc-item sub"><a href="#section-4-2">4.2 Manajemen Guru</a></div>
+            <div class="toc-item sub"><a href="#section-4-2">&nbsp;&nbsp;&nbsp;• Melihat Daftar Guru</a></div>
+            <div class="toc-item sub"><a href="#section-4-2">&nbsp;&nbsp;&nbsp;• Menambah Guru Baru (7 Field)</a></div>
+            <div class="toc-item sub"><a href="#section-4-2">&nbsp;&nbsp;&nbsp;• Mengedit Data Guru</a></div>
+            <div class="toc-item sub"><a href="#section-4-2">&nbsp;&nbsp;&nbsp;• Menghapus Guru</a></div>
+            <div class="toc-item sub"><a href="#section-4-2">&nbsp;&nbsp;&nbsp;• Mengaktifkan/Menonaktifkan Guru</a>
+            </div>
+            <div class="toc-item sub"><a href="#section-4-2">&nbsp;&nbsp;&nbsp;• Reset Password Pengguna</a></div>
+            <div class="toc-item sub"><a href="#section-4-3">4.3 Manajemen Siswa</a></div>
+            <div class="toc-item sub"><a href="#section-4-3">&nbsp;&nbsp;&nbsp;• Melihat Daftar Siswa</a></div>
+            <div class="toc-item sub"><a href="#section-4-3">&nbsp;&nbsp;&nbsp;• Menambah Siswa Baru (31 Field)</a>
+            </div>
+            <div class="toc-item sub"><a href="#section-4-4">4.4 Manajemen Kelas</a></div>
+            <div class="toc-item sub"><a href="#section-4-4">&nbsp;&nbsp;&nbsp;• Membuat Kelas Baru (4 Field)</a></div>
+            <div class="toc-item sub"><a href="#section-4-4">&nbsp;&nbsp;&nbsp;• Mendaftarkan Siswa ke Kelas
+                    (Enroll)</a></div>
+            <div class="toc-item sub"><a href="#section-4-4">&nbsp;&nbsp;&nbsp;• Mengeluarkan Siswa dari Kelas</a></div>
+            <div class="toc-item sub"><a href="#section-4-5">4.5 Manajemen Pertemuan</a></div>
+            <div class="toc-item sub"><a href="#section-4-5">&nbsp;&nbsp;&nbsp;• Membuat Pertemuan Baru (4 Field)</a>
+            </div>
+            <div class="toc-item sub"><a href="#section-4-5">&nbsp;&nbsp;&nbsp;• Input Absensi Siswa (H/I/S/A)</a></div>
+            <div class="toc-item sub"><a href="#section-4-6">4.6 Verifikasi Materi</a></div>
+            <div class="toc-item sub"><a href="#section-4-6">&nbsp;&nbsp;&nbsp;• Melihat Materi Pending</a></div>
+            <div class="toc-item sub"><a href="#section-4-6">&nbsp;&nbsp;&nbsp;• Menyetujui Materi</a></div>
+            <div class="toc-item sub"><a href="#section-4-6">&nbsp;&nbsp;&nbsp;• Menolak Materi</a></div>
+            <div class="toc-item sub"><a href="#section-4-7">4.7 Laporan & Export</a></div>
+            <div class="toc-item sub"><a href="#section-4-7">&nbsp;&nbsp;&nbsp;• Export Absensi ke Excel</a></div>
+            <div class="toc-item sub"><a href="#section-4-7">&nbsp;&nbsp;&nbsp;• Export Learning Log Siswa</a></div>
+            <div class="toc-item sub"><a href="#section-4-7">&nbsp;&nbsp;&nbsp;• Export Log Aktivitas</a></div>
+            <div class="toc-item sub"><a href="#section-4-8">4.8 Backup Data</a></div>
+            <div class="toc-item sub"><a href="#section-4-8">&nbsp;&nbsp;&nbsp;• Melakukan Backup Manual</a></div>
+            <div class="toc-item sub"><a href="#section-4-8">&nbsp;&nbsp;&nbsp;• Download Semua Materi</a></div>
 
-            <div class="toc-item main">5. Panduan untuk Guru <span>12</span></div>
-            <div class="toc-item sub">5.1 Dashboard Guru</div>
-            <div class="toc-item sub">5.2 Mengelola Materi</div>
-            <div class="toc-item sub">5.3 Memantau Siswa</div>
+            <div class="toc-item main"><a href="#section-5">5. Panduan untuk Guru</a></div>
+            <div class="toc-item sub"><a href="#section-5-1">5.1 Dashboard Guru</a></div>
+            <div class="toc-item sub"><a href="#section-5-2">5.2 Melihat Kelas yang Diampu</a></div>
+            <div class="toc-item sub"><a href="#section-5-3">5.3 Mengelola Materi</a></div>
+            <div class="toc-item sub"><a href="#section-5-3">&nbsp;&nbsp;&nbsp;• Menambahkan Materi Baru (6 Field)</a>
+            </div>
+            <div class="toc-item sub"><a href="#section-5-3">&nbsp;&nbsp;&nbsp;• Melihat Status Materi
+                    (Pending/Approved/Rejected)</a></div>
+            <div class="toc-item sub"><a href="#section-5-3">&nbsp;&nbsp;&nbsp;• Mengedit Materi</a></div>
+            <div class="toc-item sub"><a href="#section-5-3">&nbsp;&nbsp;&nbsp;• Menghapus Materi</a></div>
+            <div class="toc-item sub"><a href="#section-5-4">5.4 Memantau Progress Siswa</a></div>
+            <div class="toc-item sub"><a href="#section-5-5">5.5 Melihat Kehadiran Siswa</a></div>
 
-            <div class="toc-item main">6. Panduan untuk Siswa <span>15</span></div>
-            <div class="toc-item sub">6.1 Dashboard Siswa</div>
-            <div class="toc-item sub">6.2 Mengakses Materi</div>
-            <div class="toc-item sub">6.3 Progress Pembelajaran</div>
+            <div class="toc-item main"><a href="#section-6">6. Panduan untuk Siswa</a></div>
+            <div class="toc-item sub"><a href="#section-6-1">6.1 Dashboard Siswa</a></div>
+            <div class="toc-item sub"><a href="#section-6-2">6.2 Mengakses Kelas</a></div>
+            <div class="toc-item sub"><a href="#section-6-2">&nbsp;&nbsp;&nbsp;• Melihat Daftar Kelas</a></div>
+            <div class="toc-item sub"><a href="#section-6-2">&nbsp;&nbsp;&nbsp;• Membuka Kelas</a></div>
+            <div class="toc-item sub"><a href="#section-6-3">6.3 Mengakses Materi Pembelajaran</a></div>
+            <div class="toc-item sub"><a href="#section-6-3">&nbsp;&nbsp;&nbsp;• Membaca Materi PDF (Progress
+                    Otomatis)</a></div>
+            <div class="toc-item sub"><a href="#section-6-3">&nbsp;&nbsp;&nbsp;• Menonton Materi Video</a></div>
+            <div class="toc-item sub"><a href="#section-6-4">6.4 Melihat Progress Pembelajaran</a></div>
+            <div class="toc-item sub"><a href="#section-6-5">6.5 Melihat Status Pembayaran</a></div>
+            <div class="toc-item sub"><a href="#section-6-6">6.6 Notifikasi</a></div>
+            <div class="toc-item sub"><a href="#section-6-7">6.7 Mengubah Kata Sandi</a></div>
 
-            <div class="toc-item main">7. FAQ & Troubleshooting <span>18</span></div>
+            <div class="toc-item main"><a href="#section-7">7. FAQ & Troubleshooting</a></div>
+            <div class="toc-item sub"><a href="#section-7-1">7.1 Pertanyaan Umum (FAQ)</a></div>
+            <div class="toc-item sub"><a href="#section-7-2">7.2 Masalah Umum</a></div>
+
+            <div class="toc-item main"><a href="#appendix">📎 Lampiran</a></div>
+            <div class="toc-item sub"><a href="#appendix-a">A. Shortcut Keyboard</a></div>
+            <div class="toc-item sub"><a href="#appendix-b">B. Ikon Status Materi</a></div>
+            <div class="toc-item sub"><a href="#appendix-c">C. Ikon Status Kehadiran</a></div>
+            <div class="toc-item sub"><a href="#appendix-d">D. Kontak Support</a></div>
         </div>
 
         <!-- Section 1: Pendahuluan -->
-        <div class="page-break">
-            <h1>1. Pendahuluan</h1>
+        <div class="page-break" id="section-1">
+            <h1 id="section-1-0">1. Pendahuluan</h1>
 
-            <h2>1.1 Tentang Sistem</h2>
+            <h2 id="section-1-1">1.1 Tentang Sistem</h2>
             <p>
                 Platform E-Learning <strong>"Materi Online"</strong> adalah sistem pembelajaran digital yang dirancang
                 untuk mendukung proses belajar mengajar di Coding Akademi Payakumbuh. Sistem ini memfasilitasi interaksi
@@ -428,7 +503,7 @@
                 dan responsif untuk pengalaman pengguna yang optimal.
             </div>
 
-            <h2>1.2 Fitur Utama</h2>
+            <h2 id="section-1-2">1.2 Fitur Utama</h2>
 
             <div class="feature-grid">
                 <div class="feature-card">
@@ -459,10 +534,10 @@
         </div>
 
         <!-- Section 2: Persyaratan Sistem -->
-        <div class="page-break">
-            <h1>2. Persyaratan Sistem</h1>
+        <div class="page-break" id="section-2">
+            <h1 id="section-2-0">2. Persyaratan Sistem</h1>
 
-            <h2>2.1 Untuk Pengguna</h2>
+            <h2 id="section-2-1">2.1 Untuk Pengguna</h2>
             <table>
                 <tr>
                     <th>Komponen</th>
@@ -486,7 +561,7 @@
                 </tr>
             </table>
 
-            <h2>2.2 Format File yang Didukung</h2>
+            <h2 id="section-2-2">2.2 Format File yang Didukung</h2>
             <table>
                 <tr>
                     <th>Jenis</th>
@@ -512,14 +587,14 @@
         </div>
 
         <!-- Section 3: Memulai Aplikasi -->
-        <div class="page-break">
-            <h1>3. Memulai Aplikasi</h1>
+        <div class="page-break" id="section-3">
+            <h1 id="section-3-0">3. Memulai Aplikasi</h1>
 
-            <h2>3.1 Mengakses Sistem</h2>
+            <h2 id="section-3-1">3.1 Mengakses Sistem</h2>
             <p>Buka browser dan akses URL sistem e-learning. Anda akan melihat <strong>Landing Page</strong> dengan
                 informasi tentang Coding Akademi Payakumbuh.</p>
 
-            <h2>3.2 Login ke Sistem</h2>
+            <h2 id="section-3-2">3.2 Login ke Sistem</h2>
 
             <div class="screenshot-container">
                 <img src="images/login page.png" alt="Halaman Login" class="screenshot">
@@ -546,44 +621,66 @@
                 </div>
             </div>
 
-            <h2>3.3 Lupa Kata Sandi</h2>
+            <h2 id="section-3-3">3.3 Lupa Kata Sandi</h2>
             <p>Jika Anda lupa kata sandi, sistem <strong>tidak menyediakan fitur reset password otomatis</strong>. Reset
                 kata sandi hanya dapat dilakukan oleh <strong>Admin</strong>.</p>
 
             <div class="warning-box">
-                <strong>⚠️ Penting:</strong> Untuk keamanan, reset password hanya dapat dilakukan oleh Administrator
-                sistem.
+                <strong>⚠️ Penting:</strong> Untuk keamanan, reset password hanya dapat dilakukan oleh
+                <strong>Administrator
+                    sistem</strong>. Tidak ada fitur "Lupa Password" yang dapat digunakan sendiri oleh pengguna.
             </div>
 
-            <h3>Langkah-langkah Reset Password:</h3>
+            <h3>Langkah-langkah Reset Password untuk Guru dan Siswa:</h3>
             <div class="steps">
                 <div class="step">
                     <div class="step-number"></div>
                     <div class="step-content">Hubungi <strong>Administrator</strong> sistem melalui kontak yang tersedia
+                        (lihat bagian Kontak Support)
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number"></div>
-                    <div class="step-content">Berikan informasi akun Anda (Nama dan Email yang terdaftar)</div>
+                    <div class="step-content">Berikan informasi akun Anda:
+                        <ul>
+                            <li>Nama lengkap sesuai yang terdaftar</li>
+                            <li>Email yang terdaftar di sistem</li>
+                            <li>Peran Anda (Guru/Siswa)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Admin akan melakukan verifikasi identitas Anda</div>
                 </div>
                 <div class="step">
                     <div class="step-number"></div>
                     <div class="step-content">Admin akan melakukan reset password dan memberikan kata sandi baru kepada
-                        Anda</div>
+                        Anda melalui kontak yang aman</div>
                 </div>
                 <div class="step">
                     <div class="step-number"></div>
-                    <div class="step-content">Login dengan kata sandi baru yang diberikan oleh Admin</div>
+                    <div class="step-content">Login menggunakan kata sandi baru yang diberikan oleh Admin</div>
                 </div>
                 <div class="step">
                     <div class="step-number"></div>
-                    <div class="step-content"><strong>Segera ubah kata sandi</strong> Anda melalui menu
-                        <strong>Profil</strong> setelah login
+                    <div class="step-content"><strong>PENTING:</strong> Segera ubah kata sandi Anda melalui menu
+                        <strong>Profil → Ubah Kata Sandi</strong> setelah login untuk keamanan akun Anda
                     </div>
                 </div>
             </div>
 
-            <h2>3.4 Logout dari Sistem</h2>
+            <div class="info-box">
+                <strong>💡 Tips Keamanan:</strong>
+                <ul>
+                    <li>Gunakan kata sandi yang kuat (minimal 8 karakter, kombinasi huruf besar, kecil, angka)</li>
+                    <li>Jangan gunakan kata sandi yang sama dengan akun lain</li>
+                    <li>Jangan bagikan kata sandi Anda kepada siapapun</li>
+                    <li>Ubah kata sandi secara berkala untuk keamanan</li>
+                </ul>
+            </div>
+
+            <h2 id="section-3-4">3.4 Logout dari Sistem</h2>
             <div class="steps">
                 <div class="step">
                     <div class="step-number"></div>
@@ -601,10 +698,10 @@
         </div>
 
         <!-- Section 4: Panduan Admin -->
-        <div class="page-break">
-            <h1>4. Panduan untuk Admin</h1>
+        <div class="page-break" id="section-4">
+            <h1 id="section-4-0">4. Panduan untuk Admin</h1>
 
-            <h2>4.1 Dashboard Admin</h2>
+            <h2 id="section-4-1">4.1 Dashboard Admin</h2>
             <p>Setelah login sebagai Admin, dashboard menampilkan:</p>
             <ul>
                 <li><strong>Statistik:</strong> Total guru, siswa, dan kelas aktif</li>
@@ -617,7 +714,7 @@
                 <p class="screenshot-caption">Gambar 4.1 - Tampilan Dashboard Admin</p>
             </div>
 
-            <h2>4.2 Manajemen Guru</h2>
+            <h2 id="section-4-2">4.2 Manajemen Guru</h2>
 
             <h3>Melihat Daftar Guru</h3>
             <ol>
@@ -783,7 +880,7 @@
 
         <!-- Section 4 continued -->
         <div class="page-break">
-            <h2>4.3 Manajemen Siswa</h2>
+            <h2 id="section-4-3">4.3 Manajemen Siswa</h2>
 
             <h3>Melihat Daftar Siswa</h3>
             <ol>
@@ -1095,14 +1192,34 @@
             </table>
 
             <div class="warning-box">
-                <strong>⚠️ Catatan Penting:</strong>
+                <strong>⚠️ Catatan Penting tentang Form Siswa:</strong>
                 <ul>
-                    <li>ID Siswa akan otomatis dibuat dengan format: <code>NNN-KODEKELASNUM2-MMYYYY</code></li>
-                    <li>Target total sesi dihitung otomatis: <strong>Durasi (bulan) × Kuota per bulan</strong></li>
-                    <li>Akun akan otomatis nonaktif setelah target sesi tercapai</li>
-                    <li>Alamat lengkap terbentuk otomatis dari kombinasi Jalan, Kelurahan, Kecamatan, Kota, dan Provinsi
+                    <li><strong>ID Siswa:</strong> Akan otomatis dibuat dengan format:
+                        <code>NNN-KODEKELASNUM2-MMYYYY</code>
+                        <br>Contoh: <code>001-01-122025</code> (Siswa ke-1, Kelas 01, Bulan 12 Tahun 2025)
                     </li>
-                    <li>Total Biaya dan Total Setelah Diskon dihitung otomatis oleh sistem</li>
+                    <li><strong>Nomor Telepon:</strong> Harus diisi <strong>tanpa angka 0 di depan</strong>
+                        <br>Benar: <code>81234567890</code> | Salah: <code>081234567890</code>
+                    </li>
+                    <li><strong>Alamat Lengkap:</strong> Terbentuk otomatis dari kombinasi:
+                        <br>Jalan + Kelurahan + Kecamatan + Kota + Provinsi
+                    </li>
+                    <li><strong>Target Total Sesi:</strong> Dihitung otomatis =
+                        <code>Durasi (bulan) × Kuota per bulan</code>
+                        <br>Contoh: 3 bulan × 8 sesi = <strong>24 sesi total</strong>
+                    </li>
+                    <li><strong>Total Biaya:</strong> Dihitung otomatis =
+                        <code>Biaya Pendaftaran + Biaya Angsuran</code>
+                    </li>
+                    <li><strong>Total Setelah Diskon:</strong> Dihitung otomatis berdasarkan tipe diskon:
+                        <ul>
+                            <li>Persentase: <code>Total - (Total × Persentase / 100)</code></li>
+                            <li>Potongan Tetap: <code>Total - Nilai Diskon</code></li>
+                        </ul>
+                    </li>
+                    <li><strong>Status Akun:</strong> Akan otomatis <span class="badge badge-danger">Nonaktif</span>
+                        setelah target sesi tercapai</li>
+                    <li><strong>Password:</strong> Minimal 8 karakter dan harus sama dengan konfirmasi password</li>
                 </ul>
             </div>
 
@@ -1124,7 +1241,7 @@
             </div>
 
 
-            <h2>4.4 Manajemen Kelas</h2>
+            <h2 id="section-4-4">4.4 Manajemen Kelas</h2>
 
             <h3>Membuat Kelas Baru</h3>
             <div class="steps">
@@ -1199,6 +1316,9 @@
             </div>
 
             <h3>Mendaftarkan Siswa ke Kelas (Enroll)</h3>
+            <p>Enrollment adalah proses mendaftarkan siswa ke dalam kelas tertentu. Setelah di-enroll, siswa dapat
+                melihat dan mengakses materi kelas tersebut.</p>
+
             <div class="steps">
                 <div class="step">
                     <div class="step-number"></div>
@@ -1211,12 +1331,32 @@
                 </div>
                 <div class="step">
                     <div class="step-number"></div>
-                    <div class="step-content">Pilih satu atau lebih siswa dari daftar</div>
+                    <div class="step-content">Pilih satu atau lebih siswa dari daftar
+                        <ul>
+                            <li>Sistem hanya menampilkan siswa yang <strong>belum terdaftar</strong> di kelas ini</li>
+                            <li>Siswa yang sudah enrolled tidak akan muncul di daftar</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="step">
                     <div class="step-number"></div>
-                    <div class="step-content">Klik <strong>"Enroll"</strong></div>
+                    <div class="step-content">Klik <strong>"Enroll"</strong> untuk mendaftarkan</div>
                 </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Siswa akan langsung dapat mengakses kelas dan materi yang tersedia</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>ℹ️ Catatan Enrollment:</strong>
+                <ul>
+                    <li>Siswa dapat di-enroll ke <strong>lebih dari satu kelas</strong></li>
+                    <li>Enrollment berlaku untuk <strong>semua materi</strong> yang ada dan akan ditambahkan di kelas
+                        tersebut</li>
+                    <li>Progress pembelajaran siswa mulai tercatat sejak enrollment</li>
+                    <li>Siswa akan melihat kelas baru muncul di dashboard mereka setelah di-enroll</li>
+                </ul>
             </div>
 
             <div class="screenshot-container">
@@ -1225,11 +1365,28 @@
             </div>
 
             <h3>Mengeluarkan Siswa dari Kelas (Unenroll)</h3>
+            <p>Unenroll adalah proses mengeluarkan siswa dari kelas. Siswa tidak akan lagi dapat mengakses materi kelas
+                tersebut.</p>
+
             <ol>
                 <li>Di halaman detail kelas, lihat tab <strong>"Daftar Siswa"</strong></li>
-                <li>Klik tombol <strong>"Keluarkan"</strong> pada siswa yang akan dikeluarkan</li>
-                <li>Konfirmasi tindakan</li>
+                <li>Klik tombol <strong>"Keluarkan"</strong> atau ikon <strong>🗑️</strong> pada siswa yang akan
+                    dikeluarkan</li>
+                <li>Konfirmasi tindakan pada dialog yang muncul</li>
+                <li>Siswa akan dihapus dari daftar kelas</li>
             </ol>
+
+            <div class="warning-box">
+                <strong>⚠️ Perhatian Unenroll:</strong>
+                <ul>
+                    <li>Siswa yang di-unenroll akan <strong>kehilangan akses</strong> ke semua materi di kelas tersebut
+                    </li>
+                    <li>Progress pembelajaran siswa di kelas tersebut akan <strong>tetap tersimpan</strong> di sistem
+                    </li>
+                    <li>Jika di-enroll kembali, progress lama akan tetap tersedia</li>
+                    <li>Unenroll tidak menghapus data siswa, hanya memutuskan hubungan dengan kelas</li>
+                </ul>
+            </div>
 
             <h3>Mengelola Siswa di Kelas</h3>
             <ol>
@@ -1257,7 +1414,7 @@
 
         <!-- Section 4 continued -->
         <div class="page-break">
-            <h2>4.5 Manajemen Pertemuan</h2>
+            <h2 id="section-4-5">4.5 Manajemen Pertemuan</h2>
 
             <h3>Membuat Pertemuan Baru</h3>
             <div class="steps">
@@ -1383,7 +1540,10 @@
                 <p class="screenshot-caption">Gambar 4.11 - Detail Absensi Per Hari</p>
             </div>
 
-            <h2>4.6 Verifikasi Materi</h2>
+            <h2 id="section-4-6">4.6 Verifikasi Materi</h2>
+
+            <p>Verifikasi materi adalah proses review dan persetujuan materi yang diupload oleh Guru sebelum ditampilkan
+                ke Siswa. Ini memastikan kualitas dan kesesuaian materi pembelajaran.</p>
 
             <div class="screenshot-container">
                 <img src="images/materi pending.png" alt="Materi Pending" class="screenshot">
@@ -1397,53 +1557,209 @@
 
             <h3>Melihat Materi Menunggu Verifikasi</h3>
             <ol>
-                <li>Buka menu <strong>"Verifikasi Materi"</strong></li>
+                <li>Buka menu <strong>"Verifikasi Materi"</strong> di sidebar</li>
                 <li>Akan tampil daftar materi berstatus <span class="badge badge-warning">Pending</span></li>
+                <li>Informasi yang ditampilkan:
+                    <ul>
+                        <li>Judul materi</li>
+                        <li>Nama guru yang mengupload</li>
+                        <li>Kelas tujuan</li>
+                        <li>Tanggal upload</li>
+                        <li>Tipe file (PDF/Video/Dokumen)</li>
+                    </ul>
+                </li>
             </ol>
 
             <h3>Menyetujui Materi</h3>
-            <ol>
-                <li>Review materi dengan klik judul atau tombol <strong>"Lihat"</strong></li>
-                <li>Jika materi sesuai, klik tombol <strong>"✓ Setujui"</strong></li>
-                <li>Status materi berubah menjadi <span class="badge badge-success">Approved</span></li>
-            </ol>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Review materi dengan klik judul atau tombol <strong>"👁️ Lihat"</strong>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Periksa konten materi:
+                        <ul>
+                            <li>Untuk PDF: Periksa isi dokumen</li>
+                            <li>Untuk Video: Periksa link YouTube</li>
+                            <li>Pastikan konten sesuai dengan judul dan deskripsi</li>
+                            <li>Pastikan materi sesuai dengan tingkat kelas</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Jika materi sesuai dan berkualitas, klik tombol <strong>"✓
+                            Setujui"</strong>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Status materi berubah menjadi <span
+                            class="badge badge-success">Approved</span></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Materi akan <strong>langsung tampil</strong> ke semua siswa di kelas
+                        tersebut
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Guru akan menerima <strong>notifikasi</strong> bahwa materi telah
+                        disetujui
+                    </div>
+                </div>
+            </div>
 
             <h3>Menolak Materi</h3>
-            <ol>
-                <li>Jika materi tidak sesuai, klik tombol <strong>"✗ Tolak"</strong></li>
-                <li>Isi <strong>alasan penolakan</strong> di form yang muncul</li>
-                <li>Klik <strong>"Kirim"</strong></li>
-                <li>Guru akan menerima notifikasi penolakan beserta alasannya</li>
-            </ol>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Review materi dan temukan alasan penolakan</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Jika materi tidak sesuai, klik tombol <strong>"✗ Tolak"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Isi <strong>alasan penolakan</strong> di form yang muncul dengan jelas:
+                        <ul>
+                            <li>Jelaskan apa yang salah atau kurang</li>
+                            <li>Berikan saran perbaikan jika memungkinkan</li>
+                            <li>Gunakan bahasa yang sopan dan konstruktif</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik <strong>"Kirim"</strong> untuk mengirim penolakan</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Status materi berubah menjadi <span
+                            class="badge badge-danger">Rejected</span></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Guru akan menerima <strong>notifikasi</strong> penolakan beserta alasannya
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Guru dapat melakukan <strong>revisi</strong> dan upload ulang</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 Tips Verifikasi Materi:</strong>
+                <ul>
+                    <li>Periksa apakah materi sesuai dengan <strong>kurikulum</strong> dan <strong>tingkat
+                            kelas</strong>
+                    </li>
+                    <li>Pastikan <strong>kualitas konten</strong> baik (tidak blur, audio jelas untuk video)</li>
+                    <li>Verifikasi materi secara berkala untuk tidak menumpuk</li>
+                    <li>Berikan feedback yang konstruktif saat menolak materi</li>
+                    <li>Prioritaskan materi untuk kelas yang sedang berjalan</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Catatan Penting:</strong>
+                <ul>
+                    <li>Materi yang ditolak <strong>tidak akan dihapus</strong>, hanya perlu revisi</li>
+                    <li>Guru dapat mengedit dan submit ulang materi yang ditolak</li>
+                    <li>Siswa <strong>tidak dapat melihat</strong> materi dengan status Pending atau Rejected</li>
+                    <li>Hanya materi dengan status <span class="badge badge-success">Approved</span> yang tampil ke
+                        siswa
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <!-- Section 4 continued -->
         <div class="page-break">
-            <h2>4.7 Laporan & Export</h2>
+            <h2 id="section-4-7">4.7 Laporan & Export</h2>
 
             <h3>Export Absensi ke Excel</h3>
+            <p>Fitur export memungkinkan Admin untuk mengunduh data absensi dalam format Excel untuk keperluan
+                laporan atau arsip.</p>
             <ol>
                 <li>Buka halaman kelas atau menu <strong>"Laporan Presensi"</strong></li>
-                <li>Filter berdasarkan kelas, guru, atau rentang waktu (opsional)</li>
+                <li>Filter berdasarkan kelas, guru, atau rentang waktu (opsional):
+                    <ul>
+                        <li>Pilih kelas tertentu atau "Semua Kelas"</li>
+                        <li>Pilih guru tertentu atau "Semua Guru"</li>
+                        <li>Tentukan periode: minggu ini, bulan ini, atau custom date range</li>
+                    </ul>
+                </li>
                 <li>Klik tombol <strong>"📥 Export Absensi"</strong></li>
-                <li>File Excel akan terunduh otomatis</li>
+                <li>File Excel akan terunduh otomatis dengan format: <code>Absensi_NamaKelas_Tanggal.xlsx</code></li>
             </ol>
 
+            <div class="info-box">
+                <strong>ℹ️ Isi File Excel Absensi:</strong>
+                <ul>
+                    <li>Nama siswa</li>
+                    <li>Kelas</li>
+                    <li>Pertemuan ke-</li>
+                    <li>Tanggal pertemuan</li>
+                    <li>Status kehadiran (H/I/S/A)</li>
+                    <li>Topik pertemuan</li>
+                </ul>
+            </div>
+
             <h3>Export Learning Log Siswa</h3>
+            <p>Learning log berisi catatan lengkap aktivitas pembelajaran siswa.</p>
             <ol>
                 <li>Buka halaman siswa atau menu <strong>"Laporan"</strong></li>
+                <li>Pilih siswa tertentu atau export untuk semua siswa</li>
                 <li>Klik tombol <strong>"📥 Export Learning Log"</strong></li>
                 <li>File Excel akan terunduh otomatis</li>
             </ol>
 
+            <div class="info-box">
+                <strong>ℹ️ Isi File Learning Log:</strong>
+                <ul>
+                    <li>Nama siswa</li>
+                    <li>Kelas yang diikuti</li>
+                    <li>Materi yang telah diakses</li>
+                    <li>Waktu akses materi</li>
+                    <li>Progress per materi (%)</li>
+                    <li>Total progress kelas (%)</li>
+                </ul>
+            </div>
+
             <h3>Export Log Aktivitas</h3>
+            <p>Log aktivitas mencatat semua kegiatan pengguna di sistem untuk keperluan audit.</p>
             <ol>
                 <li>Buka menu <strong>"Laporan"</strong> → <strong>"Log Aktivitas"</strong></li>
+                <li>Filter berdasarkan:
+                    <ul>
+                        <li>Peran pengguna (Admin/Guru/Siswa)</li>
+                        <li>Jenis aktivitas (Login, Upload, Edit, Delete, dll)</li>
+                        <li>Rentang waktu</li>
+                    </ul>
+                </li>
                 <li>Klik tombol <strong>"📥 Export Log Aktivitas"</strong></li>
                 <li>File Excel akan terunduh</li>
             </ol>
 
-            <h2>4.8 Backup Data</h2>
+            <div class="info-box">
+                <strong>ℹ️ Isi File Log Aktivitas:</strong>
+                <ul>
+                    <li>Nama pengguna</li>
+                    <li>Peran (Admin/Guru/Siswa)</li>
+                    <li>Jenis aktivitas</li>
+                    <li>Detail aktivitas</li>
+                    <li>Waktu aktivitas</li>
+                    <li>IP Address</li>
+                </ul>
+            </div>
+
+            <h2 id="section-4-8">4.8 Backup Data</h2>
 
             <h3>Melakukan Backup Manual</h3>
             <div class="steps">
@@ -1480,24 +1796,64 @@
             </div>
 
             <h3>Download Semua Materi</h3>
+            <p>Fitur ini memungkinkan Admin untuk mengunduh semua file materi yang ada di sistem sebagai backup lokal.
+            </p>
             <ol>
                 <li>Buka menu <strong>"Backup Data"</strong></li>
                 <li>Klik tombol <strong>"📦 Download Semua Materi"</strong></li>
-                <li>Sistem akan mengompres semua file menjadi ZIP</li>
-                <li>File ZIP akan terunduh otomatis</li>
+                <li>Sistem akan:
+                    <ul>
+                        <li>Mengumpulkan semua file materi (PDF, Dokumen, Video)</li>
+                        <li>Mengompres menjadi file ZIP</li>
+                        <li>Membuat struktur folder per kelas</li>
+                    </ul>
+                </li>
+                <li>File ZIP akan terunduh otomatis dengan nama: <code>Materi_Backup_Tanggal.zip</code></li>
+                <li>Tunggu hingga proses selesai (tergantung jumlah file)</li>
             </ol>
 
+            <div class="info-box">
+                <strong>📦 Struktur File ZIP:</strong>
+                <pre>
+Materi_Backup_28122025.zip
+├── Kelas_Web_Development/
+│   ├── HTML_Dasar.pdf
+│   ├── CSS_Styling.pdf
+│   └── JavaScript_Intro.pdf
+├── Kelas_Python_Programming/
+│   ├── Python_Basics.pdf
+│   └── Data_Types.pdf
+└── README.txt (info backup)
+                </pre>
+            </div>
+
             <div class="success-box">
-                <strong>✅ Tips:</strong> Lakukan backup secara berkala (minimal mingguan) untuk mencegah kehilangan
-                data.
+                <strong>✅ Tips Backup:</strong>
+                <ul>
+                    <li><strong>Lakukan backup rutin:</strong> Minimal 1x seminggu atau setelah ada perubahan besar</li>
+                    <li><strong>Simpan di multiple lokasi:</strong> Cloud storage dan hard drive eksternal</li>
+                    <li><strong>Verifikasi backup:</strong> Cek file ZIP dapat dibuka dan isinya lengkap</li>
+                    <li><strong>Buat catatan:</strong> Catat tanggal backup dan jumlah file untuk referensi</li>
+                    <li><strong>Backup sebelum maintenance:</strong> Selalu backup sebelum update sistem</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Perhatian Backup:</strong>
+                <ul>
+                    <li>Proses backup database mungkin memakan waktu tergantung ukuran data</li>
+                    <li>Pastikan koneksi internet stabil saat download backup</li>
+                    <li>Simpan file backup di lokasi yang aman dan terenkripsi</li>
+                    <li>File backup berisi data sensitif, jaga kerahasiaannya</li>
+                </ul>
             </div>
         </div>
 
         <!-- Section 5: Panduan Guru -->
-        <div class="page-break">
-            <h1>5. Panduan untuk Guru</h1>
+        <div class="page-break" id="section-5">
+            <h1 id="section-5-0">5. Panduan untuk Guru</h1>
 
-            <h2>5.1 Dashboard Guru</h2>
+            <h2 id="section-5-1">5.1 Dashboard Guru</h2>
             <p>Setelah login sebagai Guru, dashboard menampilkan:</p>
             <ul>
                 <li><strong>Daftar Kelas</strong> yang Anda ampu</li>
@@ -1510,7 +1866,7 @@
                 <p class="screenshot-caption">Gambar 5.1 - Tampilan Dashboard Guru</p>
             </div>
 
-            <h2>5.2 Melihat Kelas yang Diampu</h2>
+            <h2 id="section-5-2">5.2 Melihat Kelas yang Diampu</h2>
             <ol>
                 <li>Di dashboard, lihat daftar kelas Anda</li>
                 <li>Klik nama kelas untuk melihat detail</li>
@@ -1531,7 +1887,7 @@
                 <p class="screenshot-caption">Gambar 5.4 - Daftar Materi di Kelas</p>
             </div>
 
-            <h2>5.3 Mengelola Materi</h2>
+            <h2 id="section-5-3">5.3 Mengelola Materi</h2>
 
             <h3>Menambahkan Materi Baru</h3>
 
@@ -1701,7 +2057,7 @@
 
         <!-- Section 5 continued -->
         <div class="page-break">
-            <h2>5.4 Memantau Progress Siswa</h2>
+            <h2 id="section-5-4">5.4 Memantau Progress Siswa</h2>
 
             <h3>Melihat Progress Pembelajaran</h3>
             <div class="steps">
@@ -1738,7 +2094,7 @@
                 <p class="screenshot-caption">Gambar 5.9 - Detail Progress Siswa di Kelas</p>
             </div>
 
-            <h2>5.5 Melihat Kehadiran Siswa</h2>
+            <h2 id="section-5-5">5.5 Melihat Kehadiran Siswa</h2>
 
             <h3>Laporan Kehadiran</h3>
             <ol>
@@ -1785,10 +2141,10 @@
         </div>
 
         <!-- Section 6: Panduan Siswa -->
-        <div class="page-break">
-            <h1>6. Panduan untuk Siswa</h1>
+        <div class="page-break" id="section-6">
+            <h1 id="section-6-0">6. Panduan untuk Siswa</h1>
 
-            <h2>6.1 Dashboard Siswa</h2>
+            <h2 id="section-6-1">6.1 Dashboard Siswa</h2>
             <p>Setelah login sebagai Siswa, dashboard menampilkan:</p>
             <ul>
                 <li><strong>Daftar Kelas</strong> yang Anda ikuti</li>
@@ -1802,11 +2158,11 @@
             </div>
 
             <div class="screenshot-container">
-                <img src="images/siswa dasboard progress detail.png" alt="Progress Siswa" class="screenshot">
+                <img src="images/siswa dasboard progress detail.png" alt="Dashboard Progress Siswa" class="screenshot">
                 <p class="screenshot-caption">Gambar 6.2 - Dashboard dengan Detail Progress Pembelajaran</p>
             </div>
 
-            <h2>6.2 Mengakses Kelas</h2>
+            <h2 id="section-6-2">6.2 Mengakses Kelas</h2>
 
             <h3>Melihat Daftar Kelas</h3>
             <ol>
@@ -1838,7 +2194,7 @@
                 <p class="screenshot-caption">Gambar 6.3 - Dashboard Detail Kelas dan Materi</p>
             </div>
 
-            <h2>6.3 Mengakses Materi Pembelajaran</h2>
+            <h2 id="section-6-3">6.3 Mengakses Materi Pembelajaran</h2>
 
             <h3>Melihat Daftar Materi</h3>
             <ol>
@@ -1848,10 +2204,12 @@
             </ol>
 
             <div class="screenshot-container">
-                <img src="images/siswa detail materi kelas.png" alt="Detail Materi Kelas" class="screenshot">
+                <img src="images/siswa dasboard detail kelas dan materi.png" alt="Detail Materi Kelas"
+                    class="screenshot">
                 <p class="screenshot-caption">Gambar 6.4 - Detail Daftar Materi di Kelas</p>
             </div>
 
+            <h3>Membaca Materi PDF</h3>
             <div class="steps">
                 <div class="step">
                     <div class="step-number"></div>
@@ -1876,6 +2234,11 @@
                 </div>
             </div>
 
+            <div class="screenshot-container">
+                <img src="images/siswa detail materi kelas.png" alt="PDF Viewer" class="screenshot">
+                <p class="screenshot-caption">Gambar 6.5 - Tampilan PDF Viewer dengan Fitur Navigasi</p>
+            </div>
+
             <h3>Menonton Materi Video</h3>
             <ol>
                 <li>Klik judul materi video</li>
@@ -1891,7 +2254,7 @@
 
         <!-- Section 6 continued -->
         <div class="page-break">
-            <h2>6.4 Melihat Progress Pembelajaran</h2>
+            <h2 id="section-6-4">6.4 Melihat Progress Pembelajaran</h2>
 
             <h3>Progress Bar</h3>
             <ol>
@@ -1918,39 +2281,165 @@
                 <p class="screenshot-caption">Gambar 6.6 - Halaman Progress Belajar Siswa</p>
             </div>
 
-            <h2>6.5 Melihat Status Pembayaran</h2>
-            <ol>
-                <li>Klik profil Anda di pojok kanan atas</li>
-                <li>Pilih <strong>"Profil"</strong> atau <strong>"My Profile"</strong></li>
-                <li>Di bagian informasi, lihat status:
-                    <ul>
-                        <li><span class="badge badge-success">Lunas</span> - Pembayaran sudah lengkap</li>
-                        <li><span class="badge badge-danger">Belum Lunas</span> - Masih ada tunggakan</li>
-                    </ul>
-                </li>
-            </ol>
+            <div class="info-box">
+                <strong>💡 Fitur Progress Otomatis:</strong>
+                <ul>
+                    <li>Progress membaca PDF tersimpan otomatis di setiap halaman</li>
+                    <li>Progress video tersimpan berdasarkan durasi yang telah ditonton</li>
+                    <li>Progress diupdate real-time dan dapat dilihat oleh Guru</li>
+                    <li>Progress bar menunjukkan persentase materi yang sudah selesai</li>
+                </ul>
+            </div>
 
-            <h2>6.6 Notifikasi</h2>
+            <h2 id="section-6-5">6.5 Melihat Status Pembayaran</h2>
+            <p>Siswa dapat melihat informasi pembayaran mereka melalui halaman profil.</p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik foto profil Anda di pojok kanan atas</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Pilih <strong>"Profil"</strong> atau <strong>"My Profile"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Scroll ke bagian <strong>"Informasi Pembayaran"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Lihat status pembayaran:
+                        <ul>
+                            <li><span class="badge badge-success">🟢 Lunas</span> - Pembayaran sudah lengkap</li>
+                            <li><span class="badge badge-danger">🔴 Belum Lunas</span> - Masih ada tunggakan</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>ℹ️ Informasi Pembayaran yang Ditampilkan:</strong>
+                <ul>
+                    <li><strong>Total Biaya:</strong> Biaya keseluruhan program</li>
+                    <li><strong>Biaya Pendaftaran:</strong> Biaya sekali bayar di awal</li>
+                    <li><strong>Biaya Angsuran:</strong> Biaya per periode</li>
+                    <li><strong>Diskon:</strong> Jumlah diskon yang diterima (jika ada)</li>
+                    <li><strong>Total Setelah Diskon:</strong> Jumlah yang harus dibayar</li>
+                    <li><strong>Uang Telah Dibayarkan:</strong> Total yang sudah dibayar</li>
+                    <li><strong>Status:</strong> Lunas atau Belum Lunas</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Catatan Penting:</strong>
+                <ul>
+                    <li>Informasi pembayaran <strong>hanya dapat diubah oleh Admin</strong></li>
+                    <li>Jika ada ketidaksesuaian data, hubungi Admin segera</li>
+                    <li>Status pembayaran tidak mempengaruhi akses ke materi pembelajaran</li>
+                    <li>Simpan bukti pembayaran untuk referensi</li>
+                </ul>
+            </div>
+
+            <h2 id="section-6-6">6.6 Notifikasi</h2>
+            <p>Sistem notifikasi membantu siswa tetap update dengan informasi penting terkait pembelajaran.</p>
 
             <h3>Melihat Notifikasi</h3>
-            <ol>
-                <li>Klik ikon <strong>🔔</strong> di navbar</li>
-                <li>Akan tampil daftar notifikasi terbaru</li>
-            </ol>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik ikon <strong>🔔 Bell</strong> di navbar (pojok kanan atas)</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Dropdown akan menampilkan daftar notifikasi terbaru</div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Notifikasi yang belum dibaca akan ditandai dengan:
+                        <ul>
+                            <li>Badge merah dengan angka jumlah notifikasi baru</li>
+                            <li>Background berbeda pada item notifikasi</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Jenis-jenis Notifikasi untuk Siswa</h3>
+            <table>
+                <tr>
+                    <th>Jenis Notifikasi</th>
+                    <th>Kapan Muncul</th>
+                    <th>Informasi yang Diberikan</th>
+                </tr>
+                <tr>
+                    <td><strong>Materi Baru</strong></td>
+                    <td>Saat guru mengupload materi baru yang sudah diapprove</td>
+                    <td>Nama kelas, judul materi, tanggal upload</td>
+                </tr>
+                <tr>
+                    <td><strong>Kelas Akan Berakhir</strong></td>
+                    <td>Beberapa hari sebelum kelas berakhir (biasanya 7 hari)</td>
+                    <td>Nama kelas, tanggal berakhir, sisa hari</td>
+                </tr>
+                <tr>
+                    <td><strong>Pertemuan Baru</strong></td>
+                    <td>Saat admin membuat pertemuan baru di kelas Anda</td>
+                    <td>Nama kelas, pertemuan ke-, topik, tanggal</td>
+                </tr>
+                <tr>
+                    <td><strong>Progress Milestone</strong></td>
+                    <td>Saat mencapai 25%, 50%, 75%, 100% progress</td>
+                    <td>Nama kelas, persentase selesai, motivasi</td>
+                </tr>
+            </table>
 
             <h3>Notifikasi Kelas Akan Berakhir</h3>
+            <p>Notifikasi khusus ini sangat penting untuk memastikan siswa menyelesaikan pembelajaran tepat waktu.</p>
             <ul>
-                <li>Anda akan menerima notifikasi otomatis beberapa hari sebelum kelas berakhir</li>
-                <li>Notifikasi berisi nama kelas dan tanggal berakhir</li>
+                <li>Anda akan menerima notifikasi <strong>otomatis</strong> beberapa hari sebelum kelas berakhir</li>
+                <li>Notifikasi berisi:
+                    <ul>
+                        <li>Nama kelas yang akan berakhir</li>
+                        <li>Tanggal kelas akan berakhir</li>
+                        <li>Jumlah hari tersisa</li>
+                        <li>Saran untuk menyelesaikan materi yang belum selesai</li>
+                    </ul>
+                </li>
+                <li>Jika Anda perlu perpanjangan, hubungi Admin segera</li>
             </ul>
 
-            <h3>Menandai Notifikasi Sudah Dibaca</h3>
-            <ol>
-                <li>Klik notifikasi untuk membuka detail</li>
-                <li>Atau klik <strong>"Tandai Semua Dibaca"</strong></li>
-            </ol>
+            <div class="info-box">
+                <strong>💡 Tips Mengelola Notifikasi:</strong>
+                <ul>
+                    <li>Periksa notifikasi secara rutin (minimal 1x sehari)</li>
+                    <li>Tandai notifikasi penting (kelas akan berakhir) sebagai prioritas</li>
+                    <li>Segera akses materi baru yang dinotifikasikan</li>
+                    <li>Jangan abaikan notifikasi deadline atau pengingat</li>
+                </ul>
+            </div>
 
-            <h2>6.7 Mengubah Kata Sandi</h2>
+            <h3>Menandai Notifikasi Sudah Dibaca</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Klik notifikasi untuk membuka detail (notifikasi otomatis ditandai sudah
+                        dibaca)
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Atau klik tombol <strong>"Tandai Semua Dibaca"</strong> di bagian bawah
+                        dropdown
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number"></div>
+                    <div class="step-content">Badge merah di ikon 🔔 akan hilang setelah semua notifikasi dibaca</div>
+                </div>
+            </div>
+
+            <h2 id="section-6-7">6.7 Mengubah Kata Sandi</h2>
             <div class="steps">
                 <div class="step">
                     <div class="step-number"></div>
@@ -1983,10 +2472,10 @@
         </div>
 
         <!-- Section 7: FAQ & Troubleshooting -->
-        <div class="page-break">
-            <h1>7. FAQ & Troubleshooting</h1>
+        <div class="page-break" id="section-7">
+            <h1 id="section-7-0">7. FAQ & Troubleshooting</h1>
 
-            <h2>7.1 Pertanyaan Umum (FAQ)</h2>
+            <h2 id="section-7-1">7.1 Pertanyaan Umum (FAQ)</h2>
 
             <h3>Q: Saya lupa kata sandi, bagaimana cara reset?</h3>
             <p><strong>A:</strong> Klik "Lupa Kata Sandi?" di halaman login, masukkan email, dan ikuti instruksi di
@@ -2002,7 +2491,7 @@
             <h3>Q: Apakah progress saya tersimpan jika browser tertutup?</h3>
             <p><strong>A:</strong> Ya, progress membaca PDF dan video tersimpan otomatis.</p>
 
-            <h2>7.2 Masalah Umum</h2>
+            <h2 id="section-7-2">7.2 Masalah Umum</h2>
 
             <h3>Tidak Bisa Login</h3>
             <ol>
@@ -2034,13 +2523,70 @@
                 <li>Coba logout dan login kembali</li>
                 <li>Hubungi Admin jika masalah berlanjut</li>
             </ol>
+
+            <h3>Progress Tidak Terupdate</h3>
+            <ol>
+                <li>Pastikan Anda sudah menyelesaikan materi (scroll ke halaman terakhir untuk PDF)</li>
+                <li>Refresh halaman untuk melihat update terbaru</li>
+                <li>Logout dan login kembali</li>
+                <li>Hubungi Admin jika masalah berlanjut</li>
+            </ol>
+
+            <h3>Notifikasi Tidak Muncul</h3>
+            <ol>
+                <li>Periksa ikon notifikasi (🔔) di navbar</li>
+                <li>Refresh halaman</li>
+                <li>Periksa pengaturan browser (pastikan notifikasi tidak diblokir)</li>
+            </ol>
+
+            <h2>7.3 Kontak Support</h2>
+            <p>Jika Anda mengalami masalah yang tidak dapat diselesaikan dengan panduan troubleshooting di atas,
+                silakan hubungi tim support kami:</p>
+
+            <table>
+                <tr>
+                    <th>Metode Kontak</th>
+                    <th>Detail</th>
+                    <th>Jam Operasional</th>
+                </tr>
+                <tr>
+                    <td>📧 <strong>Email</strong></td>
+                    <td>support@codingakademi.id</td>
+                    <td>Senin - Jumat<br>08:00 - 17:00 WIB</td>
+                </tr>
+                <tr>
+                    <td>📞 <strong>Telepon</strong></td>
+                    <td>(0752) XXXXXXX</td>
+                    <td>Senin - Jumat<br>08:00 - 17:00 WIB</td>
+                </tr>
+                <tr>
+                    <td>💬 <strong>WhatsApp</strong></td>
+                    <td>+62 8XX-XXXX-XXXX</td>
+                    <td>Senin - Jumat<br>08:00 - 17:00 WIB</td>
+                </tr>
+                <tr>
+                    <td>🏢 <strong>Alamat</strong></td>
+                    <td colspan="2">Coding Akademi Payakumbuh<br>Sumatera Barat, Indonesia</td>
+                </tr>
+            </table>
+
+            <div class="info-box">
+                <strong>💡 Tips saat menghubungi support:</strong>
+                <ul>
+                    <li>Jelaskan masalah dengan detail (apa yang terjadi, kapan, dan langkah yang sudah dicoba)</li>
+                    <li>Sertakan screenshot jika memungkinkan</li>
+                    <li>Sebutkan peran Anda (Admin/Guru/Siswa)</li>
+                    <li>Berikan informasi akun (nama dan email terdaftar)</li>
+                    <li>Catat nomor browser dan versi yang digunakan</li>
+                </ul>
+            </div>
         </div>
 
         <!-- Lampiran -->
-        <div class="page-break">
-            <h1>📎 Lampiran</h1>
+        <div class="page-break" id="appendix">
+            <h1 id="appendix-0">📎 Lampiran</h1>
 
-            <h2>A. Shortcut Keyboard</h2>
+            <h2 id="appendix-a">A. Shortcut Keyboard</h2>
             <table>
                 <tr>
                     <th>Fungsi</th>
@@ -2064,7 +2610,7 @@
                 </tr>
             </table>
 
-            <h2>B. Ikon Status Materi</h2>
+            <h2 id="appendix-b">B. Ikon Status Materi</h2>
             <table>
                 <tr>
                     <th>Ikon</th>
@@ -2088,7 +2634,7 @@
                 </tr>
             </table>
 
-            <h2>C. Ikon Status Kehadiran</h2>
+            <h2 id="appendix-c">C. Ikon Status Kehadiran</h2>
             <table>
                 <tr>
                     <th>Kode</th>
@@ -2117,7 +2663,7 @@
                 </tr>
             </table>
 
-            <h2>D. Kontak Support</h2>
+            <h2 id="appendix-d">D. Kontak Support</h2>
             <p>Jika Anda mengalami masalah yang tidak dapat diselesaikan:</p>
             <ul>
                 <li>📧 <strong>Email:</strong> support@codingakademi.id</li>
