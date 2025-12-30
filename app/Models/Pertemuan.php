@@ -17,6 +17,7 @@ class Pertemuan extends Model
         'waktu_mulai',
         'waktu_selesai',
         'guru_id',
+        'materi_id',
         'materi',
     ];
 
@@ -32,6 +33,11 @@ class Pertemuan extends Model
     public function guru()
     {
         return $this->belongsTo(User::class, 'guru_id');
+    }
+
+    public function materi()
+    {
+        return $this->belongsTo(Materi::class, 'materi_id');
     }
 
     public function presensi()
