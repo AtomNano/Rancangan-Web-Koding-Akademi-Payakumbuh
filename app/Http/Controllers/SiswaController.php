@@ -26,15 +26,23 @@ class SiswaController extends Controller
             $daysUntil = $enrollment->getDaysUntilExpiration();
             
             if ($expirationDate && $daysUntil !== null && $daysUntil >= 0 && $daysUntil <= $daysBeforeNotification) {
-                // Check if a similar notification already exists and is unread
-                $notificationExists = $user->unreadNotifications()
-                    ->where('type', 'App\Notifications\ClassExpirationReminder')
-                    ->where('data->expiration_date', $expirationDate->format('d F Y'))
-                    ->where('data->message', 'like', '%' . $enrollment->kelas->nama_kelas . '%')
-                    ->exists();
+                try {
+                    // Simpler check: just look for recent notifications about this class
+                    $notificationExists = $user->unreadNotifications()
+                        ->where('type', 'App\Notifications\ClassExpirationReminder')
+                        ->where('created_at', '>=', now()->subDays(1))
+                        ->get()
+                        ->contains(function ($notification) use ($enrollment) {
+                            $data = $notification->data;
+                            return isset($data['kelas_id']) && $data['kelas_id'] == $enrollment->kelas_id;
+                        });
 
-                if (!$notificationExists) {
-                    $user->notify(new \App\Notifications\ClassExpirationReminder($enrollment, $daysUntil));
+                    if (!$notificationExists) {
+                        $user->notify(new \App\Notifications\ClassExpirationReminder($enrollment, $daysUntil));
+                    }
+                } catch (\Exception $e) {
+                    // Silently fail if notification fails - don't break dashboard
+                    \Log::warning('Failed to check/send class expiration notification: ' . $e->getMessage());
                 }
             }
         }
