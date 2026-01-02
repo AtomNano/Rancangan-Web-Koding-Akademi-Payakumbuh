@@ -567,5 +567,53 @@ class UserController extends Controller
             ->with('success', 'User berhasil dinonaktifkan. Data masih tersimpan di database.');
     }
 
+    /**
+     * Tampilkan daftar user yang telah dihapus (soft deleted)
+     */
+    public function showDeleted(Request $request)
+    {
+        $role = $request->get('role');
+        $search = $request->get('search');
+
+        $query = User::onlyTrashed();
+
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->latest('deleted_at')->paginate(10);
+
+        return view('admin.users.deleted', compact('users', 'role'));
+    }
+
+    /**
+     * Restore user yang telah dihapus
+     */
+    public function restore(Request $request, $id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        
+        // Restore user
+        $user->restore();
+
+        // If role is siswa, also reactivate all enrollments
+        if ($user->isSiswa()) {
+            $user->enrollments()->where('status', 'inactive')->update(['status' => 'active']);
+        }
+
+        // Log activity
+        ActivityLogger::logUserUpdated($user, ['deleted_at' => $user->deleted_at], []);
+
+        return redirect()->route('admin.users.index', ['role' => $user->role])
+            ->with('success', 'User berhasil di-restore. Email sudah bisa digunakan kembali untuk registrasi.');
+    }
+
 
 }
