@@ -20,17 +20,24 @@ class NotificationController extends Controller
         // Get some recent read notifications for context
         $readNotifications = $user->readNotifications()->latest()->limit(5)->get();
 
-        // Generate URLs for notifications
-        $unreadNotifications->each(function ($notification) {
-            if (isset($notification->data['materi_id']) && !isset($notification->data['url'])) {
-                $notification->data['url'] = route('admin.materi.show', $notification->data['materi_id']);
+        // Generate URLs for notifications - skip URL modification as data is read-only
+        // URLs should be generated in the Notification class itself or in the view
+        $unreadNotifications = $unreadNotifications->map(function ($notification) {
+            $data = $notification->data;
+            if (isset($data['materi_id']) && !isset($data['url'])) {
+                $data['url'] = route('admin.materi.show', $data['materi_id']);
             }
+            $notification->computed_url = $data['url'] ?? null;
+            return $notification;
         });
 
-        $readNotifications->each(function ($notification) {
-            if (isset($notification->data['materi_id']) && !isset($notification->data['url'])) {
-                $notification->data['url'] = route('admin.materi.show', $notification->data['materi_id']);
+        $readNotifications = $readNotifications->map(function ($notification) {
+            $data = $notification->data;
+            if (isset($data['materi_id']) && !isset($data['url'])) {
+                $data['url'] = route('admin.materi.show', $data['materi_id']);
             }
+            $notification->computed_url = $data['url'] ?? null;
+            return $notification;
         });
 
         // Return JSON for API/AJAX/fetch requests; otherwise redirect to dashboard

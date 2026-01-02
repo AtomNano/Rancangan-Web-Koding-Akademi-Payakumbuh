@@ -160,7 +160,10 @@ class Enrollment extends Model
     public function getExpirationDate()
     {
         $startDate = $this->start_date ?? $this->user?->tanggal_pendaftaran;
-        $months = $this->duration_months ?? (int) filter_var($this->user?->durasi, FILTER_SANITIZE_NUMBER_INT);
+        $months = $this->duration_months ?? filter_var($this->user?->durasi, FILTER_SANITIZE_NUMBER_INT);
+        
+        // Ensure $months is an integer
+        $months = (int) $months;
 
         if (!$startDate || !$months || $months <= 0) {
             return null;
