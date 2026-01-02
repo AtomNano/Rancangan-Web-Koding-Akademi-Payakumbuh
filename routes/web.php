@@ -133,6 +133,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('users', UserController::class);
         Route::post('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
         Route::post('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
+        Route::post('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
+        Route::get('users-deleted', [UserController::class, 'showDeleted'])->name('users.deleted');
         
         Route::resource('kelas', KelasController::class)->parameters([
             'kelas' => 'kelas',

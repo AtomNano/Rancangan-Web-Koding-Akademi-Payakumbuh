@@ -82,7 +82,13 @@
                     <a href="{{ route('admin.users.index') }}" class="px-4 py-2 text-sm font-medium {{ !$role ? 'bg-indigo-500 text-white' : 'text-gray-700' }} rounded-l-md hover:bg-indigo-400 hover:text-white transition-colors">Semua</a>
                     <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'admin' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-l border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">Admin</a>
                     <a href="{{ route('admin.users.index', ['role' => 'guru']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'guru' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">Guru</a>
-                    <a href="{{ route('admin.users.index', ['role' => 'siswa']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'siswa' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} rounded-r-md hover:bg-indigo-400 hover:text-white transition-colors">Siswa</a>
+                    <a href="{{ route('admin.users.index', ['role' => 'siswa']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'siswa' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">Siswa</a>
+                    <a href="{{ route('admin.users.deleted') }}" class="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-r-md hover:bg-red-700 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Terhapus
+                    </a>
                 </div>
             </div>
             <div class="flex items-center space-x-2">
