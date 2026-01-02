@@ -1,0 +1,158 @@
+@startuml
+title Entity Relationship Diagram (ERD)\nSistem Materi Online - Coding Academy Payakumbuh
+
+' A4 Settings
+skinparam dpi 150
+scale 0.9
+skinparam defaultFontSize 9
+
+skinparam backgroundColor white
+skinparam class {
+    BackgroundColor #E6F3FF
+    BorderColor #0056D2
+    ArrowColor #333333
+}
+
+hide circle
+
+' ===== ENTITIES (Sesuai codingacademi.sql) =====
+
+entity "users" as users {
+    * **id** : BIGINT <<PK>>
+    --
+    * name : VARCHAR(255)
+    * email : VARCHAR(255) <<UNIQUE>>
+    * password : VARCHAR(255)
+    * role : VARCHAR ('admin','guru','siswa')
+    * status : VARCHAR ('active','inactive')
+    tanggal_lahir : DATE
+    alamat : TEXT
+    no_telepon : VARCHAR(255)
+    jenis_kelamin : ENUM
+    sekolah : VARCHAR(255)
+    bidang_ajar : VARCHAR(255)
+    hari_belajar : JSON
+    durasi : VARCHAR(255)
+    metode_pembayaran : ENUM
+    biaya_pendaftaran : BIGINT
+    biaya_angsuran : BIGINT
+    total_biaya : BIGINT
+    status_promo : VARCHAR(255)
+    tanggal_pendaftaran : DATE
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "kelas" as kelas {
+    * **id** : BIGINT <<PK>>
+    --
+    * nama_kelas : VARCHAR(255)
+    * deskripsi : TEXT
+    * bidang : VARCHAR ('coding','design','robotic')
+    * status : VARCHAR ('active','inactive')
+    guru_id : BIGINT <<FK>>
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "enrollments" as enrollments {
+    * **id** : BIGINT <<PK>>
+    --
+    * user_id : BIGINT <<FK>>
+    * kelas_id : BIGINT <<FK>>
+    * status : VARCHAR(255)
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "materis" as materis {
+    * **id** : BIGINT <<PK>>
+    --
+    * judul : VARCHAR(255)
+    * file_path : VARCHAR(255)
+    * file_type : VARCHAR ('pdf','video')
+    * status : VARCHAR ('pending','approved','rejected')
+    * kelas_id : BIGINT <<FK>>
+    * uploaded_by : BIGINT <<FK>>
+    deskripsi : TEXT
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "materi_progress" as materi_progress {
+    * **id** : BIGINT <<PK>>
+    --
+    * user_id : BIGINT <<FK>>
+    * materi_id : BIGINT <<FK>>
+    current_page : INT
+    total_pages : INT
+    progress_percentage : DECIMAL(5,2)
+    is_completed : BOOLEAN
+    last_read_at : TIMESTAMP
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "presensis" as presensis {
+    * **id** : BIGINT <<PK>>
+    --
+    * user_id : BIGINT <<FK>>
+    * materi_id : BIGINT <<FK>>
+    * status_kehadiran : VARCHAR(255)
+    tanggal_akses : DATE
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "activity_logs" as activity_logs {
+    * **id** : BIGINT <<PK>>
+    --
+    * user_id : BIGINT <<FK>>
+    * action : VARCHAR(255)
+    * description : TEXT
+    model_type : VARCHAR(255)
+    model_id : BIGINT
+    old_values : JSON
+    new_values : JSON
+    ip_address : VARCHAR(255)
+    user_agent : TEXT
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "sessions" as sessions {
+    * **id** : VARCHAR <<PK>>
+    --
+    user_id : BIGINT <<FK>>
+    ip_address : VARCHAR(45)
+    user_agent : TEXT
+    payload : LONGTEXT
+    last_activity : INT
+}
+
+' ===== RELATIONSHIPS =====
+
+users ||--o{ kelas : "guru_id"
+users ||--o{ enrollments : "user_id"
+kelas ||--o{ enrollments : "kelas_id"
+kelas ||--o{ materis : "kelas_id"
+users ||--o{ materis : "uploaded_by"
+materis ||--o{ materi_progress : "materi_id"
+users ||--o{ materi_progress : "user_id"
+materis ||--o{ presensis : "materi_id"
+users ||--o{ presensis : "user_id"
+users ||--o{ activity_logs : "user_id"
+users ||--o| sessions : "user_id"
+
+' ===== LEGEND =====
+note as N1
+    **LEGENDA:**
+    <<PK>> = Primary Key
+    <<FK>> = Foreign Key
+    * = NOT NULL
+    
+    **Total: 8 Tabel Utama**
+    (+ Laravel system tables)
+end note
+
+@enduml

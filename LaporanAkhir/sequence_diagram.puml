@@ -1,0 +1,71 @@
+@startuml
+title Sequence Diagram - Siswa Akses Materi\nSistem E-Learning Materi Online
+
+skinparam backgroundColor #FFFFFF
+skinparam sequence {
+    ArrowColor #666666
+    ActorBorderColor #333333
+    LifeLineBorderColor #999999
+    ParticipantBackgroundColor #FFEFD5
+    ParticipantBorderColor #D4A574
+}
+
+actor Siswa
+participant "Browser" as Browser
+participant "SiswaController" as Controller
+participant "Materi Model" as Materi
+participant "MateriProgress\nModel" as Progress
+database "MySQL\nDatabase" as DB
+
+== Login ==
+Siswa -> Browser: Buka halaman login
+Browser -> Controller: POST /login
+Controller -> DB: Validasi kredensial
+DB --> Controller: User data
+Controller --> Browser: Redirect ke Dashboard
+Browser --> Siswa: Tampilkan Dashboard
+
+== Akses Kelas ==
+Siswa -> Browser: Klik kelas
+Browser -> Controller: GET /siswa/kelas/{id}
+Controller -> DB: Query materi approved
+DB --> Controller: List materi
+Controller --> Browser: Tampilkan daftar materi
+Browser --> Siswa: Daftar materi
+
+== Baca Materi PDF ==
+Siswa -> Browser: Klik materi PDF
+Browser -> Controller: GET /siswa/materi/{id}
+Controller -> Materi: findOrFail(id)
+Materi -> DB: SELECT * FROM materis
+DB --> Materi: Data materi
+Materi --> Controller: Materi object
+Controller -> Progress: getOrCreate(user, materi)
+Progress -> DB: SELECT/INSERT materi_progress
+DB --> Progress: Progress data
+Progress --> Controller: Progress object
+Controller --> Browser: View materi + PDF Viewer
+Browser --> Siswa: Tampilkan PDF
+
+== Update Progress ==
+Siswa -> Browser: Navigasi halaman PDF
+Browser -> Controller: POST /siswa/progress/update
+Controller -> Progress: update(current_page)
+Progress -> DB: UPDATE materi_progress
+DB --> Progress: Success
+Progress --> Controller: Updated
+Controller --> Browser: JSON response
+Browser --> Siswa: Progress tersimpan
+
+== Tandai Selesai ==
+Siswa -> Browser: Klik "Tandai Selesai"
+Browser -> Controller: POST /siswa/materi/{id}/complete
+Controller -> Progress: markCompleted()
+Progress -> DB: UPDATE is_completed=true
+DB --> Progress: Success
+Controller -> DB: INSERT presensis
+DB --> Controller: Kehadiran tercatat
+Controller --> Browser: Success message
+Browser --> Siswa: "Materi selesai!"
+
+@enduml

@@ -1,0 +1,88 @@
+@startuml "AD - Admin"
+
+title Activity Diagram - Admin\nSistem E-Learning Materi Online
+
+skinparam dpi 150
+scale 0.65
+
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+    BackgroundColor #E8F5E9
+    BorderColor #4CAF50
+}
+
+|#E8F5E9| Admin |
+|#F5F5F5| Sistem |
+
+start
+
+|Admin|
+:Login sebagai Admin;
+
+|Sistem|
+:Validasi kredensial;
+:Tampilkan Dashboard;
+
+|Admin|
+:Pilih menu;
+
+if (Menu?) then (Kelola Guru/Siswa)
+    :CRUD Guru/Siswa;
+    :Toggle Aktif/Nonaktif;
+    |Sistem|
+    :Proses database;
+    
+elseif (Kelola Kelas) then
+    |Admin|
+    :Buat/Edit/Hapus Kelas;
+    :Enroll/Unenroll Siswa;
+    |Sistem|
+    :Proses database;
+    
+elseif (Verifikasi Materi) then
+    |Admin|
+    :Lihat materi pending;
+    :Preview materi;
+    if (Sesuai?) then (Ya)
+        :Approve materi;
+    else (Tidak)
+        :Reject + alasan;
+    endif
+    |Sistem|
+    :Update status materi;
+    :Kirim notifikasi;
+    
+elseif (Pertemuan & Absensi) then
+    |Admin|
+    :Buat/Edit Pertemuan;
+    :Input absensi siswa;
+    |Sistem|
+    :Proses database;
+    
+elseif (Export Laporan) then
+    |Admin|
+    :Pilih jenis laporan;
+    |Sistem|
+    :Generate Excel;
+    |Admin|
+    :Download file;
+    
+else (Backup Data)
+    |Admin|
+    :Pilih Backup/Download;
+    |Sistem|
+    :Generate file SQL/ZIP;
+    |Admin|
+    :Download file;
+    
+endif
+
+|Admin|
+:Logout;
+
+|Sistem|
+:Hapus session;
+
+stop
+
+@enduml

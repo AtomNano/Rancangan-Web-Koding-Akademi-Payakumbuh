@@ -1,0 +1,147 @@
+@startuml E-Learning Class Diagram
+
+' A4 Settings - Compact Layout
+skinparam dpi 150
+scale 0.5
+skinparam defaultFontSize 8
+skinparam nodesep 10
+skinparam ranksep 20
+
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam class {
+    BackgroundColor<<User>> #E1F5FE
+    BackgroundColor<<Class>> #FFF9C4
+    BackgroundColor<<Material>> #F3E5F5
+    BackgroundColor<<Attendance>> #E8F5E9
+    BackgroundColor<<Progress>> #FFE0B2
+    BackgroundColor<<Log>> #FFEBEE
+    BorderColor #424242
+    ArrowColor #424242
+}
+
+' Entities - Compact Version
+entity "users" as users <<User>> {
+    **id** : bigint <<PK>>
+    --
+    name : string
+    email : string <<UK>>
+    password : string
+    role : enum(admin, guru, siswa)
+    status : enum(active, inactive)
+    --
+    id_siswa : string <<UK>>
+    sekolah : string
+    bidang_ajar : json
+    hari_belajar : json
+    --
+    biaya_pendaftaran : decimal
+    biaya_angsuran : decimal
+    total_biaya : decimal
+    --
+    no_telepon : string
+    alamat : text
+    tanggal_lahir : date
+    jenis_kelamin : enum(L, P)
+    created_at : timestamp
+}
+
+entity "kelas" as kelas <<Class>> {
+    **id** : bigint <<PK>>
+    --
+    nama_kelas : string
+    deskripsi : text
+    guru_id : bigint <<FK>>
+    bidang : string
+    status : enum(active, inactive)
+    created_at : timestamp
+}
+
+entity "enrollments" as enrollments <<Class>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    kelas_id : bigint <<FK>>
+    status : enum(active, inactive)
+    start_date : date
+    duration_months : integer
+    sessions_attended : integer
+    created_at : timestamp
+}
+
+entity "materis" as materis <<Material>> {
+    **id** : bigint <<PK>>
+    --
+    judul : string
+    deskripsi : text
+    file_path : string
+    file_type : enum(pdf, video)
+    kelas_id : bigint <<FK>>
+    status : enum(pending, approved, rejected)
+    uploaded_by : bigint <<FK>>
+    created_at : timestamp
+}
+
+entity "pertemuans" as pertemuans <<Class>> {
+    **id** : bigint <<PK>>
+    --
+    kelas_id : bigint <<FK>>
+    judul_pertemuan : string
+    tanggal_pertemuan : date
+    guru_id : bigint <<FK>>
+    materi_id : bigint <<FK>>
+    created_at : timestamp
+}
+
+entity "presensis" as presensis <<Attendance>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    pertemuan_id : bigint <<FK>>
+    materi_id : bigint <<FK>>
+    status_kehadiran : enum(H, I, S, A)
+    tanggal_akses : timestamp
+    created_at : timestamp
+}
+
+entity "materi_progress" as materi_progress <<Progress>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    materi_id : bigint <<FK>>
+    current_page : integer
+    total_pages : integer
+    progress_percentage : decimal
+    is_completed : boolean
+    last_read_at : timestamp
+}
+
+entity "activity_logs" as activity_logs <<Log>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    action : string
+    model_type : string
+    model_id : bigint
+    description : text
+    created_at : timestamp
+}
+
+' Relationships - Simplified
+users ||--o{ enrollments
+users ||--o{ materis
+users ||--o{ presensis
+users ||--o{ materi_progress
+users ||--o{ activity_logs
+users ||--o{ kelas
+
+kelas ||--o{ enrollments
+kelas ||--o{ materis
+kelas ||--o{ pertemuans
+
+materis ||--o{ materi_progress
+materis ||--o{ presensis
+
+pertemuans ||--o{ presensis
+
+@enduml
