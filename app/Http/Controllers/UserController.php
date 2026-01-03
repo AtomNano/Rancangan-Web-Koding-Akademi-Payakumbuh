@@ -239,51 +239,45 @@ class UserController extends Controller
             $selectedKelas = Kelas::whereIn('nama_kelas', $request->bidang_ajar)->get();
             $selectedKelasIds = $selectedKelas->pluck('id')->toArray();
 
-            if (!empty($selectedKelasIds)) {
-                $user->enrollments()->whereNotIn('kelas_id', $selectedKelasIds)->delete();
-            }
+            // Only create enrollments for SISWA, not for GURU
+            if ($request->role === 'siswa') {
+                if (!empty($selectedKelasIds)) {
+                    $user->enrollments()->whereNotIn('kelas_id', $selectedKelasIds)->delete();
+                }
 
-            $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
+                $status = $request->enrollment_status;
 
-            foreach ($selectedKelas as $kelas) {
-                $enrollment = $user->enrollments()->where('kelas_id', $kelas->id)->first();
+                foreach ($selectedKelas as $kelas) {
+                    $enrollment = $user->enrollments()->where('kelas_id', $kelas->id)->first();
 
-                if ($enrollment) {
-                    $updatePayload = ['status' => $status];
-
-                    if ($request->role === 'siswa') {
-                        $updatePayload = array_merge($updatePayload, [
+                    if ($enrollment) {
+                        $enrollment->update([
+                            'status' => $status,
                             'start_date' => $enrollmentMeta['start_date'],
                             'duration_months' => $enrollmentMeta['duration_months'],
                             'monthly_quota' => $enrollmentMeta['monthly_quota'],
                             'target_sessions' => $enrollmentMeta['target_sessions'],
                         ]);
-                    }
-
-                    $enrollment->update($updatePayload);
-                } else {
-                    $payload = [
-                        'kelas_id' => $kelas->id,
-                        'status' => $status,
-                        'sessions_attended' => 0,
-                    ];
-
-                    if ($request->role === 'siswa') {
-                        $payload = array_merge($payload, [
+                    } else {
+                        $user->enrollments()->create([
+                            'kelas_id' => $kelas->id,
+                            'status' => $status,
+                            'sessions_attended' => 0,
                             'start_date' => $enrollmentMeta['start_date'],
                             'duration_months' => $enrollmentMeta['duration_months'],
                             'monthly_quota' => $enrollmentMeta['monthly_quota'],
                             'target_sessions' => $enrollmentMeta['target_sessions'],
                         ]);
-                    }
 
-                    $user->enrollments()->create($payload);
-
-                    if ($request->role === 'siswa' && !$user->id_siswa) {
-                        $idSiswa = User::generateIdSiswa($kelas->id);
-                        $user->update(['id_siswa' => $idSiswa]);
+                        if (!$user->id_siswa) {
+                            $idSiswa = User::generateIdSiswa($kelas->id);
+                            $user->update(['id_siswa' => $idSiswa]);
+                        }
                     }
                 }
+            } else {
+                // For GURU/ADMIN, remove all enrollments since they don't need to be enrolled as students
+                $user->enrollments()->delete();
             }
         }
 

@@ -90,17 +90,11 @@ class PertemuanController extends Controller
 
     /**
      * Display the specified pertemuan and show absen form
-     * All guru can access all pertemuan for attendance
+     * All guru can access all pertemuan for attendance - NO CHECKS!
      */
     public function show(Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('guru.pertemuan.show', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - all guru can access any pertemuan from any kelas URL
 
         // Get all students enrolled in this class
         $enrollmentIds = Enrollment::where('kelas_id', $kelas->id)
@@ -123,17 +117,11 @@ class PertemuanController extends Controller
 
     /**
      * Store absen for a pertemuan
-     * All guru can input attendance for any class
+     * All guru can input attendance for any class - NO CHECKS!
      */
     public function storeAbsen(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('guru.pertemuan.show', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - all guru can store absen for any pertemuan
 
         $validated = $request->validate([
             'absen' => 'required|array',
@@ -207,17 +195,11 @@ class PertemuanController extends Controller
 
     /**
      * Show the form for editing the specified pertemuan
-     * All guru can edit any pertemuan
+     * All guru can edit any pertemuan - NO CHECKS!
      */
     public function edit(Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('guru.pertemuan.edit', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - all guru can edit any pertemuan from any kelas URL
 
         $gurus = User::where('role', 'guru')->orderBy('name')->get();
 
@@ -226,17 +208,11 @@ class PertemuanController extends Controller
 
     /**
      * Update the specified pertemuan
-     * All guru can update any pertemuan
+     * All guru can update any pertemuan - NO CHECKS!
      */
     public function update(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('guru.pertemuan.edit', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - all guru can update any pertemuan from any kelas URL
 
         $validated = $request->validate([
             'guru_id' => 'required|exists:users,id',
@@ -315,17 +291,11 @@ class PertemuanController extends Controller
 
     /**
      * Show attendance detail for a pertemuan
-     * All guru can view attendance for any class
+     * All guru can view attendance for any class - NO CHECKS!
      */
     public function absenDetail(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('guru.pertemuan.absen-detail', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - all guru can view any attendance from any kelas URL
 
         // Get all students in the class
         $siswa = Enrollment::where('kelas_id', $kelas->id)
