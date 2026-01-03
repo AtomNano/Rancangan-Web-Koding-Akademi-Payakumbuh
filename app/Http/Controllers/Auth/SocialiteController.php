@@ -110,12 +110,6 @@ class SocialiteController extends Controller
                 return redirect()->route('login')
                     ->with('error', 'Akun Google Anda belum terdaftar. Silakan hubungi admin untuk ditambahkan sebagai siswa sebelum menggunakan login Google.');
             }
-        } catch (\Exception $e) {
-            } else {
-                // User belum terdaftar - jangan buat otomatis, minta admin daftarkan
-                return redirect()->route('login')
-                    ->with('error', 'Akun Google Anda belum terdaftar. Silakan hubungi admin untuk ditambahkan sebagai siswa sebelum menggunakan login Google.');
-            }
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
             \Log::error('Google OAuth InvalidStateException', [
                 'error' => $e->getMessage(),
