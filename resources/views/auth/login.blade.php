@@ -13,7 +13,9 @@
     .login-page {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         position: relative;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-width: 100vw;
     }
 
     .login-page::before {
@@ -30,6 +32,19 @@
     @keyframes pulse {
         0%, 100% { transform: scale(1); opacity: 0.5; }
         50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    /* Hide navbar and footer on mobile */
+    @media (max-width: 768px) {
+        .login-page nav,
+        .login-page + footer {
+            display: none !important;
+        }
+        
+        .login-page {
+            padding-top: 2rem;
+            min-height: 100vh;
+        }
     }
 
     .login-page nav {
