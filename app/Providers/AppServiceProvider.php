@@ -3,9 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
-use App\Models\Kelas;
-use App\Models\Pertemuan;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,21 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Scoped route model binding to ensure pertemuan belongs to kelas
-        Route::bind('pertemuan', function ($value, $route) {
-            $kelasId = $route->parameter('kelas');
-            
-            if ($kelasId instanceof Kelas) {
-                $kelasId = $kelasId->id;
-            }
-            
-            if ($kelasId) {
-                return Pertemuan::where('id', $value)
-                    ->where('kelas_id', $kelasId)
-                    ->firstOrFail();
-            }
-            
-            return Pertemuan::findOrFail($value);
-        });
+        // No scoped binding needed - controllers handle redirects directly
     }
 }
