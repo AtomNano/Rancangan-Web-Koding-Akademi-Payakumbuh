@@ -432,7 +432,8 @@ class UserController extends Controller
         $user->update($userData);
         $newValues = $user->fresh()->toArray();
 
-        if (($request->role === 'siswa' || $request->role === 'guru')) {
+        // Handle enrollment ONLY for students, not for teachers
+        if ($request->role === 'siswa') {
             $selectedKelasIds = [];
             if (!empty($request->bidang_ajar)) {
                 $selectedKelasIds = Kelas::whereIn('nama_kelas', $request->bidang_ajar)->pluck('id')->toArray();
@@ -449,11 +450,10 @@ class UserController extends Controller
             }
 
             foreach ($idsToAdd as $kelasId) {
-                $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
                 \App\Models\Enrollment::create([
                     'user_id' => $user->id,
                     'kelas_id' => $kelasId,
-                    'status' => $status,
+                    'status' => $request->enrollment_status,
                     'start_date' => $userData['_start_date'] ?? null,
                     'duration_months' => $userData['_duration_months'] ?? null,
                     'monthly_quota' => $userData['_monthly_quota'] ?? null,
@@ -463,16 +463,13 @@ class UserController extends Controller
             }
 
             if (!empty($idsToUpdate)) {
-                $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
-                $updatePayload = ['status' => $status];
-                if ($request->role === 'siswa') {
-                    $updatePayload = array_merge($updatePayload, [
-                        'start_date' => $userData['_start_date'] ?? null,
-                        'duration_months' => $userData['_duration_months'] ?? null,
-                        'monthly_quota' => $userData['_monthly_quota'] ?? null,
-                        'target_sessions' => $userData['_target_sessions'] ?? null,
-                    ]);
-                }
+                $updatePayload = [
+                    'status' => $request->enrollment_status,
+                    'start_date' => $userData['_start_date'] ?? null,
+                    'duration_months' => $userData['_duration_months'] ?? null,
+                    'monthly_quota' => $userData['_monthly_quota'] ?? null,
+                    'target_sessions' => $userData['_target_sessions'] ?? null,
+                ];
 
                 \App\Models\Enrollment::where('user_id', $user->id)
                     ->whereIn('kelas_id', $idsToUpdate)

@@ -35,8 +35,8 @@
                     </span>
                     <span class="text-white/50">Sesi Virtual</span>
                         </div>
-                <div class="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
-                    <img src="{{ asset('images/pricing/biaya-online.jpeg') }}" alt="Biaya Kursus Reguler Online" class="h-full w-full object-cover">
+                <div class="relative mt-8 h-100 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
+                    <img src="{{ asset('images/pricing/biaya-online-new.jpg') }}" alt="Biaya Kursus Reguler Online" class="h-full w-full object-contain">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/10 to-transparent"></div>
                     <span class="absolute bottom-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-white/70">
                         Fleksibel
@@ -71,17 +71,19 @@
             
             <!-- Reguler Offline Class -->
             <div class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/15 bg-white/10 p-8 shadow-[0_40px_120px_-50px_rgba(79,70,229,0.7)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-2">
-                <span class="absolute top-6 right-6 rounded-full border border-white/25 bg-white/15 px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/85">
-                    Populer
-                </span>
                 <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
                     <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1 text-white/80">
                         Reguler Offline
                     </span>
-                    <span class="text-white/50">Tatap Muka</span>
+                    <div class="flex items-center gap-1">
+                        <span class="text-white/50">Tatap Muka</span>
+                        <span class="rounded-full border border-white/25 bg-white/15 px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/85">
+                            Populer
+                        </span>
+                    </div>
                 </div>
-                <div class="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
-                    <img src="{{ asset('images/pricing/biaya-offline-reguler.jpeg') }}" alt="Biaya Kursus Reguler Offline" class="h-full w-full object-cover">
+                <div class="relative mt-8 h-100 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
+                    <img src="{{ asset('images/pricing/biaya-adult.jpg') }}" alt="Biaya Kursus Reguler Offline" class="h-full w-full object-contain">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/15 to-transparent"></div>
                     <span class="absolute bottom-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-white/80">
                         Premium
@@ -122,8 +124,8 @@
                     </span>
                     <span class="text-white/50">Eksklusif</span>
                         </div>
-                <div class="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
-                    <img src="{{ asset('images/pricing/biaya-offline-privat.jpeg') }}" alt="Biaya Kursus Privat Offline" class="h-full w-full object-cover">
+                <div class="relative mt-8 h-100 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
+                    <img src="{{ asset('images/pricing/biaya-private.jpg') }}" alt="Biaya Kursus Privat Offline" class="h-full w-full object-contain">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/15 to-transparent"></div>
                     <span class="absolute bottom-4 left-4 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-white/70">
                         Personal

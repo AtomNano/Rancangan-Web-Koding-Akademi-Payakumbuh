@@ -106,27 +106,9 @@ class SocialiteController extends Controller
                 // Redirect berdasarkan role
                 return $this->redirectToDashboard($user);
             } else {
-                // User baru dari Google, buat user dengan data dasar
-                $user = User::create([
-                    'name' => $googleUser->getName() ?? 'User',
-                    'email' => $googleUser->getEmail(),
-                    'password' => Hash::make(uniqid()), // Random password, user tidak akan pakai password
-                    'role' => 'siswa', // Default role siswa
-                    'tanggal_pendaftaran' => now(),
-                    // Data lengkap lainnya akan dilengkapi oleh admin atau user sendiri
-                ]);
-                
-                \Log::info('New user created from Google OAuth', [
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                ]);
-                
-                // Login user baru
-                Auth::login($user, true);
-                
-                // Redirect ke dashboard dengan pesan bahwa data perlu dilengkapi
-                return redirect()->route('siswa.dashboard')
-                    ->with('info', 'Selamat datang! Data Anda telah dibuat dari akun Google. Silakan lengkapi profil Anda atau hubungi admin untuk melengkapi data pendaftaran.');
+                // User belum terdaftar - jangan buat otomatis, minta admin daftarkan
+                return redirect()->route('login')
+                    ->with('error', 'Akun Google Anda belum terdaftar. Silakan hubungi admin untuk ditambahkan sebagai siswa sebelum menggunakan login Google.');
             }
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
             \Log::error('Google OAuth InvalidStateException', [
