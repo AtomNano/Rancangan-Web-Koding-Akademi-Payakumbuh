@@ -137,12 +137,11 @@ class PertemuanController extends Controller
 
     /**
      * Store absen for a pertemuan (Admin can input for any teacher's pertemuan)
+     * Admin can store absen for any pertemuan - NO CHECKS!
      */
     public function storeAbsen(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
-        }
+        // No checks - admin can store absen for any pertemuan from any kelas URL
 
         $validated = $request->validate([
             'absen' => 'required|array',
