@@ -432,8 +432,8 @@ class UserController extends Controller
         $user->update($userData);
         $newValues = $user->fresh()->toArray();
 
-        // Handle enrollment ONLY for students, not for teachers
-        if ($request->role === 'siswa') {
+        // Handle enrollment for both students and teachers
+        if ($request->role === 'siswa' || $request->role === 'guru') {
             $selectedKelasIds = [];
             if (!empty($request->bidang_ajar)) {
                 $selectedKelasIds = Kelas::whereIn('nama_kelas', $request->bidang_ajar)->pluck('id')->toArray();
@@ -450,26 +450,40 @@ class UserController extends Controller
             }
 
             foreach ($idsToAdd as $kelasId) {
-                \App\Models\Enrollment::create([
+                // For teachers: create enrollment with just active status (for class access)
+                // For students: create full enrollment with duration, quota, etc.
+                $enrollmentData = [
                     'user_id' => $user->id,
                     'kelas_id' => $kelasId,
-                    'status' => $request->enrollment_status,
-                    'start_date' => $userData['_start_date'] ?? null,
-                    'duration_months' => $userData['_duration_months'] ?? null,
-                    'monthly_quota' => $userData['_monthly_quota'] ?? null,
-                    'target_sessions' => $userData['_target_sessions'] ?? null,
-                    'sessions_attended' => 0,
-                ]);
+                    'status' => $request->role === 'siswa' ? $request->enrollment_status : 'active',
+                ];
+                
+                if ($request->role === 'siswa') {
+                    $enrollmentData = array_merge($enrollmentData, [
+                        'start_date' => $userData['_start_date'] ?? null,
+                        'duration_months' => $userData['_duration_months'] ?? null,
+                        'monthly_quota' => $userData['_monthly_quota'] ?? null,
+                        'target_sessions' => $userData['_target_sessions'] ?? null,
+                        'sessions_attended' => 0,
+                    ]);
+                }
+                
+                \App\Models\Enrollment::create($enrollmentData);
             }
 
             if (!empty($idsToUpdate)) {
-                $updatePayload = [
-                    'status' => $request->enrollment_status,
-                    'start_date' => $userData['_start_date'] ?? null,
-                    'duration_months' => $userData['_duration_months'] ?? null,
-                    'monthly_quota' => $userData['_monthly_quota'] ?? null,
-                    'target_sessions' => $userData['_target_sessions'] ?? null,
-                ];
+                // For teachers: only update status
+                // For students: update status and all enrollment details
+                $updatePayload = ['status' => $request->role === 'siswa' ? $request->enrollment_status : 'active'];
+                
+                if ($request->role === 'siswa') {
+                    $updatePayload = array_merge($updatePayload, [
+                        'start_date' => $userData['_start_date'] ?? null,
+                        'duration_months' => $userData['_duration_months'] ?? null,
+                        'monthly_quota' => $userData['_monthly_quota'] ?? null,
+                        'target_sessions' => $userData['_target_sessions'] ?? null,
+                    ]);
+                }
 
                 \App\Models\Enrollment::where('user_id', $user->id)
                     ->whereIn('kelas_id', $idsToUpdate)

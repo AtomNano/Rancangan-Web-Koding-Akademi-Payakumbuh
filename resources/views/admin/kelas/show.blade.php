@@ -57,11 +57,6 @@
                             </div>
                         </div>
 
-                        {{-- Informasi Guru --}}
-                        <div class="mt-8">
-                            <h4 class="text-xl font-semibold mb-4">Informasi Pengajar</h4>
-                            @if ($kelas->guru)
-                                <div class="bg-white dark:bg-white p-4 rounded-lg shadow flex items-center space-x-4">
                         {{-- Tabbed View --}}
                         <div x-data="{ openTab: 'materi' }" class="mt-8">
                             <div class="border-b border-gray-200 dark:border-gray-200">
@@ -184,16 +179,6 @@
                                     <p>Belum ada guru yang ditunjuk untuk kelas ini.</p>
                                 @endif
                             </div>
-                        </div>
-                                    <div>
-                                        <p class="text-lg font-semibold">{{ $kelas->guru->name }}</p>
-                                        <p class="text-gray-600 dark:text-gray-600">{{ $kelas->guru->email }}</p>
-                                        <p class="text-gray-600 dark:text-gray-600">Bidang: {{ $kelas->guru->bidang ?? 'N/A' }}</p>
-                                    </div>
-                                </div>
-                            @else
-                                <p>Belum ada guru yang ditunjuk untuk kelas ini.</p>
-                            @endif
                         </div>
 
                         <div class="mt-8 flex flex-col space-y-4">
