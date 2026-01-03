@@ -110,17 +110,11 @@ class PertemuanController extends Controller
 
     /**
      * Display the specified pertemuan and show absen form
-     * Admin can access all pertemuan regardless of kelas
+     * Admin can access all pertemuan regardless of kelas - NO CHECKS!
      */
     public function show(Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('admin.pertemuan.show', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - admin can access any pertemuan from any kelas URL
 
         // Get all students enrolled in this class
         $enrollmentIds = Enrollment::where('kelas_id', $kelas->id)
@@ -222,17 +216,11 @@ class PertemuanController extends Controller
 
     /**
      * Show the form for editing the specified pertemuan
-     * Admin can edit all pertemuan regardless of kelas
+     * Admin can edit all pertemuan regardless of kelas - NO CHECKS!
      */
     public function edit(Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('admin.pertemuan.edit', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - admin can edit any pertemuan from any kelas URL
 
         // Get available gurus for assignment
         $guru = User::where('role', 'guru')
@@ -244,17 +232,11 @@ class PertemuanController extends Controller
 
     /**
      * Update the specified pertemuan
-     * Admin can update all pertemuan regardless of kelas
+     * Admin can update all pertemuan regardless of kelas - NO CHECKS!
      */
     public function update(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('admin.pertemuan.edit', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - admin can update any pertemuan from any kelas URL
 
         $validated = $request->validate([
             'guru_id' => 'required|exists:users,id',
@@ -288,17 +270,11 @@ class PertemuanController extends Controller
 
     /**
      * Show detailed attendance records for a pertemuan
-     * Admin can access all attendance regardless of kelas
+     * Admin can access all attendance regardless of kelas - NO CHECKS!
      */
     public function absenDetail(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        // Auto-redirect to correct kelas URL for consistency (no error)
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            return redirect()->route('admin.pertemuan.absen-detail', [
-                'kelas' => $pertemuan->kelas_id, 
-                'pertemuan' => $pertemuan->id
-            ]);
-        }
+        // No checks - admin can access any attendance from any kelas URL
 
         // Get all students in the class
         $siswa = Enrollment::where('kelas_id', $kelas->id)
