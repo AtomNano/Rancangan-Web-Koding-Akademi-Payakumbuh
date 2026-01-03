@@ -110,11 +110,16 @@ class PertemuanController extends Controller
 
     /**
      * Display the specified pertemuan and show absen form
+     * Admin can access all pertemuan regardless of kelas
      */
     public function show(Kelas $kelas, Pertemuan $pertemuan)
     {
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('admin.pertemuan.show', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         // Get all students enrolled in this class
@@ -217,11 +222,16 @@ class PertemuanController extends Controller
 
     /**
      * Show the form for editing the specified pertemuan
+     * Admin can edit all pertemuan regardless of kelas
      */
     public function edit(Kelas $kelas, Pertemuan $pertemuan)
     {
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('admin.pertemuan.edit', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         // Get available gurus for assignment
@@ -234,11 +244,16 @@ class PertemuanController extends Controller
 
     /**
      * Update the specified pertemuan
+     * Admin can update all pertemuan regardless of kelas
      */
     public function update(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('admin.pertemuan.edit', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         $validated = $request->validate([
@@ -259,12 +274,11 @@ class PertemuanController extends Controller
 
     /**
      * Remove the specified pertemuan
+     * Admin can delete all pertemuan regardless of kelas
      */
     public function destroy(Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan menghapus pertemuan ini.');
-        }
+        // No check needed - admin can delete from any kelas URL
 
         $pertemuan->delete();
 
@@ -274,11 +288,16 @@ class PertemuanController extends Controller
 
     /**
      * Show detailed attendance records for a pertemuan
+     * Admin can access all attendance regardless of kelas
      */
     public function absenDetail(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('admin.pertemuan.absen-detail', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         // Get all students in the class

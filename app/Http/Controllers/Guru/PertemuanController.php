@@ -16,8 +16,10 @@ use Illuminate\Support\Facades\Auth;
 class PertemuanController extends Controller
 {
     /**
-     * Check if guru has access to a class
+     * DEPRECATED: All guru can now access all classes for attendance
+     * Check if guru has access to a class - NO LONGER USED
      */
+    /*
     private function hasAccessToClass($user, $kelas)
     {
         $isAssignedAsGuru = $kelas->guru_id !== null && (int)$kelas->guru_id === (int)$user->id;
@@ -26,18 +28,14 @@ class PertemuanController extends Controller
             ->exists();
         return $isAssignedAsGuru || $isEnrolled;
     }
+    */
 
     /**
      * Display a listing of pertemuan for a class
+     * All guru can view any class pertemuan
      */
     public function index(Kelas $kelas)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
         // Tampilkan semua pertemuan di kelas ini (tidak hanya yang dibuat oleh guru login)
         $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
             ->orderBy('tanggal_pertemuan', 'desc')
@@ -50,15 +48,10 @@ class PertemuanController extends Controller
 
     /**
      * Show the form for creating a new pertemuan
+     * All guru can create pertemuan in any class
      */
     public function create(Kelas $kelas)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
         $gurus = User::where('role', 'guru')->orderBy('name')->get();
 
         return view('guru.pertemuan.create', compact('kelas', 'gurus'));
@@ -66,15 +59,10 @@ class PertemuanController extends Controller
 
     /**
      * Store a newly created pertemuan
+     * All guru can store pertemuan in any class
      */
     public function store(Request $request, Kelas $kelas)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
         $validated = $request->validate([
             'guru_id' => 'required|exists:users,id',
             'judul_pertemuan' => 'required|string|max:255',
@@ -102,18 +90,16 @@ class PertemuanController extends Controller
 
     /**
      * Display the specified pertemuan and show absen form
+     * All guru can access all pertemuan for attendance
      */
     public function show(Kelas $kelas, Pertemuan $pertemuan)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
-        // Allow any guru with access to the class to view the pertemuan, even if created by guru lain
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('guru.pertemuan.show', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         // Get all students enrolled in this class
@@ -137,18 +123,16 @@ class PertemuanController extends Controller
 
     /**
      * Store absen for a pertemuan
+     * All guru can input attendance for any class
      */
     public function storeAbsen(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
-        // Allow class-authorized guru to input absen meski bukan pengajar yang membuat pertemuan
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('guru.pertemuan.show', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         $validated = $request->validate([
@@ -223,18 +207,16 @@ class PertemuanController extends Controller
 
     /**
      * Show the form for editing the specified pertemuan
+     * All guru can edit any pertemuan
      */
     public function edit(Kelas $kelas, Pertemuan $pertemuan)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
-        // Allow class-authorized guru to mengedit pertemuan yang ada di kelasnya
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('guru.pertemuan.edit', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         $gurus = User::where('role', 'guru')->orderBy('name')->get();
@@ -244,18 +226,16 @@ class PertemuanController extends Controller
 
     /**
      * Update the specified pertemuan
+     * All guru can update any pertemuan
      */
     public function update(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
-        // Allow class-authorized guru to memperbarui pertemuan di kelasnya
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('guru.pertemuan.edit', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         $validated = $request->validate([
@@ -276,19 +256,11 @@ class PertemuanController extends Controller
 
     /**
      * Remove the specified pertemuan
+     * All guru can delete any pertemuan
      */
     public function destroy(Kelas $kelas, Pertemuan $pertemuan)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
-        // Allow class-authorized guru to menghapus pertemuan di kelasnya
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan menghapus pertemuan ini.');
-        }
+        // No check needed - all guru can delete from any kelas
 
         $pertemuan->delete();
 
@@ -328,15 +300,10 @@ class PertemuanController extends Controller
 
     /**
      * Show pertemuan list for attendance input (for a specific class)
+     * All guru can access attendance for any class
      */
     public function attendanceSelectPertemuan(Kelas $kelas)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
         $pertemuans = Pertemuan::where('kelas_id', $kelas->id)
             ->orderBy('tanggal_pertemuan', 'desc')
             ->orderBy('waktu_mulai', 'desc')
@@ -348,17 +315,16 @@ class PertemuanController extends Controller
 
     /**
      * Show attendance detail for a pertemuan
+     * All guru can view attendance for any class
      */
     public function absenDetail(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
+        // Auto-redirect to correct kelas URL for consistency (no error)
         if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
+            return redirect()->route('guru.pertemuan.absen-detail', [
+                'kelas' => $pertemuan->kelas_id, 
+                'pertemuan' => $pertemuan->id
+            ]);
         }
 
         // Get all students in the class
@@ -398,15 +364,10 @@ class PertemuanController extends Controller
 
     /**
      * Show individual student progress/learning log
+     * All guru can view student progress in any class
      */
     public function studentProgress(Request $request, Kelas $kelas, User $siswa)
     {
-        $user = Auth::user();
-        
-        if (!$this->hasAccessToClass($user, $kelas)) {
-            abort(403, 'Anda tidak diizinkan mengakses kelas ini.');
-        }
-
         // Check if student is in this class
         $enrollment = Enrollment::where('kelas_id', $kelas->id)
             ->where('user_id', $siswa->id)
@@ -433,7 +394,7 @@ class PertemuanController extends Controller
                 'pertemuan' => $pertemuan,
                 'presensi' => $presensi,
                 'tanggal_belajar' => $pertemuan->tanggal_pertemuan,
-                'nama_mentor' => $user->name,
+                'nama_mentor' => $pertemuan->guru ? $pertemuan->guru->name : 'N/A',
                 'materi' => $pertemuan->materi,
                 'status_kehadiran' => $presensi ? $presensi->status_kehadiran : null,
             ];
