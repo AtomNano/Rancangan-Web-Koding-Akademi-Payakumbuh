@@ -82,8 +82,6 @@
         backdrop-filter: blur(20px);
         background: rgba(255, 255, 255, 0.95);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        max-height: calc(100vh - 120px);
-        overflow-y: auto;
     }
 
     .input-field {
