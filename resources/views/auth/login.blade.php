@@ -10,12 +10,27 @@
 
 @section('styles')
 <style>
+    /* Fix: Hide footer on login page */
+    .login-page ~ footer,
+    body.login-page footer {
+        display: none !important;
+    }
+
+    /* Fix: Prevent scroll by setting exact viewport height */
+    html.login-page-html,
+    html.login-page-html body {
+        height: 100vh;
+        overflow: hidden;
+    }
+
     .login-page {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         position: relative;
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow: hidden;
         max-width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
     }
 
     .login-page::before {
@@ -27,6 +42,7 @@
         height: 200%;
         background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         animation: pulse 15s ease-in-out infinite;
+        pointer-events: none;
     }
 
     @keyframes pulse {
@@ -37,25 +53,37 @@
     /* Hide navbar and footer on mobile */
     @media (max-width: 768px) {
         .login-page nav,
-        .login-page + footer {
+        .login-page + footer,
+        .login-page ~ footer {
             display: none !important;
         }
         
         .login-page {
-            padding-top: 2rem;
-            min-height: 100vh;
+            padding-top: 0;
         }
     }
 
     .login-page nav {
         padding-top: 1.5rem;
         padding-bottom: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    /* Main content area fills remaining space */
+    .login-page main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
     }
 
     .login-card {
         backdrop-filter: blur(20px);
         background: rgba(255, 255, 255, 0.95);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
     }
 
     .input-field {
@@ -75,11 +103,21 @@
         color: #667eea;
         transform: scale(1.1);
     }
+
+    /* Prevent extra scroll space */
+    html, body {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
 </style>
+<script>
+    // Add class to html element for login page specific styles
+    document.documentElement.classList.add('login-page-html');
+</script>
 @endsection 
 
 @section('content')
-<div class="relative flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+<div class="relative flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
     <!-- Alert Messages -->
     @if (session('error'))
         <div class="fixed top-4 left-1/2 z-50 -translate-x-1/2 transform">
