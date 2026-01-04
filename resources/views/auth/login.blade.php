@@ -75,7 +75,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow-y: auto;
+        padding: 1rem;
+        min-height: 0;
     }
 
     .login-card {
@@ -151,11 +152,11 @@
 
     <div class="relative w-full max-w-md">
         <!-- Login Card -->
-        <div class="login-card rounded-2xl p-8 sm:p-10">
+        <div class="login-card rounded-2xl p-6 sm:p-8">
             <!-- Header -->
-            <div class="mb-8 text-center">
-                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
-                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mb-6 text-center">
+                <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
+                    <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                 </div>
@@ -262,7 +263,7 @@
             </form>
 
             <!-- Divider -->
-            <div class="relative my-6">
+            <div class="relative my-4">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-gray-300"></div>
                 </div>
@@ -294,7 +295,7 @@
 
             <!-- Quick Login (Development Only) -->
             @if (app()->environment('local'))
-            <div class="mt-6 border-t border-gray-200 pt-6">
+            <div class="mt-4 border-t border-gray-200 pt-4">
                 <p class="mb-4 text-center text-xs font-medium uppercase tracking-wider text-gray-500">Quick Login (Development Only)</p>
                 <div class="grid grid-cols-3 gap-3">
                     <a href="{{ url('/quick-login/admin') }}" 
@@ -317,7 +318,7 @@
             @endif
 
             <!-- Footer -->
-            <div class="mt-8 text-center">
+            <div class="mt-4 text-center">
                 <p class="text-xs text-gray-500">
                     © {{ date('Y') }} Coding Academy Payakumbuh. All rights reserved.
                 </p>
