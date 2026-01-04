@@ -16,26 +16,30 @@
         display: none !important;
     }
 
-    /* Fix: Prevent scroll by setting exact viewport height */
-    html.login-page-html,
-    html.login-page-html body {
+    /* Fix double scrollbar: hide scroll on html/body */
+    html:has(.login-page),
+    html:has(.login-page) body,
+    body.login-page {
+        overflow: hidden !important;
         height: 100vh;
-        overflow: hidden;
+        height: 100dvh;
     }
 
     .login-page {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         position: relative;
-        overflow: hidden;
         max-width: 100vw;
         height: 100vh;
+        height: 100dvh;
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .login-page::before {
         content: '';
-        position: absolute;
+        position: fixed;
         top: -50%;
         right: -50%;
         width: 200%;
@@ -50,26 +54,13 @@
         50% { transform: scale(1.1); opacity: 0.8; }
     }
 
-    /* Hide navbar and footer on mobile */
-    @media (max-width: 768px) {
-        .login-page nav,
-        .login-page + footer,
-        .login-page ~ footer {
-            display: none !important;
-        }
-        
-        .login-page {
-            padding-top: 0;
-        }
-    }
-
     .login-page nav {
-        padding-top: 1.5rem;
-        padding-bottom: 1.5rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
         flex-shrink: 0;
     }
 
-    /* Main content area fills remaining space */
+    /* Main content area */
     .login-page main {
         flex: 1;
         display: flex;
@@ -83,6 +74,8 @@
         backdrop-filter: blur(20px);
         background: rgba(255, 255, 255, 0.95);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 28rem;
     }
 
     .input-field {
@@ -103,10 +96,66 @@
         transform: scale(1.1);
     }
 
-    /* Prevent extra scroll space */
-    html, body {
-        max-width: 100vw;
-        overflow-x: hidden;
+    /* ===== MOBILE RESPONSIVE STYLES ===== */
+    @media (max-width: 768px) {
+        /* Hide navbar on mobile for cleaner login */
+        .login-page nav,
+        .login-page header,
+        .login-page + footer,
+        .login-page ~ footer {
+            display: none !important;
+        }
+
+        .login-page {
+            padding: 0;
+            min-height: 100vh;
+            min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            overflow-y: auto;
+        }
+
+        .login-page main {
+            padding: 1rem;
+            align-items: flex-start;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .login-card {
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            margin: 0 auto;
+        }
+
+        /* Smaller icon on mobile */
+        .login-card .header-icon {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .login-card .header-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+
+    /* Extra small devices */
+    @media (max-width: 380px) {
+        .login-page main {
+            padding: 0.75rem;
+            padding-top: 1.5rem;
+        }
+
+        .login-card {
+            border-radius: 1rem;
+        }
+    }
+
+    /* Landscape mobile */
+    @media (max-height: 600px) and (orientation: landscape) {
+        .login-page main {
+            align-items: flex-start;
+            padding-top: 1rem;
+        }
     }
 </style>
 <script>
