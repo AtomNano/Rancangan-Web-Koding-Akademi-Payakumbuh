@@ -16,25 +16,27 @@
         display: none !important;
     }
 
-    /* Fix double scrollbar: hide scroll on html/body */
-    html:has(.login-page),
-    html:has(.login-page) body,
-    body.login-page {
-        overflow: hidden !important;
-        height: 100vh;
-        height: 100dvh;
+    /* Allow scrolling */
+    html, body {
+        overflow: auto !important;
+        height: auto !important;
     }
 
     .login-page {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #080d1a 0%, #111827 25%, #1e3a8a 50%, #312e81 75%, #4c1d95 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 20s ease infinite;
         position: relative;
-        max-width: 100vw;
-        height: 100vh;
-        height: 100dvh;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
         overflow-x: hidden;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .login-page::before {
@@ -44,20 +46,23 @@
         right: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
         animation: pulse 15s ease-in-out infinite;
         pointer-events: none;
+        z-index: 0;
     }
 
     @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.1); opacity: 0.8; }
+        0%, 100% { transform: scale(1); opacity: 0.4; }
+        50% { transform: scale(1.1); opacity: 0.6; }
     }
 
     .login-page nav {
         padding-top: 1rem;
         padding-bottom: 1rem;
         flex-shrink: 0;
+        position: relative;
+        z-index: 10;
     }
 
     /* Main content area */
@@ -66,34 +71,53 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1rem;
+        padding: 2rem 1rem;
         min-height: 0;
+        position: relative;
+        z-index: 10;
     }
 
     .login-card {
         backdrop-filter: blur(20px);
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
         width: 100%;
         max-width: 28rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .input-field {
         transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.95) !important;
     }
 
     .input-field:focus {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        background: rgba(255, 255, 255, 1) !important;
     }
 
     .input-icon {
         transition: all 0.3s ease;
     }
 
-    .input-field:focus + .input-icon-wrapper .input-icon {
+    .input-field:focus ~ .input-icon-wrapper .input-icon {
         color: #667eea;
         transform: scale(1.1);
+    }
+
+    .toggle-password {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .toggle-password:hover {
+        color: #5568d3;
+    }
+
+    .toggle-password svg {
+        width: 1.25rem;
+        height: 1.25rem;
     }
 
     /* ===== MOBILE RESPONSIVE STYLES ===== */
@@ -109,20 +133,18 @@
         .login-page {
             padding: 0;
             min-height: 100vh;
-            min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
-            overflow-y: auto;
         }
 
         .login-page main {
-            padding: 1rem;
+            padding: 2rem 1rem;
             align-items: flex-start;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
+            padding-top: 3rem;
+            padding-bottom: 3rem;
         }
 
         .login-card {
             border-radius: 1.25rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             margin: 0 auto;
         }
 
@@ -141,8 +163,8 @@
     /* Extra small devices */
     @media (max-width: 380px) {
         .login-page main {
-            padding: 0.75rem;
-            padding-top: 1.5rem;
+            padding: 1.5rem 0.75rem;
+            padding-top: 2rem;
         }
 
         .login-card {
@@ -150,11 +172,12 @@
         }
     }
 
-    /* Landscape mobile */
+    /* Landscape mobile - no special handling needed, let it scroll */
     @media (max-height: 600px) and (orientation: landscape) {
         .login-page main {
             align-items: flex-start;
-            padding-top: 1rem;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
         }
     }
 </style>
@@ -165,7 +188,7 @@
 @endsection 
 
 @section('content')
-<div class="relative flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+<div class="relative flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8" style="position: relative; z-index: 10;">
     <!-- Alert Messages -->
     @if (session('error'))
         <div class="fixed top-4 left-1/2 z-50 -translate-x-1/2 transform">
@@ -192,33 +215,27 @@
             </div>
         </div>
     @endif
-    <!-- Background decorative elements -->
-    <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
-        <div class="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
-        <div class="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl"></div>
-    </div>
 
-    <div class="relative w-full max-w-md">
+    <div class="relative w-full max-w-md" style="position: relative; z-index: 10;">
         <!-- Login Card -->
-        <div class="login-card rounded-2xl p-6 sm:p-8">
+        <div class="login-card rounded-2xl p-8 sm:p-10">
             <!-- Header -->
-            <div class="mb-6 text-center">
-                <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
-                    <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mb-8 text-center">
+                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-900">Selamat Datang</h1>
-                <p class="mt-2 text-sm text-gray-600">Masuk ke akun Anda untuk melanjutkan</p>
+                <h1 class="text-3xl font-bold text-white">Selamat Datang</h1>
+                <p class="mt-2 text-sm text-gray-200">Masuk ke akun Anda untuk melanjutkan</p>
             </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-6" id="loginForm">
+            <form method="POST" action="{{ route('login') }}" class="space-y-5" id="loginForm">
                 @csrf
                 
                 <!-- Email / Phone Field -->
                 <div>
-                    <label for="email" class="mb-2 block text-sm font-semibold text-gray-700">Email atau Nomor Telepon</label>
+                    <label for="email" class="mb-2 block text-sm font-medium text-white">Email atau Nomor Telepon</label>
                     <div class="relative">
                         <div class="input-icon-wrapper pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                             <svg class="input-icon h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,8 +248,8 @@
                             name="email" 
                             value="{{ old('email') }}" 
                             placeholder="nama@email.com atau 081234567890"
-                            class="input-field block w-full rounded-xl border border-gray-300 bg-white py-3 pl-12 pr-4 text-black placeholder-gray-400 
-                            transition-all duration-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm" 
+                            class="input-field block w-full rounded-xl border-2 border-gray-300 bg-white py-3.5 pl-12 pr-4 text-gray-900 placeholder-gray-400 
+                            transition-all duration-300 focus:border-blue-500 focus:outline-none sm:text-sm" 
                             required 
                             autofocus 
                             autocomplete="username"
@@ -243,7 +260,7 @@
 
                 <!-- Password Field -->
                 <div>
-                    <label for="password" class="mb-2 block text-sm font-semibold text-gray-700">Password</label>
+                    <label for="password" class="mb-2 block text-sm font-medium text-white">Password</label>
                     <div class="relative">
                         <div class="input-icon-wrapper pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                             <svg class="input-icon h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,33 +272,34 @@
                             id="password" 
                             name="password" 
                             placeholder="Masukkan password Anda"
-                            class="input-field block w-full rounded-xl border border-gray-300 bg-white py-3 pl-12 pr-20 text-black placeholder-gray-400 
-                            transition-all duration-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm" 
+                            class="input-field block w-full rounded-xl border-2 border-gray-300 bg-white py-3.5 pl-12 pr-12 text-gray-900 placeholder-gray-400 
+                            transition-all duration-300 focus:border-blue-500 focus:outline-none sm:text-sm" 
                             required 
                         />
-                        <button type="button" class="absolute inset-y-0 right-0 px-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center" data-password-target="password">Lihat</button>
+                        <button type="button" class="toggle-password absolute inset-y-0 right-0 px-3 text-blue-600 hover:text-blue-800 flex items-center" data-password-target="password">
+                            <svg class="eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <svg class="eye-closed hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                            </svg>
+                        </button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
 
                 <!-- Remember Me -->
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input 
-                            id="remember_me" 
-                            name="remember" 
-                            type="checkbox" 
-                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                        >
-                        <label for="remember_me" class="ml-2 block text-sm text-gray-700">
-                            Ingat saya
-                        </label>
-                    </div>
-                    @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
-                        Lupa password?
-                    </a>
-                    @endif
+                <div class="flex items-center">
+                    <input 
+                        id="remember_me" 
+                        name="remember" 
+                        type="checkbox" 
+                        class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    >
+                    <label for="remember_me" class="ml-2 block text-sm text-white">
+                        Ingat saya
+                    </label>
                 </div>
 
                 <!-- Cloudflare Turnstile Widget -->
@@ -294,10 +312,10 @@
                     <button 
                         type="submit" 
                         id="submitBtn"
-                        class="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-3.5 px-4 
-                        text-sm font-semibold text-white shadow-lg shadow-indigo-500/50 transition-all duration-300 
-                        hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl hover:shadow-indigo-500/50 
-                        focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
+                        class="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 py-3.5 px-4 
+                        text-sm font-semibold text-white shadow-lg shadow-blue-500/50 transition-all duration-300 
+                        hover:from-blue-700 hover:to-purple-700 hover:shadow-xl hover:shadow-blue-500/50 
+                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
                         disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <span class="relative z-10 flex items-center justify-center">
@@ -312,12 +330,12 @@
             </form>
 
             <!-- Divider -->
-            <div class="relative my-4">
+            <div class="relative my-6">
                 <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-gray-300"></div>
+                    <div class="w-full border-t border-white/30"></div>
                 </div>
-                <div class="relative flex justify-center text-sm">
-                    <span class="bg-white px-2 text-gray-500">atau</span>
+                <div class="relative flex justify-center text-xs">
+                    <span class="bg-transparent px-3 text-gray-200 font-medium">atau</span>
                 </div>
             </div>
 
@@ -367,8 +385,8 @@
             @endif
 
             <!-- Footer -->
-            <div class="mt-4 text-center">
-                <p class="text-xs text-gray-500">
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-300">
                     © {{ date('Y') }} Coding Academy Payakumbuh. All rights reserved.
                 </p>
             </div>
@@ -454,10 +472,20 @@
                     const input = document.getElementById(targetId);
                     if (!input) return;
 
+                    const eyeOpen = button.querySelector('.eye-open');
+                    const eyeClosed = button.querySelector('.eye-closed');
+
                     button.addEventListener('click', () => {
                         const isHidden = input.getAttribute('type') === 'password';
                         input.setAttribute('type', isHidden ? 'text' : 'password');
-                        button.textContent = isHidden ? 'Sembunyikan' : 'Lihat';
+                        
+                        if (isHidden) {
+                            eyeOpen.classList.add('hidden');
+                            eyeClosed.classList.remove('hidden');
+                        } else {
+                            eyeOpen.classList.remove('hidden');
+                            eyeClosed.classList.add('hidden');
+                        }
                     });
                 });
             });
