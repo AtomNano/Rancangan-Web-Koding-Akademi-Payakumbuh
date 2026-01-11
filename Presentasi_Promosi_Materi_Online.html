@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Online - Platform E-Learning Koding Akademi Payakumbuh</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h3 {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        p, li {
+            font-size: 1.5rem;
+            color: white;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            color: #f0f0f0;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 40px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stat-label {
+            font-size: 1.3rem;
+            color: white;
+            margin-top: 10px;
+        }
+
+        ul {
+            text-align: left;
+            list-style: none;
+            max-width: 900px;
+        }
+
+        ul li {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        ul li::before {
+            content: "✓ ";
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            color: white;
+            font-size: 1.3rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+            max-width: 800px;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .team-name {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            font-size: 1.2rem;
+            color: #f0f0f0;
+        }
+
+        .problem-list {
+            text-align: left;
+            max-width: 1000px;
+        }
+
+        .problem-item {
+            background: rgba(255, 100, 100, 0.2);
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #ff6b6b;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        .solution-item {
+            background: rgba(100, 255, 100, 0.2);
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #51cf66;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="logo">💻</div>
+            <h1>Materi Online</h1>
+            <p class="subtitle">Platform E-Learning Koding Akademi Payakumbuh</p>
+            <div class="highlight">
+                <h3>Sistem Informasi Manajemen Pembelajaran Digital</h3>
+                <p>Transformasi Pembelajaran dari Manual ke Digital</p>
+            </div>
+            <p style="margin-top: 30px; font-size: 1.3rem;">Presentasi Promosi - 2025</p>
+        </div>
+
+        <!-- Slide 2: Tentang Koding Akademi -->
+        <div class="slide">
+            <h2>🎓 Tentang Koding Akademi Payakumbuh</h2>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-number">79</div>
+                    <div class="stat-label">Siswa Aktif</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Pengajar</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Program Kelas</div>
+                </div>
+            </div>
+            <div class="features-grid" style="margin-top: 50px;">
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>Coding</h3>
+                    <p>31 Siswa</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Robotik</h3>
+                    <p>27 Siswa</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Desain & Ilustrasi</h3>
+                    <p>21 Siswa</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Tim Admin</h3>
+                    <p>2 Admin</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Permasalahan -->
+        <div class="slide">
+            <h2>⚠️ Permasalahan yang Dihadapi</h2>
+            <div class="problem-list">
+                <div class="problem-item">
+                    <strong>📝 Pengelolaan Manual</strong>
+                    <p>Data siswa, guru, dan kelas masih dicatat di buku dan spreadsheet terpisah</p>
+                </div>
+                <div class="problem-item">
+                    <strong>📱 Distribusi Materi Tidak Terstruktur</strong>
+                    <p>Materi dibagikan via WhatsApp, sering tertumpuk chat dan link kadaluarsa</p>
+                </div>
+                <div class="problem-item">
+                    <strong>📊 Monitoring Sulit</strong>
+                    <p>Tidak ada cara untuk memantau progres belajar siswa secara real-time</p>
+                </div>
+                <div class="problem-item">
+                    <strong>⏰ Administrasi Lambat</strong>
+                    <p>Rekapitulasi absensi dan pembayaran memakan waktu lama dan rawan error</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Solusi -->
+        <div class="slide">
+            <h2>✨ Solusi: Platform Materi Online</h2>
+            <div class="problem-list">
+                <div class="solution-item">
+                    <strong>🗄️ Database Terpusat</strong>
+                    <p>Semua data pengguna, kelas, dan materi tersimpan dalam satu sistem terintegrasi</p>
+                </div>
+                <div class="solution-item">
+                    <strong>📚 Distribusi Materi Terstruktur</strong>
+                    <p>Materi diunggah guru, diverifikasi admin, dan otomatis tersedia untuk siswa</p>
+                </div>
+                <div class="solution-item">
+                    <strong>📈 Tracking Progres Real-time</strong>
+                    <p>Progress bar visual dan auto-save untuk monitoring kemajuan belajar</p>
+                </div>
+                <div class="solution-item">
+                    <strong>⚡ Otomasi Administrasi</strong>
+                    <p>Absensi otomatis, manajemen pembayaran, dan laporan instan</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Fitur Utama -->
+        <div class="slide">
+            <h2>🚀 Fitur Utama Platform</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍💼</div>
+                    <h3>Panel Admin</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li>Manajemen Pengguna</li>
+                        <li>Verifikasi Materi</li>
+                        <li>Backup Data</li>
+                        <li>Laporan Lengkap</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🏫</div>
+                    <h3>Panel Guru</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li>Upload Materi</li>
+                        <li>Monitor Progres</li>
+                        <li>Kelola Absensi</li>
+                        <li>Export Data</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🎓</div>
+                    <h3>Panel Siswa</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li>Akses Materi</li>
+                        <li>Progress Bar</li>
+                        <li>Auto-save PDF</li>
+                        <li>Notifikasi</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Fitur Tambahan</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li>Landing Page</li>
+                        <li>Responsive Design</li>
+                        <li>Multi-device</li>
+                        <li>Notifikasi Real-time</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Teknologi -->
+        <div class="slide">
+            <h2>🛠️ Teknologi yang Digunakan</h2>
+            <div class="tech-stack">
+                <div class="tech-badge">Laravel 11</div>
+                <div class="tech-badge">MySQL</div>
+                <div class="tech-badge">Tailwind CSS</div>
+                <div class="tech-badge">Blade Templates</div>
+                <div class="tech-badge">Laravel Breeze</div>
+            </div>
+            <div class="highlight" style="margin-top: 50px; max-width: 900px;">
+                <h3>🏗️ Arsitektur Modern</h3>
+                <ul style="text-align: center; list-style: none;">
+                    <li>✓ Backend: Laravel 11 dengan MVC Pattern</li>
+                    <li>✓ Frontend: Blade Templates & Tailwind CSS</li>
+                    <li>✓ Database: MySQL dengan Eloquent ORM</li>
+                    <li>✓ Autentikasi: Laravel Breeze (Multi-role)</li>
+                    <li>✓ Deployment: Niagahoster (30GB Business)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Metodologi Agile Scrum -->
+        <div class="slide">
+            <h2>📋 Metodologi: Agile Scrum</h2>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Sprint</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">49</div>
+                    <div class="stat-label">User Stories</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">317</div>
+                    <div class="stat-label">Daily Scrum</div>
+                </div>
+            </div>
+            <div class="highlight" style="margin-top: 40px; max-width: 1000px;">
+                <h3>Timeline Pengembangan</h3>
+                <ul style="text-align: center; list-style: none;">
+                    <li>Sprint 1 (22 Sep - 17 Okt): Core Authentication & Basic CRUD - 20 US</li>
+                    <li>Sprint 2 (20 Okt - 31 Okt): Advanced CRUD & Profile - 13 US</li>
+                    <li>Sprint 3 (3 Nov - 3 Des): Learning Features & Tracking - 10 US</li>
+                    <li>Sprint 4 (4 Des - 24 Des): Reports, Backup & Polish - 6 US</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Hasil & Pencapaian -->
+        <div class="slide">
+            <h2>🏆 Hasil & Pencapaian</h2>
+            <div class="stats-container" style="flex-wrap: wrap;">
+                <div class="stat-box">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">User Stories</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">296</div>
+                    <div class="stat-label">Test Cases Passed</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Acceptance Rate</div>
+                </div>
+            </div>
+            <div class="highlight" style="margin-top: 40px; max-width: 1000px;">
+                <h3>📊 Performance Metrics</h3>
+                <ul style="text-align: center; list-style: none;">
+                    <li>⚡ Page Load Time: 1.8s (Target: &lt;3s)</li>
+                    <li>🚀 API Response: 280ms (Target: &lt;500ms)</li>
+                    <li>💾 Database Query: 120ms (Target: &lt;200ms)</li>
+                    <li>👥 Concurrent Users: 150 tested (Target: 100+)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 9: Manfaat -->
+        <div class="slide">
+            <h2>💡 Manfaat Platform</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Efisiensi Meningkat</h3>
+                    <p>Distribusi materi 100% paperless dan otomatis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Hemat Waktu</h3>
+                    <p>Pelaporan 50% lebih cepat dengan export otomatis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Monitoring Akurat</h3>
+                    <p>Tracking progres siswa real-time dengan visualisasi</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Data Aman</h3>
+                    <p>Backup otomatis dan enkripsi password</p>
+                </div>
+            </div>
+            <div class="highlight" style="margin-top: 40px;">
+                <h3>✨ Pengalaman Belajar Lebih Baik</h3>
+                <p>Interface ramah anak, responsive, dan mudah digunakan</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Tim Pengembang -->
+        <div class="slide">
+            <h2>👥 Tim Pengembang</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-name">Muhammad Luthfi Naldi</div>
+                    <div class="team-role">Scrum Master</div>
+                    <p style="font-size: 1.2rem; margin-top: 10px;">UI/UX Design, Backend (Admin)</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-name">Andrean Willian Syach</div>
+                    <div class="team-role">Product Owner</div>
+                    <p style="font-size: 1.2rem; margin-top: 10px;">Enterprise Architecture, Frontend (Siswa)</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-name">Faris Muhammad Taufik</div>
+                    <div class="team-role">Developer</div>
+                    <p style="font-size: 1.2rem; margin-top: 10px;">Frontend Development, Integration</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-name">Thilal Said Zaidan</div>
+                    <div class="team-role">Developer & QA</div>
+                    <p style="font-size: 1.2rem; margin-top: 10px;">Database, Backend (Guru), Testing</p>
+                </div>
+            </div>
+            <div class="highlight" style="margin-top: 40px;">
+                <p>Dikembangkan dengan metodologi Agile Scrum</p>
+                <p>22 September - 24 Desember 2025</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Closing -->
+        <div class="slide">
+            <div class="logo">🎉</div>
+            <h1>Terima Kasih!</h1>
+            <div class="highlight" style="max-width: 900px;">
+                <h2 style="margin-bottom: 30px;">Materi Online</h2>
+                <p style="font-size: 1.8rem;">Platform E-Learning Modern untuk Koding Akademi Payakumbuh</p>
+                <div style="margin-top: 40px;">
+                    <p style="font-size: 1.4rem;">✅ 49 User Stories Completed</p>
+                    <p style="font-size: 1.4rem;">✅ 100% Test Coverage</p>
+                    <p style="font-size: 1.4rem;">✅ Production Ready</p>
+                </div>
+            </div>
+            <p style="margin-top: 50px; font-size: 1.5rem;">
+                🌐 Transformasi Digital untuk Pendidikan yang Lebih Baik
+            </p>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">11</span>
+    </div>
+
+    <div class="navigation">
+        <button id="prev-btn" onclick="previousSlide()">◀ Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next ▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
