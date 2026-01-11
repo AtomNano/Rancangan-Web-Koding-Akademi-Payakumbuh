@@ -239,51 +239,45 @@ class UserController extends Controller
             $selectedKelas = Kelas::whereIn('nama_kelas', $request->bidang_ajar)->get();
             $selectedKelasIds = $selectedKelas->pluck('id')->toArray();
 
-            if (!empty($selectedKelasIds)) {
-                $user->enrollments()->whereNotIn('kelas_id', $selectedKelasIds)->delete();
-            }
+            // Only create enrollments for SISWA, not for GURU
+            if ($request->role === 'siswa') {
+                if (!empty($selectedKelasIds)) {
+                    $user->enrollments()->whereNotIn('kelas_id', $selectedKelasIds)->delete();
+                }
 
-            $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
+                $status = $request->enrollment_status;
 
-            foreach ($selectedKelas as $kelas) {
-                $enrollment = $user->enrollments()->where('kelas_id', $kelas->id)->first();
+                foreach ($selectedKelas as $kelas) {
+                    $enrollment = $user->enrollments()->where('kelas_id', $kelas->id)->first();
 
-                if ($enrollment) {
-                    $updatePayload = ['status' => $status];
-
-                    if ($request->role === 'siswa') {
-                        $updatePayload = array_merge($updatePayload, [
+                    if ($enrollment) {
+                        $enrollment->update([
+                            'status' => $status,
                             'start_date' => $enrollmentMeta['start_date'],
                             'duration_months' => $enrollmentMeta['duration_months'],
                             'monthly_quota' => $enrollmentMeta['monthly_quota'],
                             'target_sessions' => $enrollmentMeta['target_sessions'],
                         ]);
-                    }
-
-                    $enrollment->update($updatePayload);
-                } else {
-                    $payload = [
-                        'kelas_id' => $kelas->id,
-                        'status' => $status,
-                        'sessions_attended' => 0,
-                    ];
-
-                    if ($request->role === 'siswa') {
-                        $payload = array_merge($payload, [
+                    } else {
+                        $user->enrollments()->create([
+                            'kelas_id' => $kelas->id,
+                            'status' => $status,
+                            'sessions_attended' => 0,
                             'start_date' => $enrollmentMeta['start_date'],
                             'duration_months' => $enrollmentMeta['duration_months'],
                             'monthly_quota' => $enrollmentMeta['monthly_quota'],
                             'target_sessions' => $enrollmentMeta['target_sessions'],
                         ]);
-                    }
 
-                    $user->enrollments()->create($payload);
-
-                    if ($request->role === 'siswa' && !$user->id_siswa) {
-                        $idSiswa = User::generateIdSiswa($kelas->id);
-                        $user->update(['id_siswa' => $idSiswa]);
+                        if (!$user->id_siswa) {
+                            $idSiswa = User::generateIdSiswa($kelas->id);
+                            $user->update(['id_siswa' => $idSiswa]);
+                        }
                     }
                 }
+            } else {
+                // For GURU/ADMIN, remove all enrollments since they don't need to be enrolled as students
+                $user->enrollments()->delete();
             }
         }
 
@@ -438,7 +432,8 @@ class UserController extends Controller
         $user->update($userData);
         $newValues = $user->fresh()->toArray();
 
-        if (($request->role === 'siswa' || $request->role === 'guru')) {
+        // Handle enrollment for both students and teachers
+        if ($request->role === 'siswa' || $request->role === 'guru') {
             $selectedKelasIds = [];
             if (!empty($request->bidang_ajar)) {
                 $selectedKelasIds = Kelas::whereIn('nama_kelas', $request->bidang_ajar)->pluck('id')->toArray();
@@ -455,22 +450,32 @@ class UserController extends Controller
             }
 
             foreach ($idsToAdd as $kelasId) {
-                $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
-                \App\Models\Enrollment::create([
+                // For teachers: create enrollment with just active status (for class access)
+                // For students: create full enrollment with duration, quota, etc.
+                $enrollmentData = [
                     'user_id' => $user->id,
                     'kelas_id' => $kelasId,
-                    'status' => $status,
-                    'start_date' => $userData['_start_date'] ?? null,
-                    'duration_months' => $userData['_duration_months'] ?? null,
-                    'monthly_quota' => $userData['_monthly_quota'] ?? null,
-                    'target_sessions' => $userData['_target_sessions'] ?? null,
-                    'sessions_attended' => 0,
-                ]);
+                    'status' => $request->role === 'siswa' ? $request->enrollment_status : 'active',
+                ];
+                
+                if ($request->role === 'siswa') {
+                    $enrollmentData = array_merge($enrollmentData, [
+                        'start_date' => $userData['_start_date'] ?? null,
+                        'duration_months' => $userData['_duration_months'] ?? null,
+                        'monthly_quota' => $userData['_monthly_quota'] ?? null,
+                        'target_sessions' => $userData['_target_sessions'] ?? null,
+                        'sessions_attended' => 0,
+                    ]);
+                }
+                
+                \App\Models\Enrollment::create($enrollmentData);
             }
 
             if (!empty($idsToUpdate)) {
-                $status = ($request->role === 'siswa') ? $request->enrollment_status : 'active';
-                $updatePayload = ['status' => $status];
+                // For teachers: only update status
+                // For students: update status and all enrollment details
+                $updatePayload = ['status' => $request->role === 'siswa' ? $request->enrollment_status : 'active'];
+                
                 if ($request->role === 'siswa') {
                     $updatePayload = array_merge($updatePayload, [
                         'start_date' => $userData['_start_date'] ?? null,
@@ -565,6 +570,54 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index', ['role' => $role])
             ->with('success', 'User berhasil dinonaktifkan. Data masih tersimpan di database.');
+    }
+
+    /**
+     * Tampilkan daftar user yang telah dihapus (soft deleted)
+     */
+    public function showDeleted(Request $request)
+    {
+        $role = $request->get('role');
+        $search = $request->get('search');
+
+        $query = User::onlyTrashed();
+
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->latest('deleted_at')->paginate(10);
+
+        return view('admin.users.deleted', compact('users', 'role'));
+    }
+
+    /**
+     * Restore user yang telah dihapus
+     */
+    public function restore(Request $request, $id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        
+        // Restore user
+        $user->restore();
+
+        // If role is siswa, also reactivate all enrollments
+        if ($user->isSiswa()) {
+            $user->enrollments()->where('status', 'inactive')->update(['status' => 'active']);
+        }
+
+        // Log activity
+        ActivityLogger::logUserUpdated($user, ['deleted_at' => $user->deleted_at], []);
+
+        return redirect()->route('admin.users.index', ['role' => $user->role])
+            ->with('success', 'User berhasil di-restore. Email sudah bisa digunakan kembali untuk registrasi.');
     }
 
 

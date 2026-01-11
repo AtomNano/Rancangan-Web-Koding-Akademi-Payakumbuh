@@ -469,7 +469,8 @@
                                 <x-input-label :value="__('Kelas yang Diajar')" />
                                 <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
                                     @php
-                                        $selectedBidangAjar = old('bidang_ajar', json_decode($user->bidang_ajar ?? '[]', true));
+                                        // bidang_ajar is already casted as array in User model, no need to json_decode
+                                        $selectedBidangAjar = old('bidang_ajar', $user->bidang_ajar ?? []);
                                         if (!is_array($selectedBidangAjar)) {
                                             $selectedBidangAjar = [];
                                         }
@@ -581,7 +582,7 @@
                     },
                     'Kota Payakumbuh': {
                         'Payakumbuh Barat': ['Aie Tabik', 'Balai Nan Duo', 'Koto Nan Gadang', 'Koto Nan IV', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan', 'Tanjung Pauh'],
-                        'Payakumbuh Selatan': ['Aie Dingin', 'Koto Baru', 'Koto Nan Gadang', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan'],
+                        'Payakumbuh Selatan': ['Aie Dingin', 'Koto Baru', 'Koto Nan Gadang', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan', 'Balai Panjang', 'Limbukan', 'Koto Tuo Limo Kampuang', 'Padang Karambia', 'Kapalo Koto Ampangan', 'Sawahpadang', 'Aua Kuniang'],
                         'Payakumbuh Timur': ['Aie Dingin', 'Koto Baru', 'Koto Nan Gadang', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan'],
                         'Payakumbuh Utara': ['Aie Tabik', 'Balai Nan Duo', 'Koto Nan Gadang', 'Koto Nan IV', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan'],
                         'Lamposi Tigo Nagori': ['Aie Dingin', 'Koto Baru', 'Koto Nan Gadang', 'Kubang', 'Labuh Baru', 'Padang Tangah', 'Pakan Sinayan']

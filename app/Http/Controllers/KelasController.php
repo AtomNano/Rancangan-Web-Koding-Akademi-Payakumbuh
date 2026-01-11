@@ -88,7 +88,18 @@ class KelasController extends Controller
     public function show(Kelas $kelas)
     {
         $kelas->load('guru'); // Load the teacher for the class
-        $students = $kelas->students()->with('presensi')->get(); // Load students with their presensis
+        
+        // Load students with proper filtering - only students with active/expiring enrollment
+        $students = $kelas->students()
+            ->where('users.role', 'siswa')
+            ->whereHas('enrollments', function ($query) use ($kelas) {
+                $query->where('kelas_id', $kelas->id)
+                    ->whereIn('status', ['active', 'expiring']);
+            })
+            ->with('presensi')
+            ->orderBy('users.name')
+            ->get();
+            
         $approvedMateri = $kelas->materi()->where('status', 'approved')->get();
         $totalApprovedMateri = $approvedMateri->count();
 

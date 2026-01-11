@@ -110,12 +110,11 @@ class PertemuanController extends Controller
 
     /**
      * Display the specified pertemuan and show absen form
+     * Admin can access all pertemuan regardless of kelas - NO CHECKS!
      */
     public function show(Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
-        }
+        // No checks - admin can access any pertemuan from any kelas URL
 
         // Get all students enrolled in this class
         $enrollmentIds = Enrollment::where('kelas_id', $kelas->id)
@@ -138,12 +137,11 @@ class PertemuanController extends Controller
 
     /**
      * Store absen for a pertemuan (Admin can input for any teacher's pertemuan)
+     * Admin can store absen for any pertemuan - NO CHECKS!
      */
     public function storeAbsen(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
-        }
+        // No checks - admin can store absen for any pertemuan from any kelas URL
 
         $validated = $request->validate([
             'absen' => 'required|array',
@@ -217,12 +215,11 @@ class PertemuanController extends Controller
 
     /**
      * Show the form for editing the specified pertemuan
+     * Admin can edit all pertemuan regardless of kelas - NO CHECKS!
      */
     public function edit(Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
-        }
+        // No checks - admin can edit any pertemuan from any kelas URL
 
         // Get available gurus for assignment
         $guru = User::where('role', 'guru')
@@ -234,12 +231,11 @@ class PertemuanController extends Controller
 
     /**
      * Update the specified pertemuan
+     * Admin can update all pertemuan regardless of kelas - NO CHECKS!
      */
     public function update(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
-        }
+        // No checks - admin can update any pertemuan from any kelas URL
 
         $validated = $request->validate([
             'guru_id' => 'required|exists:users,id',
@@ -259,12 +255,11 @@ class PertemuanController extends Controller
 
     /**
      * Remove the specified pertemuan
+     * Admin can delete all pertemuan regardless of kelas
      */
     public function destroy(Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan menghapus pertemuan ini.');
-        }
+        // No check needed - admin can delete from any kelas URL
 
         $pertemuan->delete();
 
@@ -274,12 +269,11 @@ class PertemuanController extends Controller
 
     /**
      * Show detailed attendance records for a pertemuan
+     * Admin can access all attendance regardless of kelas - NO CHECKS!
      */
     public function absenDetail(Request $request, Kelas $kelas, Pertemuan $pertemuan)
     {
-        if ($pertemuan->kelas_id !== $kelas->id) {
-            abort(403, 'Anda tidak diizinkan mengakses pertemuan ini.');
-        }
+        // No checks - admin can access any attendance from any kelas URL
 
         // Get all students in the class
         $siswa = Enrollment::where('kelas_id', $kelas->id)
