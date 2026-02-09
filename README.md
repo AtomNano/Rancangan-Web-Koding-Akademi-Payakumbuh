@@ -4,7 +4,7 @@ Platform E-Learning "Materi Online" adalah sistem pembelajaran digital yang dira
 
 ## 🌐 Demo & Deployment
 
-- **Production URL:** [https://luthfiserver.site](https://luthfiserver.site)
+- **Production URL:** [https://codingacademy.my.id/](https://codingacademy.my.id/)
 - **Local Development:** `http://127.0.0.1:8000`
 
 ## 📋 Daftar Isi
