@@ -13,17 +13,17 @@
 
     <!-- Welcome Banner -->
     <div
-        class="relative overflow-hidden rounded-xl bg-gradient-to-r from-teal-900 via-teal-800 to-teal-900 p-8 mb-8 shadow-xl border border-teal-700/50">
+        class="relative overflow-hidden rounded-xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-8 mb-8 shadow-xl border border-slate-700/50">
         <div class="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]">
         </div>
         <div class="relative flex items-center justify-between">
             <div>
                 <h3 class="text-3xl font-bold text-white mb-2">Selamat Datang, Customer Service!</h3>
-                <p class="text-teal-100 text-lg">Kelola pendaftaran dan data siswa Coding Academy.</p>
+                <p class="text-slate-300 text-lg">Kelola pendaftaran dan data siswa Coding Academy.</p>
             </div>
             <div class="hidden md:block text-white text-right">
                 <div x-data="liveClock()" x-init="init()" class="text-3xl font-bold" x-text="time"></div>
-                <p class="text-teal-200 text-sm mt-1">Zona Waktu: Asia/Jakarta</p>
+                <p class="text-slate-300 text-sm mt-1">Zona Waktu: Asia/Jakarta</p>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
         <form action="{{ route('cs.siswa.index') }}" method="GET" class="relative">
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                    <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                         fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd"
                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
@@ -41,7 +41,7 @@
                     </svg>
                 </div>
                 <input type="text" name="search" id="search"
-                    class="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm shadow-sm transition-all duration-200"
+                    class="block w-full pl-10 pr-3 py-4 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 sm:text-sm shadow-sm transition-all duration-200"
                     placeholder="Cari siswa berdasarkan nama atau email..." autocomplete="off">
                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <button type="submit"

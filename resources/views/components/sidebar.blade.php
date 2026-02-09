@@ -45,6 +45,8 @@
                             Panel Admin
                         @elseif($user->role === 'guru')
                             Panel Guru
+                        @elseif($user->role === 'cs')
+                            Panel Customer Service
                         @else
                             Panel Siswa
                         @endif
