@@ -108,6 +108,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.read.all');
+
+    // Tour complete route
+    Route::post('/tour/complete', [\App\Http\Controllers\TourController::class, 'complete'])->name('tour.complete');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

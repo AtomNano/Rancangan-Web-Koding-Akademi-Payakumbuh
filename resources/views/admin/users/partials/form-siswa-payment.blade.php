@@ -12,8 +12,8 @@
             <select id="metode_pembayaran" name="metode_pembayaran"
                 class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                 <option value="">Pilih Metode Pembayaran</option>
-                <option value="transfer" {{ old('metode_pembayaran', $user->metode_pembayaran ?? '') == 'transfer' ? 'selected' : '' }}>Transfer Bank</option>
-                <option value="cash" {{ old('metode_pembayaran', $user->metode_pembayaran ?? '') == 'cash' ? 'selected' : '' }}>Tunai (Cash)</option>
+                <option value="transfer" {{ old('metode_pembayaran', optional($user ?? null)->metode_pembayaran ?? '') == 'transfer' ? 'selected' : '' }}>Transfer Bank</option>
+                <option value="cash" {{ old('metode_pembayaran', optional($user ?? null)->metode_pembayaran ?? '') == 'cash' ? 'selected' : '' }}>Tunai (Cash)</option>
             </select>
             <p class="mt-1 text-xs text-gray-500">Pilih metode pembayaran yang digunakan</p>
         </div>
@@ -23,7 +23,7 @@
                 class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                 <option value="">Tidak Ada Promo</option>
                 @foreach(['Promo Saudara Gratis', 'Promo Early Bird', 'Promo Referral', 'Beasiswa'] as $promo)
-                    <option value="{{ $promo }}" {{ old('status_promo', $user->status_promo ?? '') == $promo ? 'selected' : '' }}>{{ $promo }}</option>
+                    <option value="{{ $promo }}" {{ old('status_promo', optional($user ?? null)->status_promo ?? '') == $promo ? 'selected' : '' }}>{{ $promo }}</option>
                 @endforeach
             </select>
             <p class="mt-1 text-xs text-gray-500">Pilih promo atau diskon yang berlaku (jika ada)</p>
@@ -49,8 +49,8 @@
                 <select id="discount_type" name="discount_type"
                     class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                     <option value="">Tidak Ada Diskon</option>
-                    <option value="percentage" {{ old('discount_type', $user->discount_type ?? '') == 'percentage' ? 'selected' : '' }}>Persentase (%)</option>
-                    <option value="fixed" {{ old('discount_type', $user->discount_type ?? '') == 'fixed' ? 'selected' : '' }}>Potongan Tetap (Rp)</option>
+                    <option value="percentage" {{ old('discount_type', optional($user ?? null)->discount_type ?? '') == 'percentage' ? 'selected' : '' }}>Persentase (%)</option>
+                    <option value="fixed" {{ old('discount_type', optional($user ?? null)->discount_type ?? '') == 'fixed' ? 'selected' : '' }}>Potongan Tetap (Rp)</option>
                 </select>
             </div>
         </div>
@@ -58,7 +58,7 @@
             <div>
                 <x-input-label for="discount_value" :value="__('Nilai Diskon')" />
                 <x-text-input id="discount_value" class="block mt-1 w-full" type="text" name="discount_value"
-                    :value="old('discount_value', $user->discount_value ?? '')" />
+                    :value="old('discount_value', optional($user ?? null)->discount_value ?? '')" />
             </div>
             <div>
                 <x-input-label for="total_setelah_diskon" :value="__('Total Setelah Diskon')" />

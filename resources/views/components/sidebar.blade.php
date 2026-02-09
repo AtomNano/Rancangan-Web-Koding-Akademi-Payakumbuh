@@ -54,7 +54,7 @@
         </div>
 
         <!-- Navigation Menu -->
-        <nav
+        <nav id="sidebar-nav"
             class="mt-6 px-3 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
             @if($user->role === 'admin')
                 {{-- Admin Links --}}
@@ -228,7 +228,7 @@
         </nav>
 
         <!-- Bottom Section with User Info & Logout -->
-        <div class="mt-auto p-4 border-t border-slate-700/50 bg-slate-900/30 backdrop-blur-sm">
+        <div id="sidebar-user-info" class="mt-auto p-4 border-t border-slate-700/50 bg-slate-900/30 backdrop-blur-sm">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <img class="h-10 w-10 rounded-lg object-cover ring-2 ring-slate-700/50"

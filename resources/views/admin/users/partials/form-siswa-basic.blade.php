@@ -9,13 +9,15 @@
     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
             <x-input-label for="name" :value="__('Nama Lengkap')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name', $user->name ?? '')" required autofocus placeholder="Masukkan nama lengkap" />
+            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name', optional($user ?? null)->name)" required autofocus placeholder="Masukkan nama lengkap" />
             <p class="mt-1 text-xs text-gray-500">Nama lengkap sesuai identitas</p>
+            <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $user->email ?? '')" required placeholder="email@example.com" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', optional($user ?? null)->email)" required placeholder="email@example.com" />
             <p class="mt-1 text-xs text-gray-500">Email aktif untuk login</p>
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         @if(isset($user))
@@ -43,25 +45,28 @@
                     <span class="text-gray-500 sm:text-sm">+62</span>
                 </div>
                 <x-text-input id="no_telepon" class="block w-full pl-12" type="tel" name="no_telepon"
-                    :value="old('no_telepon', $user->no_telepon ?? '')" placeholder="81234567890"
+                    :value="old('no_telepon', optional($user ?? null)->no_telepon ?? '')" placeholder="81234567890"
                     pattern="[0-9]{10,13}" />
             </div>
             <p class="mt-1 text-xs text-gray-500">Contoh: 81234567890 (tanpa 0 di depan)</p>
+            <x-input-error :messages="$errors->get('no_telepon')" class="mt-2" />
         </div>
         <div>
             <x-input-label for="tanggal_lahir" :value="__('Tanggal Lahir')" />
             <x-text-input id="tanggal_lahir" class="block mt-1 w-full" type="date" name="tanggal_lahir"
                 :value="old('tanggal_lahir', isset($user) && $user->tanggal_lahir ? $user->tanggal_lahir->format('Y-m-d') : '')" max="{{ date('Y-m-d', strtotime('-5 years')) }}" />
             <p class="mt-1 text-xs text-gray-500">Minimal 5 tahun</p>
+            <x-input-error :messages="$errors->get('tanggal_lahir')" class="mt-2" />
         </div>
         <div>
             <x-input-label for="jenis_kelamin" :value="__('Jenis Kelamin')" />
             <select id="jenis_kelamin" name="jenis_kelamin"
                 class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                 <option value="">Pilih Jenis Kelamin</option>
-                <option value="laki-laki" {{ old('jenis_kelamin', $user->jenis_kelamin ?? '') == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                <option value="perempuan" {{ old('jenis_kelamin', $user->jenis_kelamin ?? '') == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                <option value="laki-laki" {{ old('jenis_kelamin', optional($user ?? null)->jenis_kelamin ?? '') == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                <option value="perempuan" {{ old('jenis_kelamin', optional($user ?? null)->jenis_kelamin ?? '') == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
             </select>
+            <x-input-error :messages="$errors->get('jenis_kelamin')" class="mt-2" />
         </div>
         <div class="md:col-span-2">
             <x-input-label :value="__('Alamat Lengkap')" />
@@ -235,7 +240,8 @@
                 </div>
 
                 <!-- Alamat Lengkap (Hidden - akan diisi otomatis) -->
-                <input type="hidden" id="alamat" name="alamat" value="{{ old('alamat', $user->alamat ?? '') }}">
+                <input type="hidden" id="alamat" name="alamat"
+                    value="{{ old('alamat', optional($user ?? null)->alamat ?? '') }}">
             </div>
         </div>
     </div>

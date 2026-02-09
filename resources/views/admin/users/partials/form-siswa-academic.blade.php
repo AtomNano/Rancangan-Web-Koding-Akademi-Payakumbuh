@@ -14,7 +14,7 @@
         </div>
 
         @php
-            $sekolahValue = old('sekolah', $user->sekolah ?? '');
+            $sekolahValue = old('sekolah', optional($user ?? null)->sekolah ?? '');
             $kelasSekolahValue = '';
             if (isset($user) && strpos($sekolahValue, ' - ') !== false) {
                 $parts = explode(' - ', $sekolahValue, 2);
@@ -77,7 +77,7 @@
             <x-input-label :value="__('Bidang Ajar (Kelas)')" />
             <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4">
                 @php
-                    $selectedBidangAjar = old('bidang_ajar', $user->bidang_ajar ?? []);
+                    $selectedBidangAjar = old('bidang_ajar', optional($user ?? null)->bidang_ajar ?? []);
                 @endphp
                 @foreach ($kelas as $item)
                     <label class="flex items-center">
@@ -96,8 +96,8 @@
             <div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-3">
                 @foreach(['1 Bulan', '3 Bulan', '6 Bulan', '12 Bulan'] as $d)
                     <label
-                        class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors {{ old('durasi', $user->durasi ?? '') == $d ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' }}">
-                        <input type="radio" name="durasi" value="{{ $d }}" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi', $user->durasi ?? '') == $d ? 'checked' : '' }}>
+                        class="flex items-center p-3 border-2 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors {{ old('durasi', optional($user ?? null)->durasi ?? '') == $d ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200' }}">
+                        <input type="radio" name="durasi" value="{{ $d }}" class="text-indigo-600 focus:ring-indigo-500" {{ old('durasi', optional($user ?? null)->durasi ?? '') == $d ? 'checked' : '' }}>
                         <span class="ml-2 text-sm font-medium text-gray-700">{{ $d }}</span>
                     </label>
                 @endforeach
@@ -110,7 +110,7 @@
             $enStart = old('enrollment_start_date', optional($firstEnrollment?->start_date)->format('Y-m-d') ?? date('Y-m-d'));
 
             // Derive months from durasi program if editing or just selected
-            $durasiStr = old('durasi', $user->durasi ?? '');
+            $durasiStr = old('durasi', optional($user ?? null)->durasi ?? '');
             preg_match('/(\d+)/', $durasiStr, $matches);
             $enDuration = isset($matches[1]) ? (int) $matches[1] : ($firstEnrollment?->duration_months ?? 0);
 
