@@ -28,6 +28,31 @@
         </div>
     </div>
 
+    <!-- Search Bar -->
+    <div class="mb-8">
+        <form action="{{ route('cs.siswa.index') }}" method="GET" class="relative">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" name="search" id="search"
+                    class="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm shadow-sm transition-all duration-200"
+                    placeholder="Cari siswa berdasarkan nama atau email..." autocomplete="off">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                        Cari
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <a href="{{ route('cs.siswa.index') }}"
@@ -130,16 +155,25 @@
         <div class="lg:col-span-4 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col">
             <div class="p-6 border-b border-slate-200 flex justify-between items-center">
                 <h4 class="text-lg font-bold text-slate-900">Siswa Terbaru</h4>
-                <a href="{{ route('cs.siswa.index') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Lihat Semua</a>
+                <a href="{{ route('cs.siswa.index') }}"
+                    class="text-sm text-blue-600 hover:text-blue-800 font-medium">Lihat Semua</a>
             </div>
             <div class="p-0 overflow-x-auto flex-1">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Siswa</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">ID Siswa</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Kelas</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Status</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Siswa</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                ID Siswa</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Kelas</th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Status</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -148,7 +182,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-8 w-8">
-                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
                                                 {{ substr($student->name, 0, 2) }}
                                             </div>
                                         </div>
@@ -159,13 +194,15 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800">
                                         {{ $student->student_id ?: $student->id_siswa ?: '-' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($student->enrolledClasses->count() > 0)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                                             {{ $student->enrolledClasses->first()->nama_kelas }}
                                             @if($student->enrolledClasses->count() > 1)
                                                 +{{ $student->enrolledClasses->count() - 1 }}
@@ -177,15 +214,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($student->is_active)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Aktif</span>
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Aktif</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Nonaktif</span>
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Nonaktif</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-4 text-center text-sm text-slate-500">Belum ada data siswa.</td>
+                                <td colspan="4" class="px-6 py-4 text-center text-sm text-slate-500">Belum ada data siswa.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -201,7 +241,9 @@
             <div class="p-4 space-y-4 overflow-y-auto max-h-[400px]">
                 @forelse($recent_logs as $log)
                     <div class="relative pl-4 border-l-2 border-slate-200 pb-1 last:pb-0">
-                        <div class="absolute -left-[5.5px] top-1.5 h-2.5 w-2.5 rounded-full bg-indigo-400 border-2 border-white"></div>
+                        <div
+                            class="absolute -left-[5.5px] top-1.5 h-2.5 w-2.5 rounded-full bg-indigo-400 border-2 border-white">
+                        </div>
                         <p class="text-xs text-slate-500 mb-0.5">{{ $log->created_at->diffForHumans() }}</p>
                         <p class="text-sm font-medium text-slate-800 leading-snug">{{ $log->description }}</p>
                     </div>
@@ -210,7 +252,8 @@
                 @endforelse
             </div>
             <div class="p-4 border-t border-slate-200 bg-slate-50 rounded-b-xl text-center">
-                 <a href="{{ route('cs.logs') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">Lihat Semua &rarr;</a>
+                <a href="{{ route('cs.logs') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">Lihat
+                    Semua &rarr;</a>
             </div>
         </div>
     </div>

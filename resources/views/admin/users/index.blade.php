@@ -127,7 +127,7 @@
                     <tr>
                         <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Pengguna</th>
                         <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Sisa Sesi Belajar</th>
-                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ID Siswa</th>
+                        <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ID</th>
                         <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Peran</th>
                         <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Kelas</th>
                         <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
@@ -149,13 +149,7 @@
                                         <div class="ml-4">
                                             <div class="text-sm font-semibold text-gray-900">{{ $user->name }}</div>
                                             <div class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</div>
-                                            @if($user->role === 'admin' && $user->kode_admin)
-                                            <div class="text-xs text-purple-700 font-bold mt-1">{{ $user->kode_admin }}</div>
-                                            @elseif($user->role === 'guru' && $user->kode_guru)
-                                            <div class="text-xs text-green-700 font-bold mt-1">{{ $user->kode_guru }}</div>
-                                            @elseif($user->role === 'cs' && $user->kode_cs)
-                                            <div class="text-xs text-pink-700 font-bold mt-1">{{ $user->kode_cs }}</div>
-                                            @endif
+
                                         </div>
                                     </div>
                                 </a>
@@ -192,29 +186,27 @@
                                     <span class="text-gray-400 italic">-</span>
                                 @endif
                             </td>
-                            <!-- ID Siswa -->
+                            <!-- ID -->
                             <td class="px-4 py-4 align-top">
-                                @if($user->role === 'siswa')
-                                    @php
-                                        $displayIdSiswa = $user->student_id ?: $user->id_siswa;
-                                    @endphp
-                                    @if($displayIdSiswa)
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-8 w-8">
-                                                <div class="w-8 h-8 bg-indigo-100 rounded flex items-center justify-center">
-                                                    <span class="text-indigo-700 font-bold text-xs">{{ substr($displayIdSiswa, 0, 1) }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3">
-                                                <div class="text-sm font-semibold text-indigo-600">{{ $displayIdSiswa }}</div>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <span class="text-gray-400 italic">-</span>
-                                    @endif
-                                @else
-                                    <span class="text-gray-400 italic">-</span>
-                                @endif
+                                @php
+                                    $displayId = '-';
+                                    $idClass = 'text-gray-600';
+                                    
+                                    if ($user->role === 'siswa') {
+                                        $displayId = $user->student_id ?: $user->id_siswa ?: '-';
+                                        $idClass = 'text-indigo-600';
+                                    } elseif ($user->role === 'admin') {
+                                        $displayId = $user->kode_admin ?: '-';
+                                        $idClass = 'text-purple-600';
+                                    } elseif ($user->role === 'guru') {
+                                        $displayId = $user->kode_guru ?: '-';
+                                        $idClass = 'text-green-600';
+                                    } elseif ($user->role === 'cs') {
+                                        $displayId = $user->kode_cs ?: '-';
+                                        $idClass = 'text-pink-600';
+                                    }
+                                @endphp
+                                <span class="text-sm font-semibold font-mono {{ $idClass }}">{{ $displayId }}</span>
                             </td>
                             <!-- Peran -->
                             <td class="px-4 py-4 align-top">

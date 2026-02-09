@@ -64,12 +64,16 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $user->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $user->email }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                @if($user->role === 'admin') bg-red-100 text-red-800
-                                @elseif($user->role === 'guru') bg-blue-100 text-blue-800
-                                @else bg-green-100 text-green-800
-                                @endif">
-                                {{ ucfirst($user->role) }}
+                            @php
+                                $role_classes = [
+                                    'admin' => 'bg-purple-100 text-purple-800',
+                                    'guru' => 'bg-green-100 text-green-800',
+                                    'siswa' => 'bg-blue-100 text-blue-800',
+                                    'cs' => 'bg-pink-100 text-pink-800',
+                                ];
+                            @endphp
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $role_classes[$user->role] ?? 'bg-gray-100 text-gray-800' }}">
+                                {{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : ($user->role === 'cs' ? 'CS' : 'Siswa')) }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
