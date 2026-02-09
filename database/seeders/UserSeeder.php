@@ -52,6 +52,26 @@ class UserSeeder extends Seeder
         $this->command->info('✅ Admin accounts created successfully');
         $this->command->info('📧 Email: admin@academy.local | Password: password123');
         $this->command->info('📧 Email: admin2@academy.local | Password: password123');
+
+        // CS User (for testing/development)
+        $csUser = User::updateOrCreate(
+            ['email' => 'cs@academy.local'],
+            [
+                'name' => 'Customer Service',
+                'password' => Hash::make('password123'),
+                'role' => 'cs',
+                'email_verified_at' => now(),
+                'status' => 'active',
+            ]
+        );
+
+        // Generate kode CS
+        if (!$csUser->kode_cs) {
+            $csUser->update(['kode_cs' => User::generateKodeCS()]);
+        }
+
+        $this->command->info('✅ CS account created successfully');
+        $this->command->info('📧 Email: cs@academy.local | Password: password123');
     }
 }
 

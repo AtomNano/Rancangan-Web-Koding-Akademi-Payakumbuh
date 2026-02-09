@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah ') . ($role === 'admin' ? 'Admin' : ($role === 'guru' ? 'Guru' : 'Siswa')) }}
+            {{ __('Tambah ') . ($role === 'admin' ? 'Admin' : ($role === 'guru' ? 'Guru' : ($role === 'cs' ? 'CS' : 'Siswa'))) }}
         </h2>
     </x-slot>
 
@@ -20,7 +20,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.users.store') }}" method="POST">
+                <form action="{{ auth()->user()->isCS() ? route('cs.siswa.store') : route('admin.users.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="role" value="{{ $role }}">
 
@@ -432,7 +432,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <x-input-label for="name" :value="__('Nama Lengkap')" />
-                                    <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus placeholder="Nama lengkap admin" />
+                                    <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus placeholder="Nama lengkap {{ $role === 'cs' ? 'CS' : 'admin' }}" />
                                 </div>
                                 <div>
                                     <x-input-label for="email" :value="__('Email')" />
@@ -455,7 +455,7 @@
 
                     <!-- Form Actions -->
                     <div class="flex items-center justify-end p-6 bg-gray-50">
-                        <a href="{{ route('admin.users.index', ['role' => $role]) }}" class="text-sm text-gray-600 hover:text-gray-900 mr-4">
+                        <a href="{{ auth()->user()->isCS() ? route('cs.siswa.index') : route('admin.users.index', ['role' => $role]) }}" class="text-sm text-gray-600 hover:text-gray-900 mr-4">
                             {{ __('Batal') }}
                         </a>
                         <x-primary-button>

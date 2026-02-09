@@ -380,6 +380,11 @@
                         transition-all hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-600">
                         Siswa
                     </a>
+                    <a href="{{ url('/quick-login/cs') }}" 
+                        class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 
+                        transition-all hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-600">
+                        CS
+                    </a>
                 </div>
             </div>
             @endif

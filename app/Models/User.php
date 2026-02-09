@@ -27,6 +27,7 @@ class User extends Authenticatable
         'student_id',
         'kode_admin',
         'kode_guru',
+        'kode_cs',
         'tanggal_pendaftaran',
         'sekolah',
         'bidang_ajar',
@@ -106,6 +107,11 @@ class User extends Authenticatable
     public function isSiswa()
     {
         return $this->role === 'siswa';
+    }
+
+    public function isCS()
+    {
+        return $this->role === 'cs';
     }
 
     public function enrolledClasses()
@@ -222,5 +228,16 @@ class User extends Authenticatable
         $count = User::where('role', 'guru')->whereNotNull('kode_guru')->count();
         $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
         return "GURU-{$nextNumber}";
+    }
+
+    /**
+     * Generate kode CS otomatis
+     * Format: CS-NNNN (Contoh: CS-0001)
+     */
+    public static function generateKodeCS()
+    {
+        $count = User::where('role', 'cs')->whereNotNull('kode_cs')->count();
+        $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        return "CS-{$nextNumber}";
     }
 }

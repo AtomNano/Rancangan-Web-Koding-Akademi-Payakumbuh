@@ -83,6 +83,7 @@
                     <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'admin' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-l border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">Admin</a>
                     <a href="{{ route('admin.users.index', ['role' => 'guru']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'guru' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">Guru</a>
                     <a href="{{ route('admin.users.index', ['role' => 'siswa']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'siswa' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">Siswa</a>
+                    <a href="{{ route('admin.users.index', ['role' => 'cs']) }}" class="px-4 py-2 text-sm font-medium {{ $role == 'cs' ? 'bg-indigo-500 text-white' : 'text-gray-700' }} border-r border-gray-300 hover:bg-indigo-400 hover:text-white transition-colors">CS</a>
                     <a href="{{ route('admin.users.deleted') }}" class="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-r-md hover:bg-red-700 transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -109,6 +110,7 @@
                         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                             <a href="{{ route('admin.users.create', ['role' => 'admin']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Tambah Admin</a>
                             <a href="{{ route('admin.users.create', ['role' => 'guru']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Tambah Guru</a>
+                            <a href="{{ route('admin.users.create', ['role' => 'cs']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Tambah CS</a>
                             <a href="{{ route('admin.users.create', ['role' => 'siswa']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Tambah Siswa</a>
                         </div>
                     </div>
@@ -151,6 +153,8 @@
                                             <div class="text-xs text-purple-700 font-bold mt-1">{{ $user->kode_admin }}</div>
                                             @elseif($user->role === 'guru' && $user->kode_guru)
                                             <div class="text-xs text-green-700 font-bold mt-1">{{ $user->kode_guru }}</div>
+                                            @elseif($user->role === 'cs' && $user->kode_cs)
+                                            <div class="text-xs text-pink-700 font-bold mt-1">{{ $user->kode_cs }}</div>
                                             @endif
                                         </div>
                                     </div>
@@ -219,10 +223,11 @@
                                         'admin' => 'bg-purple-100 text-purple-800',
                                         'guru' => 'bg-green-100 text-green-800',
                                         'siswa' => 'bg-blue-100 text-blue-800',
+                                        'cs' => 'bg-pink-100 text-pink-800',
                                     ];
                                 @endphp
                                 <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full {{ $role_classes[$user->role] ?? 'bg-gray-100 text-gray-800' }}">
-                                    {{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : 'Siswa') }}
+                                    {{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : ($user->role === 'cs' ? 'CS' : 'Siswa')) }}
                                 </span>
                             </td>
                             <td class="px-4 py-4 text-sm text-gray-700 align-top">

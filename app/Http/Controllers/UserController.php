@@ -17,7 +17,13 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $role = $request->get('role');
+        // If user is CS, force role to be 'siswa'
+        if ($request->user() && $request->user()->isCS()) {
+            $role = 'siswa';
+        } else {
+            $role = $request->get('role');
+        }
+
         $status = $request->get('status');
         $search = $request->get('search');
 
@@ -33,7 +39,7 @@ class UserController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -61,9 +67,14 @@ class UserController extends Controller
             'total' => User::count(),
             'guru' => User::where('role', 'guru')->count(),
             'siswa' => User::where('role', 'siswa')->count(),
+            'cs' => User::where('role', 'cs')->count(),
             'inactive' => User::where('role', 'siswa')->get()->filter(fn($u) => !$u->is_active)->count(),
         ];
-        
+
+        if ($request->user() && $request->user()->isCS()) {
+            return view('cs.siswa.index', compact('users', 'role', 'stats'));
+        }
+
         return view('admin.users.index', compact('users', 'role', 'stats'));
     }
 
@@ -75,7 +86,7 @@ class UserController extends Controller
         $role = $request->get('role', 'guru');
         // Get all active classes - siswa can enroll in any class (dasar, umum, mahasiswa, etc.)
         $kelas = Kelas::where('status', 'active')->orderBy('nama_kelas')->get();
-        
+
         return view('admin.users.create', compact('role', 'kelas'));
     }
 
@@ -88,7 +99,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->whereNull('deleted_at')],
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,guru,siswa',
+            'role' => 'required|in:admin,guru,siswa,cs',
         ]);
 
         $userData = $baseValidated;
@@ -157,25 +168,32 @@ class UserController extends Controller
             } else {
                 $studentValidated['total_setelah_diskon'] = $total_biaya;
             }
-            
+
             // If alamat is not provided but address details are, combine them
-            if (empty($studentValidated['alamat']) && 
-                (!empty($request->jalan) || !empty($request->provinsi) || !empty($request->kota))) {
+            if (
+                empty($studentValidated['alamat']) &&
+                (!empty($request->jalan) || !empty($request->provinsi) || !empty($request->kota))
+            ) {
                 $parts = [];
-                if (!empty($request->jalan)) $parts[] = $request->jalan;
-                if (!empty($request->kelurahan)) $parts[] = 'Kel. ' . $request->kelurahan;
-                if (!empty($request->kecamatan)) $parts[] = 'Kec. ' . $request->kecamatan;
-                if (!empty($request->kota)) $parts[] = $request->kota;
-                if (!empty($request->provinsi)) $parts[] = $request->provinsi;
+                if (!empty($request->jalan))
+                    $parts[] = $request->jalan;
+                if (!empty($request->kelurahan))
+                    $parts[] = 'Kel. ' . $request->kelurahan;
+                if (!empty($request->kecamatan))
+                    $parts[] = 'Kec. ' . $request->kecamatan;
+                if (!empty($request->kota))
+                    $parts[] = $request->kota;
+                if (!empty($request->provinsi))
+                    $parts[] = $request->provinsi;
                 $studentValidated['alamat'] = implode(', ', $parts);
             }
-            
+
             // Store kelas_sekolah in sekolah field or create a new field
             // For now, we'll append it to sekolah field
             if (!empty($studentValidated['kelas_sekolah'])) {
                 $studentValidated['sekolah'] = $studentValidated['sekolah'] . ' - ' . $studentValidated['kelas_sekolah'];
             }
-            
+
             $userData = array_merge($userData, $studentValidated);
 
             // Save target sessions info for later enrollment creation
@@ -232,6 +250,9 @@ class UserController extends Controller
         } elseif ($request->role === 'guru' && empty($user->kode_guru)) {
             $kodeGuru = User::generateKodeGuru();
             $user->update(['kode_guru' => $kodeGuru]);
+        } elseif ($request->role === 'cs' && empty($user->kode_cs)) {
+            $kodeCS = User::generateKodeCS();
+            $user->update(['kode_cs' => $kodeCS]);
         }
 
         $selectedKelas = collect();
@@ -298,6 +319,10 @@ class UserController extends Controller
             $message = 'User berhasil dibuat.';
         }
 
+        if ($request->user()->isCS()) {
+            return redirect()->route('cs.siswa.index')->with('success', $message);
+        }
+
         return redirect()->route('admin.users.index', ['role' => $user->role])
             ->with('success', $message);
     }
@@ -318,7 +343,11 @@ class UserController extends Controller
         // Get all active classes - siswa can enroll in any class (dasar, umum, mahasiswa, etc.)
         $kelas = Kelas::where('status', 'active')->orderBy('nama_kelas')->get();
         $enrolledClassIds = $user->enrolledClasses->pluck('id')->toArray();
-        
+
+        if (auth()->user()->isCS()) {
+            return view('cs.siswa.edit', compact('user', 'kelas', 'enrolledClassIds'));
+        }
+
         return view('admin.users.edit', compact('user', 'kelas', 'enrolledClassIds'));
     }
 
@@ -341,7 +370,7 @@ class UserController extends Controller
         $baseValidated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required|in:admin,guru,siswa',
+            'role' => 'required|in:admin,guru,siswa,cs',
         ]);
 
         $userData = $baseValidated;
@@ -408,7 +437,7 @@ class UserController extends Controller
             } else {
                 $studentValidated['total_setelah_diskon'] = $total_biaya;
             }
-            
+
             $userData = array_merge($userData, $studentValidated);
 
             // Save target sessions info for enrollment updates
@@ -457,7 +486,7 @@ class UserController extends Controller
                     'kelas_id' => $kelasId,
                     'status' => $request->role === 'siswa' ? $request->enrollment_status : 'active',
                 ];
-                
+
                 if ($request->role === 'siswa') {
                     $enrollmentData = array_merge($enrollmentData, [
                         'start_date' => $userData['_start_date'] ?? null,
@@ -467,7 +496,7 @@ class UserController extends Controller
                         'sessions_attended' => 0,
                     ]);
                 }
-                
+
                 \App\Models\Enrollment::create($enrollmentData);
             }
 
@@ -475,7 +504,7 @@ class UserController extends Controller
                 // For teachers: only update status
                 // For students: update status and all enrollment details
                 $updatePayload = ['status' => $request->role === 'siswa' ? $request->enrollment_status : 'active'];
-                
+
                 if ($request->role === 'siswa') {
                     $updatePayload = array_merge($updatePayload, [
                         'start_date' => $userData['_start_date'] ?? null,
@@ -511,6 +540,11 @@ class UserController extends Controller
         // Log activity
         ActivityLogger::logUserUpdated($user, $oldValues, $newValues);
 
+        if (auth()->user()->isCS()) {
+            return redirect()->route('cs.siswa.index')
+                ->with('success', 'User berhasil diperbarui.');
+        }
+
         return redirect()->route('admin.users.index', ['role' => $user->role])
             ->with('success', 'User berhasil diperbarui.');
     }
@@ -520,18 +554,27 @@ class UserController extends Controller
     public function deactivate(User $user)
     {
         $role = $user->role;
-        
+
         // Hanya bisa menonaktifkan siswa
         if (!$user->isSiswa()) {
+            if (auth()->user()->isCS()) {
+                return redirect()->route('cs.siswa.index')
+                    ->with('error', 'Hanya siswa yang dapat dinonaktifkan.');
+            }
             return redirect()->route('admin.users.index', ['role' => $role])
                 ->with('error', 'Hanya siswa yang dapat dinonaktifkan.');
         }
-        
+
         // Ubah semua enrollment status menjadi 'inactive'
         $user->enrollments()->update(['status' => 'inactive']);
-        
+
         // Log activity
         ActivityLogger::logUserDeleted($user);
+
+        if (auth()->user()->isCS()) {
+            return redirect()->route('cs.siswa.index')
+                ->with('success', 'Siswa berhasil dinonaktifkan. Siswa tidak dapat mengakses sistem lagi.');
+        }
 
         return redirect()->route('admin.users.index', ['role' => $role])
             ->with('success', 'Siswa berhasil dinonaktifkan. Siswa tidak dapat mengakses sistem lagi.');
@@ -540,18 +583,27 @@ class UserController extends Controller
     public function activate(User $user)
     {
         $role = $user->role;
-        
+
         // Hanya bisa mengaktifkan siswa
         if (!$user->isSiswa()) {
+            if (auth()->user()->isCS()) {
+                return redirect()->route('cs.siswa.index')
+                    ->with('error', 'Hanya siswa yang dapat diaktifkan.');
+            }
             return redirect()->route('admin.users.index', ['role' => $role])
                 ->with('error', 'Hanya siswa yang dapat diaktifkan.');
         }
-        
+
         // Ubah semua enrollment status menjadi 'active'
         $user->enrollments()->update(['status' => 'active']);
-        
+
         // Log activity
         ActivityLogger::logUserUpdated($user, [], []);
+
+        if (auth()->user()->isCS()) {
+            return redirect()->route('cs.siswa.index')
+                ->with('success', 'Siswa berhasil diaktifkan kembali. Siswa dapat mengakses sistem.');
+        }
 
         return redirect()->route('admin.users.index', ['role' => $role])
             ->with('success', 'Siswa berhasil diaktifkan kembali. Siswa dapat mengakses sistem.');
@@ -561,12 +613,17 @@ class UserController extends Controller
     {
         $role = $user->role;
         $userData = $user->toArray();
-        
+
         // Log activity sebelum delete
         ActivityLogger::logUserDeleted($user);
-        
+
         // Soft delete - data tidak dihapus permanen, hanya ditandai sebagai tidak aktif
         $user->delete();
+
+        if (auth()->user()->isCS()) {
+            return redirect()->route('cs.siswa.index')
+                ->with('success', 'User berhasil dinonaktifkan. Data masih tersimpan di database.');
+        }
 
         return redirect()->route('admin.users.index', ['role' => $role])
             ->with('success', 'User berhasil dinonaktifkan. Data masih tersimpan di database.');
@@ -589,7 +646,7 @@ class UserController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -604,7 +661,7 @@ class UserController extends Controller
     public function restore(Request $request, $id)
     {
         $user = User::onlyTrashed()->findOrFail($id);
-        
+
         // Restore user
         $user->restore();
 
