@@ -27,6 +27,7 @@ class User extends Authenticatable
         'student_id',
         'kode_admin',
         'kode_guru',
+        'kode_cs',
         'tanggal_pendaftaran',
         'sekolah',
         'bidang_ajar',
@@ -44,6 +45,7 @@ class User extends Authenticatable
         'alamat',
         'tanggal_lahir',
         'jenis_kelamin',
+        'has_seen_tour',
     ];
 
     /**
@@ -108,6 +110,11 @@ class User extends Authenticatable
         return $this->role === 'siswa';
     }
 
+    public function isCS()
+    {
+        return $this->role === 'cs';
+    }
+
     public function enrolledClasses()
     {
         return $this->belongsToMany(Kelas::class, 'enrollments', 'user_id', 'kelas_id')
@@ -120,6 +127,14 @@ class User extends Authenticatable
                 'sessions_attended'
             )
             ->withTimestamps();
+    }
+
+    /**
+     * Get classes taught by this user (for gurus)
+     */
+    public function teachingClasses()
+    {
+        return $this->hasMany(Kelas::class, 'guru_id');
     }
 
     /**
@@ -222,5 +237,16 @@ class User extends Authenticatable
         $count = User::where('role', 'guru')->whereNotNull('kode_guru')->count();
         $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
         return "GURU-{$nextNumber}";
+    }
+
+    /**
+     * Generate kode CS otomatis
+     * Format: CS-NNNN (Contoh: CS-0001)
+     */
+    public static function generateKodeCS()
+    {
+        $count = User::where('role', 'cs')->whereNotNull('kode_cs')->count();
+        $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        return "CS-{$nextNumber}";
     }
 }

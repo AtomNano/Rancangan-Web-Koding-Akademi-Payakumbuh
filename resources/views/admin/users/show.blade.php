@@ -202,7 +202,7 @@
                             <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                                 <div class="p-4 bg-gray-50 rounded-lg">
                                     <dt class="text-sm font-medium text-gray-500">Peran</dt>
-                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : 'Siswa') }}</dd>
+                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $user->role === 'admin' ? 'Admin' : ($user->role === 'guru' ? 'Guru' : ($user->role === 'cs' ? 'Customer Service' : 'Siswa')) }}</dd>
                                 </div>
                                 <div class="p-4 bg-gray-50 rounded-lg">
                                     <dt class="text-sm font-medium text-gray-500">Bergabung Sejak</dt>

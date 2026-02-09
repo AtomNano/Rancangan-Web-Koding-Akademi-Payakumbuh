@@ -24,7 +24,7 @@ class DashboardController extends Controller
                 case 'admin':
                     // Student status calculation
                     $all_siswa = User::where('role', 'siswa')->get();
-                    [$siswa_aktif, $siswa_tidak_aktif] = $all_siswa->partition(fn ($user) => $user->is_active);
+                    [$siswa_aktif, $siswa_tidak_aktif] = $all_siswa->partition(fn($user) => $user->is_active);
 
                     $stats = [
                         'total_pengguna' => User::count(),
@@ -37,7 +37,7 @@ class DashboardController extends Controller
                         'materi_aktif' => Materi::where('status', 'approved')->count(),
                     ];
                     $pending_verifications = Materi::where('status', 'pending')->with(['uploadedBy', 'kelas'])->latest()->take(5)->get();
-                    
+
                     // Get recent activities with pagination (10 per page)
                     $recent_activities = ActivityLog::with('user')
                         ->latest()
@@ -45,22 +45,22 @@ class DashboardController extends Controller
                         ->withQueryString();
 
                     return view('admin.dashboard', compact('stats', 'pending_verifications', 'recent_activities'));
-                
+
                 case 'guru':
                     $user = auth()->user();
-                    
+
                     // Get classes assigned to this guru via guru_id
                     $kelas = Kelas::where('guru_id', $user->id)
                         ->withCount('students')
                         ->with('guru')
                         ->orderBy('created_at', 'desc')
                         ->get();
-                    
+
                     // Also get classes where guru is enrolled (secondary method)
                     $enrolledKelasIds = \App\Models\Enrollment::where('user_id', $user->id)
                         ->pluck('kelas_id')
                         ->toArray();
-                    
+
                     if (!empty($enrolledKelasIds)) {
                         $enrolledKelas = Kelas::whereIn('id', $enrolledKelasIds)
                             ->where('guru_id', '!=', $user->id) // Don't duplicate classes already in $kelas
@@ -68,28 +68,20 @@ class DashboardController extends Controller
                             ->with('guru')
                             ->orderBy('created_at', 'desc')
                             ->get();
-                        
+
                         // Merge enrolled classes with assigned classes
                         $kelas = $kelas->merge($enrolledKelas)->unique('id');
                     }
-                    
+
                     // Ensure we have a collection
                     if (!$kelas || !($kelas instanceof \Illuminate\Support\Collection)) {
                         $kelas = collect();
                     }
-                    
+
                     $assignedKelasIds = $kelas->pluck('id')->toArray();
-                    
-                    // Log for debugging
-                    \Log::info('DashboardController Guru: Loading classes for guru', [
-                        'user_id' => $user->id,
-                        'user_email' => $user->email,
-                        'total_kelas_count' => $kelas->count(),
-                        'kelas_list' => $kelas->pluck('id', 'nama_kelas')->toArray(),
-                        'assigned_via_guru_id' => Kelas::where('guru_id', $user->id)->count(),
-                        'enrolled_count' => count($enrolledKelasIds),
-                    ]);
-                    
+
+
+
                     // Calculate stats
                     if (empty($assignedKelasIds)) {
                         $materi_count = 0;
@@ -100,31 +92,18 @@ class DashboardController extends Controller
                         $pending_count = Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
                         $approved_count = Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
                     }
-                    
+
                     $stats = [
                         'total_materi' => $materi_count,
                         'pending_materi' => $pending_count,
                         'approved_materi' => $approved_count,
                     ];
-                    
-                    // Debug logging
-                    \Log::info('DashboardController Guru: Loading ALL classes (NO AUTH CHECK)', [
-                        'user_id' => $user->id,
-                        'user_email' => $user->email,
-                        'user_name' => $user->name,
-                        'total_kelas_found' => $kelas->count(),
-                        'kelas_details' => $kelas->map(function($k) {
-                            return [
-                                'id' => $k->id, 
-                                'nama' => $k->nama_kelas, 
-                                'guru_id' => $k->guru_id, 
-                                'status' => $k->status,
-                                'students_count' => $k->students_count ?? 0
-                            ];
-                        })->toArray(),
-                    ]);
-                    
+
+
+
                     return view('guru.dashboard', compact('stats', 'kelas'));
+                case 'cs':
+                    return redirect()->route('cs.dashboard');
                 case 'siswa':
                     return redirect()->route('siswa.dashboard');
                 default:
@@ -144,37 +123,37 @@ class DashboardController extends Controller
         $totalSiswa = User::where('role', 'siswa')->count();
         $totalKelas = Kelas::count();
         $totalMateri = Materi::where('status', 'approved')->count();
-        
+
         // Progress statistics
         $totalProgress = MateriProgress::count();
         $completedProgress = MateriProgress::where('is_completed', true)->count();
         $avgProgress = MateriProgress::avg('progress_percentage') ?? 0;
-        
+
         // Attendance statistics
         $totalPresensi = Presensi::count();
         $hadirCount = Presensi::where('status_kehadiran', 'hadir')->count();
         $izinCount = Presensi::where('status_kehadiran', 'izin')->count();
         $sakitCount = Presensi::where('status_kehadiran', 'sakit')->count();
         $alphaCount = Presensi::where('status_kehadiran', 'alpha')->count();
-        
+
         // Progress by class
         $progressByKelas = [];
         $kelasList = Kelas::with('materi')->get();
         foreach ($kelasList as $kelas) {
             $materiIds = $kelas->materi()->where('status', 'approved')->pluck('id');
             $siswaIds = $kelas->students()->where('users.role', 'siswa')->pluck('users.id');
-            
+
             $totalMateriKelas = $materiIds->count();
             $completedCount = MateriProgress::whereIn('materi_id', $materiIds)
                 ->whereIn('user_id', $siswaIds)
                 ->where('is_completed', true)
                 ->distinct('materi_id', 'user_id')
                 ->count();
-            
+
             $avgProgressKelas = MateriProgress::whereIn('materi_id', $materiIds)
                 ->whereIn('user_id', $siswaIds)
                 ->avg('progress_percentage') ?? 0;
-            
+
             $progressByKelas[] = [
                 'kelas' => $kelas,
                 'total_siswa' => $siswaIds->count(),
@@ -183,7 +162,7 @@ class DashboardController extends Controller
                 'avg_progress' => round($avgProgressKelas, 1),
             ];
         }
-        
+
         // Most accessed materials
         $mostAccessedMateri = Presensi::select('materi_id', DB::raw('count(*) as access_count'))
             ->with('materi')
@@ -191,7 +170,7 @@ class DashboardController extends Controller
             ->orderBy('access_count', 'desc')
             ->limit(10)
             ->get();
-        
+
         // Student progress details
         $studentProgressDetails = [];
         $siswaList = User::where('role', 'siswa')->with('enrolledClasses')->get();
@@ -200,22 +179,22 @@ class DashboardController extends Controller
             $materiIds = Materi::whereIn('kelas_id', $enrolledKelasIds)
                 ->where('status', 'approved')
                 ->pluck('id');
-            
+
             $totalMateriSiswa = $materiIds->count();
             $completedMateri = MateriProgress::where('user_id', $siswa->id)
                 ->whereIn('materi_id', $materiIds)
                 ->where('is_completed', true)
                 ->count();
-            
+
             $avgProgressSiswa = MateriProgress::where('user_id', $siswa->id)
                 ->whereIn('materi_id', $materiIds)
                 ->avg('progress_percentage') ?? 0;
-            
+
             // Attendance stats for this student
             $presensiSiswa = Presensi::where('user_id', $siswa->id)
                 ->whereIn('materi_id', $materiIds)
                 ->get();
-            
+
             $studentProgressDetails[] = [
                 'siswa' => $siswa,
                 'total_materi' => $totalMateriSiswa,
@@ -228,14 +207,14 @@ class DashboardController extends Controller
                 'alpha' => $presensiSiswa->where('status_kehadiran', 'alpha')->count(),
             ];
         }
-        
+
         // Recent activity (last 30 days)
         $recentPresensi = Presensi::with(['user', 'materi'])
             ->where('tanggal_akses', '>=', now()->subDays(30))
             ->orderBy('tanggal_akses', 'desc')
             ->limit(20)
             ->get();
-        
+
         return view('admin.analytics', compact(
             'totalSiswa',
             'totalKelas',
@@ -253,5 +232,14 @@ class DashboardController extends Controller
             'studentProgressDetails',
             'recentPresensi'
         ));
+    }
+    public function logs()
+    {
+        $activities = \App\Models\ActivityLog::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('cs.logs.index', compact('activities'));
     }
 }

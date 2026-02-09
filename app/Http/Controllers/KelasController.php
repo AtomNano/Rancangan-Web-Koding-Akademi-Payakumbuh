@@ -15,10 +15,23 @@ class KelasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $kelasList = Kelas::with('guru', 'enrollments', 'materi')->latest()->get();
-        
+        $query = Kelas::with('guru', 'enrollments', 'materi')->latest();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_kelas', 'like', "%{$search}%")
+                    ->orWhere('deskripsi', 'like', "%{$search}%")
+                    ->orWhereHas('guru', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $kelasList = $query->get();
+
         // Get unassigned classes (classes without guru_id) for admin notice
         $unassignedKelas = Kelas::whereNull('guru_id')->get();
 
@@ -30,7 +43,7 @@ class KelasController extends Controller
             ->pluck('user_id')
             ->toArray();
         $totalEnrolledSiswa = count($enrolledStudentIds);
-        
+
         $stats = [
             'total_kelas' => \App\Models\Kelas::count(),
             'total_siswa' => $totalEnrolledSiswa, // Count enrolled students, not all students
@@ -40,7 +53,7 @@ class KelasController extends Controller
         ];
 
         return view('admin.kelas.index', [
-            'kelasList' => $kelasList, 
+            'kelasList' => $kelasList,
             'stats' => $stats,
             'unassignedKelas' => $unassignedKelas
         ]);
@@ -88,7 +101,7 @@ class KelasController extends Controller
     public function show(Kelas $kelas)
     {
         $kelas->load('guru'); // Load the teacher for the class
-        
+
         // Load students with proper filtering - only students with active/expiring enrollment
         $students = $kelas->students()
             ->where('users.role', 'siswa')
@@ -99,7 +112,7 @@ class KelasController extends Controller
             ->with('presensi')
             ->orderBy('users.name')
             ->get();
-            
+
         $approvedMateri = $kelas->materi()->where('status', 'approved')->get();
         $totalApprovedMateri = $approvedMateri->count();
 
@@ -122,7 +135,7 @@ class KelasController extends Controller
         }
 
         $materi = $kelas->materi()->with('uploadedBy')->paginate(10);
-        
+
         return view('admin.kelas.show', compact('kelas', 'studentsProgress', 'materi', 'classProgress'));
     }
 
@@ -165,7 +178,7 @@ class KelasController extends Controller
     {
         // Log activity
         ActivityLogger::logClassDeleted($kelas);
-        
+
         $kelas->delete();
 
         return redirect()->route('admin.kelas.index')
@@ -179,7 +192,7 @@ class KelasController extends Controller
     {
         $availableStudents = User::where('role', 'siswa')
             ->select('id', 'name', 'email', 'student_id', 'id_siswa', 'role')
-            ->whereDoesntHave('enrollments', function($query) use ($kelas) {
+            ->whereDoesntHave('enrollments', function ($query) use ($kelas) {
                 $query->where('kelas_id', $kelas->id)
                     ->whereIn('status', ['active', 'expiring']);
             })
@@ -300,7 +313,7 @@ class KelasController extends Controller
     {
         // Log activity
         ActivityLogger::logStudentUnenrolled($kelas, $user);
-        
+
         $kelas->enrollments()->where('user_id', $user->id)->delete();
 
         return redirect()->route('admin.kelas.show', $kelas)

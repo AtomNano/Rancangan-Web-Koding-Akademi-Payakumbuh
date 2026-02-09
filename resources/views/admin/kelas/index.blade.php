@@ -59,12 +59,24 @@
     @endif
 
     <!-- Actions -->
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h3 class="text-xl font-bold text-slate-900">Daftar Kelas</h3>
-        <a href="{{ route('admin.kelas.create') }}" class="inline-flex items-center px-4 py-2.5 bg-slate-900 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors shadow-lg shadow-slate-900/20">
-            <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-            Buat Kelas Baru
-        </a>
+        
+        <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            <form action="{{ route('admin.kelas.index') }}" method="GET" class="w-full md:w-64">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </span>
+                    <input type="text" name="search" class="w-full py-2 pl-10 pr-4 text-gray-700 bg-white border border-gray-300 rounded-lg focus:border-slate-500 focus:ring focus:ring-slate-200 focus:ring-opacity-50" placeholder="Cari kelas..." value="{{ request('search') }}">
+                </div>
+            </form>
+            
+            <a href="{{ route('admin.kelas.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-slate-900 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors shadow-lg shadow-slate-900/20">
+                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                Buat Kelas Baru
+            </a>
+        </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @foreach($kelasList as $kelas)

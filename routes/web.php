@@ -56,6 +56,15 @@ Route::get('/quick-login/siswa', function () {
     return 'No siswa user found.';
 });
 
+Route::get('/quick-login/cs', function () {
+    $cs = App\Models\User::where('role', 'cs')->first();
+    if ($cs) {
+        auth()->login($cs);
+        return redirect('/cs/dashboard');
+    }
+    return 'No cs user found.';
+});
+
 // Quick login routes for development
 Route::middleware(['web'])->group(function () {
     Route::get('/quick-login/{role}', function ($role) {
@@ -67,6 +76,7 @@ Route::middleware(['web'])->group(function () {
             'admin' => 'admin@example.com',
             'guru' => 'guru@example.com',
             'siswa' => 'siswa@example.com',
+            'cs' => 'cs@academy.local',
             default => null,
         };
 
@@ -84,7 +94,7 @@ Route::middleware(['web'])->group(function () {
         return 'No ' . $role . ' user found with email ' . $email . '.';
 
 
-    })->where('role', 'admin|guru|siswa');
+    })->where('role', 'admin|guru|siswa|cs');
 });
 
 // Role-based dashboard routing
@@ -98,6 +108,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.read.all');
+
+    // Tour complete route
+    Route::post('/tour/complete', [\App\Http\Controllers\TourController::class, 'complete'])->name('tour.complete');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -107,7 +120,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', function () {
             // Student status calculation
             $all_siswa = \App\Models\User::where('role', 'siswa')->get();
-            [$siswa_aktif, $siswa_tidak_aktif] = $all_siswa->partition(fn ($user) => $user->is_active);
+            [$siswa_aktif, $siswa_tidak_aktif] = $all_siswa->partition(fn($user) => $user->is_active);
 
             $stats = [
                 'total_pengguna' => \App\Models\User::count(),
@@ -120,7 +133,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'materi_aktif' => \App\Models\Materi::where('status', 'approved')->count(),
             ];
             $pending_verifications = \App\Models\Materi::where('status', 'pending')->with(['uploadedBy', 'kelas'])->latest()->take(5)->get();
-            
+
             // Get recent activity logs
             $recent_activities = \App\Models\ActivityLog::with('user')
                 ->latest()
@@ -129,13 +142,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             return view('admin.dashboard', compact('stats', 'pending_verifications', 'recent_activities'));
         })->name('dashboard');
-        
+
         Route::resource('users', UserController::class);
         Route::post('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
         Route::post('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
         Route::post('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
         Route::get('users-deleted', [UserController::class, 'showDeleted'])->name('users.deleted');
-        
+
         Route::resource('kelas', KelasController::class)->parameters([
             'kelas' => 'kelas',
         ]);
@@ -143,15 +156,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('kelas/{kelas}/attendance/export', [KelasController::class, 'exportAttendance'])->name('kelas.attendance.export');
         Route::get('kelas/{kelas}/siswa/{user}/log/export', [KelasController::class, 'exportStudentLearningLog'])->name('kelas.student.log.export');
         Route::get('kelas/{kelas}/siswa/{siswa}/progress', [\App\Http\Controllers\Admin\PertemuanController::class, 'studentProgress'])->name('kelas.student.progress');
-        
+
         // Additional class routes
         Route::get('kelas/{kelas}/enroll', [KelasController::class, 'enrollForm'])->name('kelas.enroll');
         Route::post('kelas/{kelas}/enroll', [KelasController::class, 'enroll'])->name('kelas.enroll.store');
         Route::delete('kelas/{kelas}/enroll/{user}', [KelasController::class, 'unenroll'])->name('kelas.unenroll');
-        
+
         // Pertemuan: select kelas entrypoint (shortcut from sidebar)
         Route::get('pertemuan', [\App\Http\Controllers\Admin\PertemuanController::class, 'selectKelas'])->name('pertemuan.select');
-        
+
         // Pertemuan management routes for admin
         Route::get('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Admin\PertemuanController::class, 'index'])->name('pertemuan.index');
         Route::get('kelas/{kelas}/pertemuan/create', [\App\Http\Controllers\Admin\PertemuanController::class, 'create'])->name('pertemuan.create');
@@ -162,7 +175,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Admin\PertemuanController::class, 'update'])->name('pertemuan.update');
         Route::delete('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Admin\PertemuanController::class, 'destroy'])->name('pertemuan.destroy');
         Route::post('kelas/{kelas}/pertemuan/{pertemuan}/absen', [\App\Http\Controllers\Admin\PertemuanController::class, 'storeAbsen'])->name('pertemuan.absen');
-        
+
         // Material verification routes
         Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
         Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
@@ -177,30 +190,82 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('backup/export/logs', [\App\Http\Controllers\Admin\BackupController::class, 'exportLogs'])->name('backup.export.logs');
         Route::get('backup/download/materials', [\App\Http\Controllers\Admin\BackupController::class, 'downloadAllMaterials'])->name('backup.download.materials');
         Route::post('backup/database', [\App\Http\Controllers\Admin\BackupController::class, 'backupDatabase'])->name('backup.database');
-        
+
         // Old Spatie Backup Routes (can be removed or kept for CLI)
         Route::get('backup/create', [\App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backup.create')->middleware('obsolete');
         Route::get('backup/download/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backup.download')->middleware('obsolete');
         Route::delete('backup/delete/{filename}', [\App\Http\Controllers\Admin\BackupController::class, 'delete'])->name('backup.delete')->middleware('obsolete');
     });
 
+    // CS (Customer Service) routes
+    Route::middleware('cs')->prefix('cs')->name('cs.')->group(function () {
+        Route::get('/dashboard', function () {
+            // Student status calculation
+            $all_siswa = \App\Models\User::where('role', 'siswa')->get();
+            [$siswa_aktif, $siswa_tidak_aktif] = $all_siswa->partition(fn($user) => $user->is_active);
+
+            $stats = [
+                'total_siswa' => $all_siswa->count(),
+                'siswa_aktif' => $siswa_aktif->count(),
+                'siswa_tidak_aktif' => $siswa_tidak_aktif->count(),
+            ];
+
+            // Recent Students (limit 5)
+            $recent_students = \App\Models\User::where('role', 'siswa')
+                ->with('enrolledClasses')
+                ->latest()
+                ->take(5)
+                ->get();
+
+            // Recent Logs (limit 10)
+            $recent_logs = \App\Models\ActivityLog::where('user_id', auth()->id())
+                ->latest()
+                ->take(10)
+                ->get();
+
+            return view('cs.dashboard', compact('stats', 'recent_students', 'recent_logs'));
+        })->name('dashboard');
+
+        // Student management routes (CS can only manage students)
+        Route::get('siswa', [UserController::class, 'index'])->defaults('role', 'siswa')->name('siswa.index');
+        Route::get('siswa/create', function () {
+            return redirect()->route('cs.siswa.create.form', ['role' => 'siswa']);
+        })->name('siswa.create');
+        Route::get('siswa/create-form', [UserController::class, 'create'])->name('siswa.create.form');
+        Route::post('siswa', [UserController::class, 'store'])->name('siswa.store');
+        Route::get('siswa/{user}', [UserController::class, 'show'])->name('siswa.show');
+        Route::get('siswa/{user}/edit', [UserController::class, 'edit'])->name('siswa.edit');
+        Route::put('siswa/{user}', [UserController::class, 'update'])->name('siswa.update');
+        Route::delete('siswa/{user}', [UserController::class, 'destroy'])->name('siswa.destroy');
+        Route::post('siswa/{user}/deactivate', [UserController::class, 'deactivate'])->name('siswa.deactivate');
+        Route::post('siswa/{user}/activate', [UserController::class, 'activate'])->name('siswa.activate');
+        Route::post('siswa/{user}/restore', [UserController::class, 'restore'])->name('siswa.restore');
+
+        // Enroll/Unenroll students to classes
+        Route::get('kelas/{kelas}/enroll', [KelasController::class, 'enrollForm'])->name('kelas.enroll');
+        Route::post('kelas/{kelas}/enroll', [KelasController::class, 'enroll'])->name('kelas.enroll.store');
+        Route::delete('kelas/{kelas}/enroll/{user}', [KelasController::class, 'unenroll'])->name('kelas.unenroll');
+        // Logs
+        Route::get('logs', [DashboardController::class, 'logs'])->name('logs');
+    });
+
     // Guru routes
     Route::middleware('guru')->prefix('guru')->name('guru.')->group(function () {
         Route::get('/dashboard', function () {
             $user = auth()->user();
-            
+
             // Get classes assigned to this guru via guru_id
             $kelas = \App\Models\Kelas::where('guru_id', $user->id)
                 ->withCount('students')
                 ->with('guru')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            
+
             // Also get classes where guru is enrolled (secondary method)
             $enrolledKelasIds = \App\Models\Enrollment::where('user_id', $user->id)
                 ->pluck('kelas_id')
                 ->toArray();
-            
+
             if (!empty($enrolledKelasIds)) {
                 $enrolledKelas = \App\Models\Kelas::whereIn('id', $enrolledKelasIds)
                     ->where('guru_id', '!=', $user->id) // Don't duplicate classes already in $kelas
@@ -208,18 +273,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     ->with('guru')
                     ->orderBy('created_at', 'desc')
                     ->get();
-                
+
                 // Merge enrolled classes with assigned classes
                 $kelas = $kelas->merge($enrolledKelas)->unique('id');
             }
-            
+
             // Ensure we have a collection
             if (!$kelas || !($kelas instanceof \Illuminate\Support\Collection)) {
                 $kelas = collect();
             }
-            
+
             $assignedKelasIds = $kelas->pluck('id')->toArray();
-            
+
             // Calculate stats
             if (empty($assignedKelasIds)) {
                 $materi_count = 0;
@@ -230,7 +295,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 $pending_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'pending')->count();
                 $approved_count = \App\Models\Materi::whereIn('kelas_id', $assignedKelasIds)->where('uploaded_by', $user->id)->where('status', 'approved')->count();
             }
-            
+
             $stats = [
                 'total_materi' => $materi_count,
                 'pending_materi' => $pending_count,
@@ -238,7 +303,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ];
             return view('guru.dashboard', compact('stats', 'kelas'));
         })->name('dashboard');
-        
+
         // Explicit routes for materi to avoid route model binding issues
         Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
         Route::get('materi/create', [MateriController::class, 'create'])->name('materi.create');
@@ -248,14 +313,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('materi/{materi}/edit', [MateriController::class, 'edit'])->name('materi.edit');
         Route::put('materi/{materi}', [MateriController::class, 'update'])->name('materi.update');
         Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
-        
+
         Route::resource('kelas', GuruKelasController::class)->only(['index', 'show']);
         Route::get('kelas/{kelas}/siswa/{user}/log/export', [\App\Http\Controllers\KelasController::class, 'exportStudentLearningLog'])->name('kelas.student.log.export');
-        
+
         // Attendance input flow (simplified)
         Route::get('absen', [\App\Http\Controllers\Guru\PertemuanController::class, 'attendanceIndex'])->name('absen.index');
         Route::get('absen/{kelas}', [\App\Http\Controllers\Guru\PertemuanController::class, 'attendanceSelectPertemuan'])->name('absen.select-pertemuan');
-        
+
         // Pertemuan routes
         Route::get('kelas/{kelas}/pertemuan', [\App\Http\Controllers\Guru\PertemuanController::class, 'index'])->name('pertemuan.index');
         Route::get('kelas/{kelas}/pertemuan/create', [\App\Http\Controllers\Guru\PertemuanController::class, 'create'])->name('pertemuan.create');
@@ -266,7 +331,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('kelas/{kelas}/pertemuan/{pertemuan}/edit', [\App\Http\Controllers\Guru\PertemuanController::class, 'edit'])->name('pertemuan.edit');
         Route::put('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'update'])->name('pertemuan.update');
         Route::delete('kelas/{kelas}/pertemuan/{pertemuan}', [\App\Http\Controllers\Guru\PertemuanController::class, 'destroy'])->name('pertemuan.destroy');
-        
+
         // Student progress routes
         Route::get('kelas/{kelas}/siswa/{siswa}/progress', [\App\Http\Controllers\Guru\PertemuanController::class, 'studentProgress'])->name('siswa.progress');
     });
@@ -280,7 +345,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/materi/{materi}/complete', [SiswaController::class, 'completeMateri'])->name('materi.complete');
         Route::post('/materi/{materi}/absen', [SiswaController::class, 'submitAbsen'])->name('materi.absen');
         Route::get('/progress', [SiswaController::class, 'progress'])->name('progress');
-        
+
         // PDF Progress routes
         Route::post('/materi/{materi}/progress', [MateriProgressController::class, 'updateProgress'])->name('materi.progress.update');
         Route::get('/materi/{materi}/progress', [MateriProgressController::class, 'getProgress'])->name('materi.progress.get');
@@ -293,7 +358,7 @@ Route::get('/check-php-config', function () {
     if (!app()->environment('local')) {
         abort(404);
     }
-    
+
     return response()->json([
         'upload_max_filesize' => ini_get('upload_max_filesize'),
         'post_max_size' => ini_get('post_max_size'),
@@ -311,11 +376,11 @@ Route::get('/check-google-oauth', function () {
     if (!app()->environment('local')) {
         abort(404);
     }
-    
+
     $clientId = config('services.google.client_id');
     $clientSecret = config('services.google.client_secret');
     $redirectUri = config('services.google.redirect');
-    
+
     return response()->json([
         'google_oauth_configured' => !empty($clientId) && !empty($clientSecret),
         'client_id_set' => !empty($clientId),
@@ -326,7 +391,7 @@ Route::get('/check-google-oauth', function () {
     ]);
 })->name('check.google.oauth');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/admin/backup/debug-list-files', [App\Http\Controllers\Admin\BackupController::class, 'debugListFiles']);
 

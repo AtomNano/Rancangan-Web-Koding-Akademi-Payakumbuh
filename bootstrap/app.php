@@ -6,8 +6,8 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -15,12 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'guru' => \App\Http\Middleware\GuruMiddleware::class,
             'siswa' => \App\Http\Middleware\SiswaMiddleware::class,
+            'cs' => \App\Http\Middleware\CsMiddleware::class,
         ]);
-        
+
         // Trust reverse proxies (e.g., Hostinger/Cloudflare) so HTTPS and
         // X-Forwarded headers are honored for secure cookies and CSRF/session.
         $middleware->trustProxies(at: '*');
-        
+
         // Add middleware to increase POST size limits
         // Note: This runs early but upload_max_filesize and post_max_size
         // must be set in php.ini and server must be restarted
@@ -38,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'post_max_size' => ini_get('post_max_size'),
                 ], 413);
             }
-            
+
             return response()->view('errors.upload-too-large', [
                 'maxSize' => ini_get('post_max_size'),
                 'uploadMaxSize' => ini_get('upload_max_filesize'),
