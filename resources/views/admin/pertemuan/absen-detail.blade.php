@@ -20,42 +20,48 @@
                     <div class="flex items-center justify-between mb-4">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">{{ $pertemuan->judul_pertemuan }}</h1>
-                            <p class="text-gray-600 mt-1">{{ $kelas->nama_kelas }} • <span class="font-semibold">{{ $pertemuan->guru->name ?? 'N/A' }}</span></p>
+                            <p class="text-gray-600 mt-1">{{ $kelas->nama_kelas }} • <span
+                                    class="font-semibold">{{ $pertemuan->guru?->name ?? 'N/A' }}</span></p>
                         </div>
-                        <a href="{{ route('admin.pertemuan.show', ['kelas' => $kelas->id, 'pertemuan' => $pertemuan->id]) }}" 
-                           class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        <a href="{{ route('admin.pertemuan.show', ['kelas' => $kelas->id, 'pertemuan' => $pertemuan->id]) }}"
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                             Edit Absen
                         </a>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                         <div class="bg-blue-50 p-4 rounded-lg">
                             <p class="text-sm text-gray-600">Tanggal</p>
-                            <p class="text-lg font-semibold text-gray-900 mt-1">{{ $pertemuan->tanggal_pertemuan->format('d M Y') }}</p>
-                        </div>
-                        @if($pertemuan->waktu_mulai)
-                        <div class="bg-green-50 p-4 rounded-lg">
-                            <p class="text-sm text-gray-600">Waktu</p>
                             <p class="text-lg font-semibold text-gray-900 mt-1">
-                                {{ $pertemuan->waktu_mulai }}
-                                @if($pertemuan->waktu_selesai)
-                                    - {{ $pertemuan->waktu_selesai }}
-                                @endif
+                                {{ $pertemuan->tanggal_pertemuan->format('d M Y') }}
                             </p>
                         </div>
+                        @if($pertemuan->waktu_mulai)
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <p class="text-sm text-gray-600">Waktu</p>
+                                <p class="text-lg font-semibold text-gray-900 mt-1">
+                                    {{ $pertemuan->waktu_mulai }}
+                                    @if($pertemuan->waktu_selesai)
+                                        - {{ $pertemuan->waktu_selesai }}
+                                    @endif
+                                </p>
+                            </div>
                         @endif
                         @if($pertemuan->materi)
-                        <div class="bg-purple-50 p-4 rounded-lg">
-                            <p class="text-sm text-gray-600">Materi</p>
-                            <p class="text-lg font-semibold text-gray-900 mt-1">{{ $pertemuan->materi }}</p>
-                        </div>
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <p class="text-sm text-gray-600">Materi</p>
+                                <p class="text-lg font-semibold text-gray-900 mt-1">{{ $pertemuan->materi }}</p>
+                            </div>
                         @endif
                         <div class="bg-indigo-50 p-4 rounded-lg">
                             <p class="text-sm text-gray-600">Total Absen</p>
-                            <p class="text-lg font-semibold text-gray-900 mt-1">{{ $presensi->count() }} / {{ $siswa->count() }}</p>
+                            <p class="text-lg font-semibold text-gray-900 mt-1">{{ $presensi->count() }} /
+                                {{ $siswa->count() }}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -71,7 +77,8 @@
                         </div>
                         <div class="bg-green-100 rounded-lg p-3">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                     </div>
@@ -85,7 +92,8 @@
                         </div>
                         <div class="bg-yellow-100 rounded-lg p-3">
                             <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                     </div>
@@ -99,7 +107,8 @@
                         </div>
                         <div class="bg-blue-100 rounded-lg p-3">
                             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
                     </div>
@@ -113,7 +122,8 @@
                         </div>
                         <div class="bg-red-100 rounded-lg p-3">
                             <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </div>
                     </div>
@@ -131,15 +141,19 @@
                         @if($hadirList->count() > 0)
                             <div class="space-y-3">
                                 @foreach($hadirList as $p)
-                                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                    <div
+                                        class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
                                         <div class="flex items-center flex-1">
                                             <div class="flex-shrink-0 h-10 w-10">
-                                                <div class="h-10 w-10 rounded-full bg-green-200 flex items-center justify-center">
-                                                    <span class="text-green-700 font-bold text-sm">{{ substr($p->user->name, 0, 1) }}</span>
+                                                <div
+                                                    class="h-10 w-10 rounded-full bg-green-200 flex items-center justify-center">
+                                                    <span
+                                                        class="text-green-700 font-bold text-sm">{{ substr($p->user?->name ?? '?', 0, 1) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3 flex-1">
-                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ $p->user?->name ?? 'User terhapus' }}</div>
                                                 <div class="text-xs text-gray-500">
                                                     @php $displayId = $p->user->student_id ?? $p->user->id_siswa; @endphp
                                                     @if($displayId)
@@ -150,14 +164,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Hadir</span>
+                                        <span
+                                            class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Hadir</span>
                                     </div>
                                 @endforeach
                             </div>
                         @else
                             <div class="text-center py-8">
-                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
+                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
                                 </svg>
                                 <p class="text-gray-500 text-sm">Tidak ada siswa yang hadir</p>
                             </div>
@@ -174,15 +191,19 @@
                         @if($izinList->count() > 0)
                             <div class="space-y-3">
                                 @foreach($izinList as $p)
-                                    <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                                    <div
+                                        class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                                         <div class="flex items-center flex-1">
                                             <div class="flex-shrink-0 h-10 w-10">
-                                                <div class="h-10 w-10 rounded-full bg-yellow-200 flex items-center justify-center">
-                                                    <span class="text-yellow-700 font-bold text-sm">{{ substr($p->user->name, 0, 1) }}</span>
+                                                <div
+                                                    class="h-10 w-10 rounded-full bg-yellow-200 flex items-center justify-center">
+                                                    <span
+                                                        class="text-yellow-700 font-bold text-sm">{{ substr($p->user?->name ?? '?', 0, 1) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3 flex-1">
-                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ $p->user?->name ?? 'User terhapus' }}</div>
                                                 <div class="text-xs text-gray-500">
                                                     @php $displayId = $p->user->student_id ?? $p->user->id_siswa; @endphp
                                                     @if($displayId)
@@ -193,14 +214,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Izin</span>
+                                        <span
+                                            class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Izin</span>
                                     </div>
                                 @endforeach
                             </div>
                         @else
                             <div class="text-center py-8">
-                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
+                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
                                 </svg>
                                 <p class="text-gray-500 text-sm">Tidak ada siswa yang izin</p>
                             </div>
@@ -217,15 +241,19 @@
                         @if($sakitList->count() > 0)
                             <div class="space-y-3">
                                 @foreach($sakitList as $p)
-                                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                    <div
+                                        class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
                                         <div class="flex items-center flex-1">
                                             <div class="flex-shrink-0 h-10 w-10">
-                                                <div class="h-10 w-10 rounded-full bg-blue-200 flex items-center justify-center">
-                                                    <span class="text-blue-700 font-bold text-sm">{{ substr($p->user->name, 0, 1) }}</span>
+                                                <div
+                                                    class="h-10 w-10 rounded-full bg-blue-200 flex items-center justify-center">
+                                                    <span
+                                                        class="text-blue-700 font-bold text-sm">{{ substr($p->user?->name ?? '?', 0, 1) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3 flex-1">
-                                                <div class="text-sm font-medium text-gray-900">{{ $p->user->name }}</div>
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ $p->user?->name ?? 'User terhapus' }}</div>
                                                 <div class="text-xs text-gray-500">
                                                     @php $displayId = $p->user->student_id ?? $p->user->id_siswa; @endphp
                                                     @if($displayId)
@@ -236,14 +264,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Sakit</span>
+                                        <span
+                                            class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Sakit</span>
                                     </div>
                                 @endforeach
                             </div>
                         @else
                             <div class="text-center py-8">
-                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
+                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
                                 </svg>
                                 <p class="text-gray-500 text-sm">Tidak ada siswa yang sakit</p>
                             </div>
@@ -260,11 +291,13 @@
                         @if($alphaList->count() > 0)
                             <div class="space-y-3">
                                 @foreach($alphaList as $p)
-                                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                                    <div
+                                        class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
                                         <div class="flex items-center flex-1">
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <div class="h-10 w-10 rounded-full bg-red-200 flex items-center justify-center">
-                                                    <span class="text-red-700 font-bold text-sm">{{ substr($p->user->name, 0, 1) }}</span>
+                                                    <span
+                                                        class="text-red-700 font-bold text-sm">{{ substr($p->user?->name ?? '?', 0, 1) }}</span>
                                                 </div>
                                             </div>
                                             <div class="ml-3 flex-1">
@@ -279,14 +312,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Alpha</span>
+                                        <span
+                                            class="px-3 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full whitespace-nowrap ml-2">Alpha</span>
                                     </div>
                                 @endforeach
                             </div>
                         @else
                             <div class="text-center py-8">
-                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
+                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 12c1.105 0 2-1.118 2-2.5S13.105 7 12 7s-2 1.118-2 2.5S10.895 12 12 12z" />
                                 </svg>
                                 <p class="text-gray-500 text-sm">Tidak ada siswa yang alpha</p>
                             </div>

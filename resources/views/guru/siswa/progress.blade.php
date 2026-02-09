@@ -51,7 +51,7 @@
                     </div>
                     <div class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-4 border-l-4 border-pink-500">
                         <p class="text-gray-600 text-xs font-semibold uppercase tracking-wide">Mentor</p>
-                        <p class="text-gray-900 font-bold text-lg mt-1">{{ $kelas->guru->name ?? 'N/A' }}</p>
+                        <p class="text-gray-900 font-bold text-lg mt-1">{{ $kelas->guru?->name ?? 'N/A' }}</p>
                     </div>
                     <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border-l-4 border-green-500">
                         <p class="text-gray-600 text-xs font-semibold uppercase tracking-wide">Total Pertemuan</p>

@@ -44,7 +44,7 @@
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
-                                Diupload oleh: <span class="font-medium ml-1">{{ $materi->uploadedBy->name ?? 'N/A' }}</span>
+                                Diupload oleh: <span class="font-medium ml-1">{{ $materi->uploadedBy?->name ?? 'N/A' }}</span>
                             </div>
                             <div class="flex items-center text-gray-600">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,7 +277,7 @@
                             @forelse($recentAccess as $access)
                                 <div class="flex items-center justify-between text-xs p-2 bg-gray-50 rounded">
                                     <div>
-                                        <p class="font-medium text-gray-700">{{ $access->user->name ?? 'N/A' }}</p>
+                                        <p class="font-medium text-gray-700">{{ $access->user?->name ?? 'N/A' }}</p>
                                         <p class="text-gray-500">{{ $access->tanggal_akses->format('d M Y H:i') }}</p>
                                     </div>
                                     <span class="px-2 py-1 rounded text-xs font-medium
@@ -700,7 +700,7 @@
                                 <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
-                                <strong>Pengunggah:</strong><span class="ml-2">{{ $materi->uploadedBy->name ?? 'N/A' }}</span>
+                                <strong>Pengunggah:</strong><span class="ml-2">{{ $materi->uploadedBy?->name ?? 'N/A' }}</span>
                             </div>
                             <div class="flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

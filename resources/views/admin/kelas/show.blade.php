@@ -25,7 +25,7 @@
                     <div class="p-6 sm:p-8 text-gray-900 dark:text-gray-900">
                         <p class="text-gray-600 dark:text-gray-600 mb-4 text-center max-w-3xl mx-auto">{{ $kelas->deskripsi }}</p>
                         <div class="text-center mb-8">
-                            <p class="text-gray-700 dark:text-gray-700"><strong>Guru Pengajar:</strong> {{ $kelas->guru->name ?? 'N/A' }}</p>
+                            <p class="text-gray-700 dark:text-gray-700"><strong>Guru Pengajar:</strong> {{ $kelas->guru?->name ?? 'N/A' }}</p>
                         </div>
 
                         {{-- Main Statistics --}}
@@ -129,7 +129,7 @@
                                             <tbody class="bg-white dark:bg-white divide-y divide-gray-200 dark:divide-gray-200">
                                                 @foreach ($studentsProgress as $studentData)
                                                     <tr>
-                                                        <td class="px-6 py-4 whitespace-nowrap">{{ $studentData['student']->name }}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap">{{ $studentData['student']?->name ?? 'Peserta terhapus' }}</td>
                                                         @php $displayId = $studentData['student']->student_id ?? $studentData['student']->id_siswa; @endphp
                                                         <td class="px-6 py-4 whitespace-nowrap">
                                                             @if($displayId)
