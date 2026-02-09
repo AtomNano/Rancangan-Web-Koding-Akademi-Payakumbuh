@@ -29,7 +29,7 @@ class BackupController extends Controller
      */
     public function exportUsers(Request $request)
     {
-        $request->validate(['role' => 'required|in:admin,guru,siswa']);
+        $request->validate(['role' => 'required|in:admin,guru,siswa,all']);
         $role = $request->role;
         $filename = 'data-' . $role . '-' . now()->format('Y-m-d-His') . '.xlsx';
 
@@ -90,7 +90,7 @@ class BackupController extends Controller
                 if (Storage::disk('public')->exists($file)) {
                     $filePath = Storage::disk('public')->path($file);
                     $filenameInZip = basename($file);
-                    
+
                     if (is_readable($filePath)) {
                         $zip->addFile($filePath, $filenameInZip);
                     } else {

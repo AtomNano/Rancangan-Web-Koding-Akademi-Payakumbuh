@@ -20,14 +20,13 @@ class LogsExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
     {
         return [
             'ID',
-            'Level',
-            'Pesan',
-            'URL',
-            'Metode',
+            'User',
+            'Action',
+            'Description',
+            'Model Type',
+            'Model ID',
             'IP Address',
             'User Agent',
-            'User ID',
-            'Nama User',
             'Timestamp',
         ];
     }
@@ -36,15 +35,14 @@ class LogsExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
     {
         return [
             $log->id,
-            $log->level,
-            $log->message,
-            $log->url,
-            $log->method,
+            $log->user ? $log->user->name . ' (' . $log->user->email . ')' : 'System',
+            ucfirst($log->action),
+            $log->description,
+            $log->model_type,
+            $log->model_id,
             $log->ip_address,
             $log->user_agent,
-            $log->user_id,
-            $log->user ? $log->user->name : 'N/A',
-            $log->created_at->toDateTimeString(),
+            $log->created_at->format('Y-m-d H:i:s'),
         ];
     }
 }

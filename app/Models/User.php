@@ -129,6 +129,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get classes taught by this user (for gurus)
+     */
+    public function teachingClasses()
+    {
+        return $this->hasMany(Kelas::class, 'guru_id');
+    }
+
+    /**
      * Get the user's active status from the status column (active/inactive).
      *
      * @return bool
