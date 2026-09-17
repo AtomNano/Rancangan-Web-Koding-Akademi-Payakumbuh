@@ -1,0 +1,48 @@
+@startuml "SD - Admin Create Meeting"
+
+title Sequence Diagram\\nAdmin Buat Pertemuan Baru\\nE-Learning Coding Akademi Payakumbuh
+
+actor Admin
+participant "kelasList" as List
+participant "PertemuanController" as Controller
+participant "Pertemuan" as Pertemuan
+
+Admin -> List: klikBuatPertemuan()
+activate List
+
+List -> Controller: createMeeting()
+activate Controller
+
+Controller --> List: displayForm()
+deactivate Controller
+
+List --> Admin: displayForm()
+deactivate List
+
+Admin -> List: submitData(data)
+activate List
+
+List -> Controller: store(data)
+activate Controller
+
+alt validation success
+    Controller -> Pertemuan: create()
+    activate Pertemuan
+    Pertemuan --> Controller: success
+    deactivate Pertemuan
+    
+    Controller --> List: sendSuccessNotif()
+    deactivate Controller
+    
+    List --> Admin: displayNotif()
+    deactivate List
+    
+else validation failed
+    Controller --> List: sendErrorNotif()
+    deactivate Controller
+    
+    List --> Admin: displayNotif()
+    deactivate List
+end
+
+@enduml

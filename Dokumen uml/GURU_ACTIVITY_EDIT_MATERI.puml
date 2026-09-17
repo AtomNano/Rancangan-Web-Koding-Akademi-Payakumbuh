@@ -1,0 +1,109 @@
+@startuml "Guru Activity - Edit Materi"
+
+title Guru Activity Diagram\\nEdit Materi Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+|Guru|
+start
+:Login ke sistem;
+:Buka menu "Materi Saya";
+:Lihat daftar materi;
+
+|System|
+:Tampilkan daftar materi guru;
+note right
+  Menampilkan:
+  • Judul materi
+  • Kelas
+  • Status (Pending/Approved/Rejected)
+  • Tanggal upload
+  • Tombol aksi
+end note
+
+|Guru|
+:Pilih materi yang akan diedit;
+:Klik tombol "Edit";
+
+|System|
+:Load data materi;
+:Tampilkan form edit;
+note right
+  Form sudah terisi dengan
+  data materi yang ada
+end note
+
+|Guru|
+:Ubah data yang diperlukan;
+note right
+  **Data yang bisa diubah:**
+  • Judul materi
+  • Deskripsi
+  • File (upload ulang)
+end note
+
+if (Ganti file?) then (Ya)
+  :Upload file baru;
+  |System|
+  :Validasi file baru;
+  if (File valid?) then (Ya)
+    :Hapus file lama;
+    :Upload file baru;
+    :Update file_path;
+  else (Tidak)
+    :Tampilkan error;
+    |Guru|
+    stop
+  endif
+else (Tidak)
+  :File tetap sama;
+endif
+
+|Guru|
+:Klik tombol "Update";
+
+|System|
+:Validasi input data;
+
+if (Judul kosong?) then (Ya)
+  :Tampilkan error\\n"Judul wajib diisi";
+  |Guru|
+  stop
+else (Tidak)
+  :Update data materi di database;
+  
+  if (Status sebelumnya?) then (Approved)
+    :Set status = "pending";
+    note right
+      Jika materi approved diedit,
+      status kembali ke pending
+      untuk reverifikasi admin
+    end note
+    :Kirim notifikasi ke admin;
+  else (Pending/Rejected)
+    :Status tetap pending;
+  endif
+  
+  :Set updated_at = timestamp;
+  :Log aktivitas;
+  note right
+    **Activity Log:**
+    • User: Guru
+    • Action: Updated Material
+    • Material: [judul]
+    • Changes: [field yang diubah]
+    • New Status: Pending
+    • Timestamp: [waktu]
+  end note
+  
+  |Guru|
+  :Tampilkan notifikasi sukses;
+  note right
+    "Materi berhasil diupdate!
+    Menunggu verifikasi admin."
+  end note
+  :Redirect ke daftar materi;
+  :Lihat perubahan data;
+endif
+
+stop
+
+@enduml

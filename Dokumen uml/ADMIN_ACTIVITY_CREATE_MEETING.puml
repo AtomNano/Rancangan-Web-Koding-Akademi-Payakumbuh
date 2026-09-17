@@ -1,0 +1,96 @@
+@startuml "Admin Activity - Create Meeting"
+
+title Admin Activity Diagram\\nBuat Pertemuan Baru\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Pertemuan";
+:Pilih kelas;
+
+|System|
+:Load data kelas;
+:Tampilkan halaman pertemuan kelas;
+
+|Admin|
+:Klik tombol "Buat Pertemuan Baru";
+
+|System|
+:Tampilkan form buat pertemuan;
+
+|Admin|
+:Isi tanggal pertemuan;
+note right
+  Pilih tanggal dari calendar
+end note
+
+:Isi pertemuan ke-;
+note right
+  Contoh: 1, 2, 3, dst
+  (auto-increment suggestion)
+end note
+
+:Isi topik/judul pertemuan;
+note right
+  Contoh:
+  • "Pengenalan HTML & CSS"
+  • "JavaScript Fundamentals"
+  • "Database Design"
+end note
+
+:Isi deskripsi pertemuan (opsional);
+note right
+  Deskripsi detail tentang:
+  • Materi yang akan dibahas
+  • Target pembelajaran
+  • Tugas/latihan
+end note
+
+:Klik tombol "Simpan";
+
+|System|
+:Validasi input data;
+
+if (Tanggal kosong?) then (Ya)
+  :Tampilkan error\\n"Tanggal wajib diisi";
+  |Admin|
+  stop
+else (Tidak)
+  if (Topik kosong?) then (Ya)
+    :Tampilkan error\\n"Topik wajib diisi";
+    |Admin|
+    stop
+  else (Tidak)
+    :Buat record pertemuan baru;
+    :Set kelas_id = kelas yang dipilih;
+    :Set tanggal_pertemuan;
+    :Set pertemuan_ke;
+    :Set topik & deskripsi;
+    :Set created_at = timestamp;
+    :Simpan ke database;
+    :Generate pertemuan ID;
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Admin
+      • Action: Created Meeting
+      • Class: [nama kelas]
+      • Meeting: Pertemuan ke-[X]
+      • Topic: [topik]
+      • Date: [tanggal]
+      • Timestamp: [waktu]
+    end note
+    
+    |Admin|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Pertemuan berhasil dibuat!"
+    end note
+    :Redirect ke halaman detail pertemuan;
+    :Lihat pertemuan baru (belum ada absensi);
+  endif
+endif
+
+stop
+
+@enduml

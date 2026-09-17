@@ -1,0 +1,91 @@
+@startuml "Admin Activity - Tambah User"
+
+title Admin Activity Diagram\\nTambah Pengguna Baru\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Pengguna";
+:Klik tombol "Tambah User";
+
+|System|
+:Tampilkan form tambah user;
+
+|Admin|
+:Pilih role user;
+note right
+  Role yang tersedia:
+  • Guru
+  • Siswa
+end note
+
+if (Role yang dipilih?) then (Guru)
+  :Isi form data guru;
+  note right
+    **Data Guru:**
+    • Nama Lengkap (required)
+    • Email (required, unique)
+    • Password (required, min 8 char)
+    • NIP (optional)
+    • No. Telepon (optional)
+  end note
+else (Siswa)
+  :Isi form data siswa;
+  note right
+    **Data Siswa:**
+    • Nama Lengkap (required)
+    • Email (required, unique)
+    • Password (required, min 8 char)
+    • NIS (required, unique)
+    • Kelas (optional)
+    • No. Telepon (optional)
+  end note
+endif
+
+:Klik tombol "Simpan";
+
+|System|
+:Validasi input data;
+
+if (Email sudah terdaftar?) then (Ya)
+  :Tampilkan error\\n"Email sudah digunakan";
+  |Admin|
+  stop
+else (Tidak)
+  if (NIS sudah terdaftar?\\n(untuk siswa)) then (Ya)
+    :Tampilkan error\\n"NIS sudah digunakan";
+    |Admin|
+    stop
+  else (Tidak)
+    if (Password < 8 karakter?) then (Ya)
+      :Tampilkan error\\n"Password minimal 8 karakter";
+      |Admin|
+      stop
+    else (Tidak)
+      :Hash password;
+      :Set is_active = true (default);
+      :Simpan user ke database;
+      :Generate user ID;
+      :Log aktivitas;
+      note right
+        **Activity Log:**
+        • User: Admin
+        • Action: Created User
+        • Details: [nama user]
+        • Timestamp: [waktu]
+      end note
+      
+      |Admin|
+      :Tampilkan notifikasi sukses;
+      note right
+        "User berhasil ditambahkan!"
+      end note
+      :Redirect ke halaman daftar user;
+      :Lihat user baru di daftar;
+    endif
+  endif
+endif
+
+stop
+
+@enduml

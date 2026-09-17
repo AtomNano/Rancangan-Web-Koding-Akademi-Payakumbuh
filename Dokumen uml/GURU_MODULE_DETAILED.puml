@@ -1,0 +1,152 @@
+@startuml "Guru Module - Detailed Use Case"
+
+title E-Learning Coding Akademi Payakumbuh\\nGuru Module - Detailed Use Case Diagram\\nBased on Actual Codebase - December 2025
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+actor "GURU" as Guru #3498DB
+
+rectangle "Guru Module" as GuruModule {
+    
+    ' ===== 1. KELOLA MATERI (MateriController) =====
+    package "Kelola Materi" as MateriPkg #E6F3FF {
+        usecase "Upload Materi\\n(PDF/Video)" as UploadMateri
+        usecase "Edit Materi" as EditMateri
+        usecase "Delete Materi" as DeleteMateri
+        usecase "Melihat Semua Materi" as ViewAllMateri
+        usecase "Melihat Detail Materi" as ViewMateriDetail
+        usecase "Download Materi" as DownloadMateri
+    }
+    
+    ' ===== 2. KELOLA PERTEMUAN & INPUT ABSENSI (Guru\PertemuanController) =====
+    package "Kelola Pertemuan & Input Absensi" as PertemuanPkg #FFF9E6 {
+        usecase "Membuat Pertemuan Baru" as CreatePertemuan
+        usecase "Mengubah Detail\\nPertemuan" as EditPertemuan
+        usecase "Menghapus Pertemuan" as DeletePertemuan
+        usecase "Melihat Detail Pertemuan" as ViewPertemuan
+        
+        usecase "Input Absensi Siswa" as InputAbsen
+        usecase "Melihat Detail Absensi\\nper Pertemuan" as ViewAbsenDetail
+        usecase "Pilih Kelas untuk\\nInput Absensi" as SelectKelasAbsen
+        usecase "Pilih Pertemuan untuk\\nInput Absensi" as SelectPertemuanAbsen
+    }
+    
+    ' ===== 3. KELOLA KELAS (GuruKelasController) =====
+    package "Kelola Kelas" as KelasPkg #E6FFE6 {
+        usecase "Melihat Daftar Kelas\\nyang Diajar" as ViewMyKelas
+        usecase "Melihat Detail Kelas\\n& Daftar Siswa" as ViewKelasDetail
+        usecase "Export Learning Log\\nper Siswa" as ExportStudentLog
+    }
+    
+    ' ===== 4. MONITOR PROGRESS SISWA (Guru\PertemuanController) =====
+    package "Monitor Progress Siswa" as MonitorPkg #FFE6F3 {
+        usecase "Melihat Progress\\nSiswa per Kelas" as ViewStudentProgress
+        usecase "Melihat Learning Log\\nSiswa" as ViewLearningLog
+    }
+}
+
+' ===== GURU CONNECTIONS =====
+' Material Management
+Guru --> UploadMateri
+Guru --> EditMateri
+Guru --> DeleteMateri
+Guru --> ViewAllMateri
+Guru --> ViewMateriDetail
+Guru --> DownloadMateri
+
+' Meeting & Attendance
+Guru --> CreatePertemuan
+Guru --> EditPertemuan
+Guru --> DeletePertemuan
+Guru --> ViewPertemuan
+Guru --> InputAbsen
+Guru --> ViewAbsenDetail
+Guru --> SelectKelasAbsen
+Guru --> SelectPertemuanAbsen
+
+' Class Management
+Guru --> ViewMyKelas
+Guru --> ViewKelasDetail
+Guru --> ExportStudentLog
+
+' Student Monitoring
+Guru --> ViewStudentProgress
+Guru --> ViewLearningLog
+
+' ===== RELATIONSHIPS =====
+SelectKelasAbsen ..> SelectPertemuanAbsen : <<next>>
+SelectPertemuanAbsen ..> InputAbsen : <<next>>
+InputAbsen ..> ViewAbsenDetail : <<update>>
+UploadMateri ..> ViewAllMateri : <<update>>
+
+' ===== NOTES =====
+note right of Guru
+  **GURU (Teacher)**
+  Mengelola materi, pertemuan,
+  dan monitoring siswa
+  
+  **Controllers:**
+  • MateriController
+  • GuruKelasController
+  • Guru\\PertemuanController
+end note
+
+note bottom of MateriPkg
+  **MateriController (Guru)**
+  Routes: /guru/materi/*
+  • index() - List materi guru
+  • create() - Form upload materi
+  • store() - Upload materi baru
+  • show() - Detail materi
+  • edit() - Form edit materi
+  • update() - Update materi
+  • destroy() - Hapus materi
+  • download() - Download file
+  
+  **Status Materi:**
+  • pending - Menunggu verifikasi admin
+  • approved - Disetujui, siswa bisa akses
+  • rejected - Ditolak admin
+end note
+
+note bottom of PertemuanPkg
+  **Guru\\PertemuanController**
+  Routes: /guru/kelas/{kelas}/pertemuan/*
+  • index() - List pertemuan
+  • create() - Form buat pertemuan
+  • store() - Simpan pertemuan
+  • show() - Detail pertemuan
+  • edit() - Form edit pertemuan
+  • update() - Update pertemuan
+  • destroy() - Hapus pertemuan
+  • storeAbsen() - Input absensi
+  • absenDetail() - Detail absensi
+  • attendanceIndex() - Pilih kelas
+  • attendanceSelectPertemuan() - Pilih pertemuan
+  • studentProgress() - Progress siswa
+end note
+
+note bottom of KelasPkg
+  **GuruKelasController**
+  Routes: /guru/kelas/*
+  • index() - List kelas yang diajar
+  • show() - Detail kelas + siswa
+  
+  **Akses Kelas:**
+  Guru bisa akses kelas via:
+  1. guru_id di tabel kelas
+  2. enrollment di tabel enrollments
+end note
+
+note bottom of MonitorPkg
+  **Monitor Progress**
+  Guru dapat melihat:
+  • Progress materi siswa
+  • Riwayat absensi siswa
+  • Learning log per siswa
+  • Export Excel learning log
+end note
+
+@enduml

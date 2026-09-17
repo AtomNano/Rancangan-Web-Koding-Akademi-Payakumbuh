@@ -1,0 +1,101 @@
+@startuml "Admin Activity - Enroll Student"
+
+title Admin Activity Diagram\\nEnroll Siswa ke Kelas\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Kelas";
+:Pilih kelas untuk enrollment;
+:Klik tombol "Enroll Siswa";
+
+|System|
+:Load data kelas;
+:Load daftar semua siswa aktif;
+:Load siswa yang sudah enrolled;
+:Filter siswa yang belum enrolled;
+:Tampilkan form enrollment;
+
+|Admin|
+:Lihat daftar siswa tersedia;
+note right
+  Daftar siswa yang:
+  • Status aktif (is_active = true)
+  • Belum enrolled di kelas ini
+end note
+
+:Pilih siswa yang akan dienroll;
+note right
+  **Pilihan:**
+  • Pilih satu siswa
+  • Pilih multiple siswa (checkbox)
+  • Select all siswa
+end note
+
+if (Berapa siswa dipilih?) then (Satu siswa)
+  :Centang checkbox 1 siswa;
+elseif (Multiple siswa) then
+  :Centang checkbox beberapa siswa;
+else (Semua siswa)
+  :Klik "Select All";
+  :Semua siswa tercentang;
+endif
+
+:Klik tombol "Enroll";
+
+|System|
+:Validasi pilihan;
+
+if (Tidak ada siswa dipilih?) then (Ya)
+  :Tampilkan error\\n"Pilih minimal 1 siswa";
+  |Admin|
+  stop
+else (Tidak)
+  :Mulai proses enrollment;
+  
+  repeat
+    :Ambil siswa dari list;
+    
+    :Cek apakah sudah enrolled;
+    if (Sudah enrolled?) then (Ya)
+      :Skip siswa ini;
+      note right
+        Seharusnya tidak terjadi
+        karena sudah difilter
+      end note
+    else (Tidak)
+      :Buat record enrollment;
+      :Set user_id = siswa;
+      :Set kelas_id = kelas;
+      :Set enrolled_at = timestamp;
+      :Simpan ke database;
+    endif
+    
+  repeat while (Masih ada siswa?) is (Ya)
+  ->Tidak;
+  
+  :Hitung total siswa berhasil dienroll;
+  :Log aktivitas;
+  note right
+    **Activity Log:**
+    • User: Admin
+    • Action: Enrolled Students
+    • Class: [nama kelas]
+    • Students: [daftar nama]
+    • Count: [jumlah]
+    • Timestamp: [waktu]
+  end note
+  
+  |Admin|
+  :Tampilkan notifikasi sukses;
+  note right
+    "[X] siswa berhasil dienroll
+    ke kelas [nama kelas]"
+  end note
+  :Redirect ke halaman detail kelas;
+  :Lihat siswa baru di daftar enrolled;
+endif
+
+stop
+
+@enduml

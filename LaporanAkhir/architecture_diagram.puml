@@ -1,0 +1,97 @@
+@startuml
+title Arsitektur Sistem - Materi Online\nCoding Academy Payakumbuh
+
+' A4 Page Size Settings (Portrait: 210mm x 297mm)
+skinparam page {
+    borderColor white
+    margin 10
+}
+skinparam dpi 150
+scale 1.0
+
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultFontSize 10
+
+' Color scheme
+skinparam package {
+    BackgroundColor<<presentation>> #FFE4B5
+    BackgroundColor<<application>> #B0E0E6
+    BackgroundColor<<data>> #98FB98
+}
+
+' ===== PRESENTATION LAYER =====
+package "PRESENTATION LAYER" <<presentation>> {
+    node "Browser (Admin)" as BrowserAdmin
+    node "Browser (Guru)" as BrowserGuru
+    node "Browser (Siswa)" as BrowserSiswa
+}
+
+' ===== APPLICATION LAYER =====
+package "APPLICATION LAYER" <<application>> {
+    node "Web Server (Apache)" as WebServer {
+        package "Laravel 11.x" as Laravel {
+            component "Routes & Middleware" as Routes
+            
+            package "Controllers" {
+                component "UserController" as UserCtrl
+                component "KelasController" as KelasCtrl
+                component "MateriController" as MateriCtrl
+                component "SiswaController" as SiswaCtrl
+            }
+            
+            package "Models (Eloquent)" {
+                component "User, Kelas, Materi" as Models
+                component "Enrollment, Pertemuan" as Models2
+            }
+            
+            component "Views (Blade)" as Views
+        }
+    }
+}
+
+' ===== DATA LAYER =====
+package "DATA LAYER" <<data>> {
+    database "MySQL 8.0" as MySQL {
+        storage "users, kelas, materi" as Tables1
+        storage "enrollments, pertemuan" as Tables2
+        storage "absens, materi_progress" as Tables3
+    }
+    
+    folder "File Storage\n(/storage/app/public/)" as FileStorage {
+        file "PDF & Video Files" as Files
+    }
+}
+
+' ===== CONNECTIONS =====
+BrowserAdmin -down-> WebServer : HTTPS
+BrowserGuru -down-> WebServer : HTTPS
+BrowserSiswa -down-> WebServer : HTTPS
+
+Routes -down-> UserCtrl
+Routes -down-> KelasCtrl
+Routes -down-> MateriCtrl
+Routes -down-> SiswaCtrl
+
+UserCtrl -down-> Models
+KelasCtrl -down-> Models
+MateriCtrl -down-> Models
+SiswaCtrl -down-> Models2
+
+Models -down-> MySQL
+Models2 -down-> MySQL
+MateriCtrl -right-> FileStorage
+
+' Notes
+note right of Laravel
+    **MVC Architecture**
+    PHP 8.2
+end note
+
+note bottom of MySQL
+    12 Tables
+    Relational DB
+end note
+
+@enduml

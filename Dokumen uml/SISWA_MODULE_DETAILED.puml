@@ -1,0 +1,123 @@
+@startuml "Siswa Module - Detailed Use Case"
+
+title E-Learning Coding Akademi Payakumbuh\\nSiswa Module - Detailed Use Case Diagram\\nBased on Actual Codebase - December 2025
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+actor "SISWA" as Siswa #2ECC71
+
+rectangle "Siswa Module" as SiswaModule {
+    
+    ' ===== 1. AKSES KELAS & MATERI (SiswaController) =====
+    package "Akses Kelas & Materi" as KelasPkg #E6FFE6 {
+        usecase "Melihat Dashboard\\n(Daftar Kelas)" as ViewDashboard
+        usecase "Melihat Detail Kelas\\n& Daftar Materi" as ViewKelasDetail
+        usecase "Melihat Detail Materi\\n(PDF/Video)" as ViewMateri
+        usecase "Download Materi" as DownloadMateri
+    }
+    
+    ' ===== 2. PROGRESS PEMBELAJARAN (SiswaController + MateriProgressController) =====
+    package "Progress Pembelajaran" as ProgressPkg #E6F3FF {
+        usecase "Complete Materi\\n(Mark as Done)" as CompleteMateri
+        usecase "Track PDF Progress\\n(Current Page)" as TrackPDFProgress
+        usecase "Mark Materi\\nas Completed" as MarkCompleted
+        usecase "Melihat Progress\\nSemua Kelas" as ViewAllProgress
+    }
+    
+    ' ===== 3. SUBMIT ABSENSI (SiswaController) =====
+    package "Submit Absensi" as AbsenPkg #FFF9E6 {
+        usecase "Submit Absensi\\nper Materi" as SubmitAbsen
+        usecase "Auto Record\\nAttendance" as AutoAttendance
+    }
+}
+
+' ===== SISWA CONNECTIONS =====
+' Class & Material Access
+Siswa --> ViewDashboard
+Siswa --> ViewKelasDetail
+Siswa --> ViewMateri
+Siswa --> DownloadMateri
+
+' Progress Tracking
+Siswa --> CompleteMateri
+Siswa --> TrackPDFProgress
+Siswa --> MarkCompleted
+Siswa --> ViewAllProgress
+
+' Attendance
+Siswa --> SubmitAbsen
+Siswa --> AutoAttendance
+
+' ===== RELATIONSHIPS =====
+ViewDashboard ..> ViewKelasDetail : <<select>>
+ViewKelasDetail ..> ViewMateri : <<select>>
+ViewMateri ..> TrackPDFProgress : <<while reading>>
+ViewMateri ..> CompleteMateri : <<finish>>
+TrackPDFProgress ..> MarkCompleted : <<auto complete>>
+SubmitAbsen ..> AutoAttendance : <<trigger>>
+
+' ===== NOTES =====
+note right of Siswa
+  **SISWA (Student)**
+  Akses materi, track progress,
+  dan submit absensi
+  
+  **Controllers:**
+  • SiswaController
+  • MateriProgressController
+end note
+
+note bottom of KelasPkg
+  **SiswaController - Class & Material**
+  Routes: /siswa/*
+  • dashboard() - Dashboard + enrolled classes
+  • showClass() - Class detail + materials
+  • showMateri() - Material detail (PDF/Video)
+  
+  **Access Control:**
+  Siswa hanya bisa akses:
+  • Kelas yang mereka enrolled
+  • Materi dengan status "approved"
+end note
+
+note bottom of ProgressPkg
+  **Progress Tracking**
+  
+  **SiswaController:**
+  • completeMateri() - Mark as completed
+  • progress() - View all progress
+  
+  **MateriProgressController:**
+  • updateProgress() - Update PDF page
+  • getProgress() - Get current progress
+  • markCompleted() - Auto complete
+  
+  **Progress Data:**
+  • current_page - Halaman terakhir dibaca
+  • total_pages - Total halaman PDF
+  • progress_percentage - Persentase (%)
+  • is_completed - Status completion
+  • last_read_at - Waktu terakhir baca
+end note
+
+note bottom of AbsenPkg
+  **Submit Absensi**
+  Routes: /siswa/materi/{materi}/absen
+  
+  **SiswaController:**
+  • submitAbsen() - Submit attendance
+  • recordAttendance() - Auto record (deprecated)
+  
+  **Attendance Status:**
+  • hadir - Present
+  • izin - Permission
+  • sakit - Sick
+  • alpha - Absent
+  
+  **Note:** Siswa submit absensi
+  per materi, bukan per pertemuan
+end note
+
+@enduml

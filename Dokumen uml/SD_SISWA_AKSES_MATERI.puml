@@ -1,0 +1,59 @@
+@startuml "SD - Siswa Akses Materi"
+
+title Sequence Diagram\\nSiswa Akses Materi Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+actor Siswa
+participant "materiList" as List
+participant "MateriController" as Controller
+participant "Materi" as Materi
+participant "MateriProgress" as Progress
+
+Siswa -> List: klikBukaMateri()
+activate List
+
+List -> Controller: showMateri(materi_id)
+activate Controller
+
+Controller -> Materi: find(id)
+activate Materi
+Materi --> Controller: materiData
+deactivate Materi
+
+alt materi approved
+    Controller -> Progress: getUserProgress()
+    activate Progress
+    Progress --> Controller: progressData
+    deactivate Progress
+    
+    Controller --> List: displayMateri()
+    deactivate Controller
+    
+    List --> Siswa: displayMateri()
+    deactivate List
+    
+    Siswa -> List: gantiHalaman(page)
+    activate List
+    
+    List -> Controller: updateProgress(page)
+    activate Controller
+    
+    Controller -> Progress: update()
+    activate Progress
+    Progress --> Controller: success
+    deactivate Progress
+    
+    Controller --> List: sendSuccessNotif()
+    deactivate Controller
+    
+    List --> Siswa: displayNotif()
+    deactivate List
+    
+else materi not approved
+    Controller --> List: sendErrorNotif()
+    deactivate Controller
+    
+    List --> Siswa: displayNotif()
+    deactivate List
+end
+
+@enduml

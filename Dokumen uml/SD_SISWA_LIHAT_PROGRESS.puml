@@ -1,0 +1,33 @@
+@startuml "SD - Siswa Lihat Progress"
+
+title Sequence Diagram\\nSiswa Lihat Progress Pembelajaran\\nE-Learning Coding Akademi Payakumbuh
+
+actor Siswa
+participant "progressPage" as Page
+participant "SiswaController" as Controller
+participant "MateriProgress" as Progress
+participant "Presensi" as Presensi
+
+Siswa -> Page: klikMenuProgress()
+activate Page
+
+Page -> Controller: getProgress()
+activate Controller
+
+Controller -> Progress: getClassProgress()
+activate Progress
+Progress --> Controller: progressData
+deactivate Progress
+
+Controller -> Presensi: getAttendanceStats()
+activate Presensi
+Presensi --> Controller: attendanceData
+deactivate Presensi
+
+Controller --> Page: displayProgress()
+deactivate Controller
+
+Page --> Siswa: displayProgress()
+deactivate Page
+
+@enduml

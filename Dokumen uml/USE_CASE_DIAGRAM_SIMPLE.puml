@@ -1,0 +1,133 @@
+@startuml "E-Learning Coding Akademi - Use Case (Simplified)"
+
+title E-Learning Coding Akademi Payakumbuh\nUse Case Diagram v2.0 (Simplified)\nVerified - December 2025
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+' Actors
+actor "ADMIN" as Admin #E74C3C
+actor "GURU" as Guru #3498DB  
+actor "SISWA" as Siswa #2ECC71
+
+rectangle "E-Learning System" as System {
+    
+    ' ===== AUTHENTICATION =====
+    package "Autentikasi" as AuthPkg {
+      usecase "Login" as Login
+      usecase "Login dengan\nGoogle OAuth" as OAuth
+      usecase "Logout" as Logout
+    }
+    
+    ' ===== ADMIN =====
+    package "Admin Functions" as AdminPkg #FFE6E6 {
+      usecase "Kelola Pengguna\n(CRUD, Activate/Deactivate)" as AdminUser
+      usecase "Kelola Kelas\n(CRUD, Enroll/Unenroll)" as AdminClass
+      usecase "Kelola Pertemuan\n& Absensi" as AdminMeeting
+      usecase "Verifikasi Materi\n(Approve/Reject/Remind)" as AdminVerify
+      usecase "Monitoring\n(Dashboard, Logs,\nProgress)" as AdminMonitor
+      usecase "Backup & Export\n(Users, DB, Materials)" as AdminBackup
+    }
+    
+    ' ===== GURU =====
+    package "Guru Functions" as GuruPkg #E6F3FF {
+      usecase "Kelola Materi\n(Upload/Edit/Delete)" as GuruMaterial
+      usecase "Kelola Pertemuan\n& Input Absensi" as GuruMeeting
+      usecase "Kelola Kelas\n(View Students,\nExport Logs)" as GuruClass
+      usecase "Monitor Progress\nSiswa" as GuruMonitor
+    }
+    
+    ' ===== SISWA =====
+    package "Siswa Functions" as SiswaPkg #E6FFE6 {
+      usecase "Akses Kelas\n& Materi" as SiswaAccess
+      usecase "Progress Pembelajaran\n(Complete, Track PDF)" as SiswaProgress
+      usecase "Submit Absensi" as SiswaAbsen
+      usecase "View Dashboard" as SiswaDashboard
+    }
+    
+    ' ===== SHARED =====
+    package "Shared Features" as SharedPkg {
+      usecase "Notifikasi" as Notification
+      usecase "Edit Profile" as Profile
+    }
+}
+
+' ===== ADMIN CONNECTIONS =====
+Admin --> Login
+Admin --> Logout
+Admin --> AdminUser
+Admin --> AdminClass
+Admin --> AdminMeeting
+Admin --> AdminVerify
+Admin --> AdminMonitor
+Admin --> AdminBackup
+Admin --> Notification
+Admin --> Profile
+
+' ===== GURU CONNECTIONS =====
+Guru --> Login
+Guru --> Logout
+Guru --> GuruMaterial
+Guru --> GuruMeeting
+Guru --> GuruClass
+Guru --> GuruMonitor
+Guru --> Notification
+Guru --> Profile
+
+' ===== SISWA CONNECTIONS =====
+Siswa --> Login
+Siswa --> Logout
+Siswa --> SiswaAccess
+Siswa --> SiswaProgress
+Siswa --> SiswaAbsen
+Siswa --> SiswaDashboard
+Siswa --> Notification
+Siswa --> Profile
+
+' ===== RELATIONSHIPS =====
+Login ..> OAuth : <<include>>
+AdminVerify ..> Notification : <<notify>>
+GuruMaterial ..> Notification : <<notify>>
+
+' ===== NOTES =====
+note right of Admin
+  **ADMIN (Pengurus)**
+  • Full control sistem
+  • Manajemen users & kelas
+  • Verifikasi materi
+  • Pertemuan & absensi
+  • Backup data
+end note
+
+note right of Guru
+  **GURU (Teacher)**
+  • Upload materi
+  • Kelola pertemuan
+  • Input absensi
+  • Monitor siswa
+end note
+
+note right of Siswa
+  **SISWA (Student)**
+  • Akses materi
+  • Track progress
+  • Submit absensi
+  • View dashboard
+end note
+
+note bottom of System
+  **Platform E-Learning Coding Akademi Payakumbuh**
+  Version 2.10 | Laravel 11 | MySQL
+  
+  **Key Features:**
+  ✅ Role-based Access (Admin/Guru/Siswa)
+  ✅ Google OAuth Login
+  ✅ Meeting & Attendance Management
+  ✅ Material Verification Workflow
+  ✅ PDF Progress Tracking
+  ✅ Notification System
+  ✅ Export & Backup Features
+end note
+
+@enduml

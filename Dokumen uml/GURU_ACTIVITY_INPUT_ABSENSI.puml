@@ -1,0 +1,138 @@
+@startuml "Guru Activity - Input Absensi"
+
+title Guru Activity Diagram\\nInput Absensi Siswa\\nE-Learning Coding Akademi Payakumbuh
+
+|Guru|
+start
+:Login ke sistem;
+:Buka menu "Absensi";
+:Pilih kelas yang diajar;
+
+|System|
+:Load daftar pertemuan kelas;
+:Tampilkan daftar pertemuan;
+
+|Guru|
+:Pilih pertemuan untuk input absensi;
+:Klik "Input Absensi";
+
+|System|
+:Load data pertemuan;
+:Load daftar siswa enrolled;
+:Load presensi yang sudah ada (jika ada);
+:Tampilkan form input absensi;
+note right
+  Form menampilkan:
+  • Info pertemuan (tanggal, topik)
+  • Daftar siswa enrolled
+  • Radio button status per siswa
+  • Tombol simpan
+end note
+
+|Guru|
+:Lihat daftar siswa;
+
+repeat
+  :Pilih siswa;
+  :Pilih status kehadiran;
+  note right
+    **Status Kehadiran:**
+    ○ Hadir
+    ○ Izin
+    ○ Sakit
+    ○ Alpha
+  end note
+  
+repeat while (Masih ada siswa?) is (Ya)
+->Tidak;
+
+:Klik tombol "Simpan Absensi";
+
+|System|
+:Validasi input;
+
+if (Ada siswa yang belum\\ndiisi statusnya?) then (Ya)
+  :Tampilkan peringatan;
+  note right
+    "Masih ada [X] siswa yang
+    belum diisi status kehadirannya.
+    Lanjutkan simpan?"
+  end note
+  
+  |Guru|
+  if (Konfirmasi?) then (Ya)
+    :Klik "Ya, Simpan";
+  else (Tidak)
+    :Kembali ke form;
+    stop
+  endif
+else (Tidak)
+  ' Lanjut proses
+endif
+
+|System|
+:Mulai simpan presensi;
+
+repeat
+  :Ambil data siswa & status;
+  
+  :Cek apakah sudah ada presensi;
+  if (Sudah ada?) then (Ya)
+    :Update presensi existing;
+    note right
+      UPDATE presensi
+      SET status = [status]
+      WHERE user_id = [siswa]
+      AND pertemuan_id = [pertemuan]
+    end note
+  else (Tidak)
+    :Insert presensi baru;
+    note right
+      INSERT INTO presensi
+      (user_id, pertemuan_id, status)
+      VALUES ([siswa], [pertemuan], [status])
+    end note
+  endif
+  
+repeat while (Masih ada siswa?) is (Ya)
+->Tidak;
+
+:Hitung statistik kehadiran;
+note right
+  • Total siswa
+  • Hadir: X siswa
+  • Izin: X siswa
+  • Sakit: X siswa
+  • Alpha: X siswa
+  • % Kehadiran
+end note
+
+:Log aktivitas;
+note right
+  **Activity Log:**
+  • User: Guru
+  • Action: Input Attendance
+  • Meeting: Pertemuan ke-[X]
+  • Class: [nama kelas]
+  • Date: [tanggal]
+  • Students: [jumlah]
+  • Timestamp: [waktu]
+end note
+
+|Guru|
+:Tampilkan notifikasi sukses;
+note right
+  "Absensi berhasil disimpan!
+  
+  Hadir: [X] siswa
+  Izin: [X] siswa
+  Sakit: [X] siswa
+  Alpha: [X] siswa"
+end note
+
+:Redirect ke detail pertemuan;
+:Lihat statistik absensi;
+
+stop
+
+@enduml

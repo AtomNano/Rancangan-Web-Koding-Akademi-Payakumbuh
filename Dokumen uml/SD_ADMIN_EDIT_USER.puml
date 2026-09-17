@@ -1,0 +1,53 @@
+@startuml "SD - Admin Edit User"
+
+title Sequence Diagram\\nAdmin Edit Data User\\nE-Learning Coding Akademi Payakumbuh
+
+actor Admin
+participant "userList" as List
+participant "UserController" as Controller
+participant "User" as User
+
+Admin -> List: klikEdit()
+activate List
+
+List -> Controller: editUser(user_id)
+activate Controller
+
+Controller -> User: find(id)
+activate User
+User --> Controller: userData
+deactivate User
+
+Controller --> List: displayForm()
+deactivate Controller
+
+List --> Admin: displayForm()
+deactivate List
+
+Admin -> List: updateData()
+activate List
+
+List -> Controller: update(data)
+activate Controller
+
+alt validation success
+    Controller -> User: update()
+    activate User
+    User --> Controller: success
+    deactivate User
+    
+    Controller --> List: sendSuccessNotif()
+    deactivate Controller
+    
+    List --> Admin: displayNotif()
+    deactivate List
+    
+else validation failed
+    Controller --> List: sendErrorNotif()
+    deactivate Controller
+    
+    List --> Admin: displayNotif()
+    deactivate List
+end
+
+@enduml

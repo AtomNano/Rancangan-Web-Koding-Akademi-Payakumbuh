@@ -1,0 +1,96 @@
+@startuml "Admin Activity - Export Attendance"
+
+title Admin Activity Diagram\\nExport Absensi Kelas (Excel)\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Kelas";
+:Pilih kelas untuk export;
+:Lihat detail kelas;
+
+|System|
+:Load data kelas;
+:Tampilkan detail kelas;
+
+|Admin|
+:Klik tombol "Export Absensi";
+
+|System|
+:Mulai generate Excel;
+:Query data pertemuan kelas;
+:Query data siswa enrolled;
+:Query data presensi;
+
+:Buat struktur Excel;
+note right
+  **Format Excel:**
+  Header:
+  • Nama Kelas
+  • Guru Pengajar
+  • Periode Export
+  
+  Kolom:
+  • No
+  • NIS
+  • Nama Siswa
+  • Pertemuan 1, 2, 3, ... N
+  • Total Hadir
+  • Total Izin
+  • Total Sakit
+  • Total Alpha
+  • % Kehadiran
+end note
+
+repeat
+  :Ambil data siswa;
+  
+  repeat
+    :Ambil data pertemuan;
+    :Cek presensi siswa di pertemuan;
+    
+    if (Ada presensi?) then (Ya)
+      :Isi cell dengan status;
+      note right
+        • H = Hadir
+        • I = Izin
+        • S = Sakit
+        • A = Alpha
+      end note
+    else (Tidak)
+      :Isi cell dengan "-";
+    endif
+    
+  repeat while (Masih ada pertemuan?) is (Ya)
+  ->Tidak;
+  
+  :Hitung total per status;
+  :Hitung persentase kehadiran;
+  note right
+    % = (Total Hadir / Total Pertemuan) × 100
+  end note
+  
+repeat while (Masih ada siswa?) is (Ya)
+->Tidak;
+
+:Format Excel (border, color, etc);
+:Set column width auto;
+:Generate filename;
+note right
+  Format:
+  absensi-[nama-kelas]-[timestamp].xlsx
+  
+  Contoh:
+  absensi-web-development-2025-12-27.xlsx
+end note
+
+:Download file Excel;
+
+|Admin|
+:File berhasil didownload;
+:Buka file Excel;
+:Lihat data absensi lengkap;
+
+stop
+
+@enduml

@@ -1,0 +1,203 @@
+@startuml "SD - Siswa Lengkap"
+
+title Sequence Diagram\\nSiswa - Semua Fitur\\nE-Learning Coding Akademi Payakumbuh
+
+actor Siswa
+participant "Page" as Page
+participant "SiswaController" as SiswaCtrl
+participant "MateriProgressController" as ProgressCtrl
+participant "Model" as Model
+database "Database" as DB
+
+== AKSES PEMBELAJARAN (US3001-US3002) ==
+
+Siswa -> Page: lihatDashboard()
+activate Page
+Page -> SiswaCtrl: dashboard()
+activate SiswaCtrl
+SiswaCtrl -> Model: getEnrolledKelas(siswaId)
+Model -> DB: SELECT via enrollments
+DB --> Model: kelasList
+SiswaCtrl -> Model: getOverallProgress(siswaId)
+Model -> DB: SELECT materi_progress
+DB --> Model: progressData
+SiswaCtrl --> Page: displayDashboard()
+deactivate SiswaCtrl
+Page --> Siswa: tampilkanDashboard()
+deactivate Page
+
+Siswa -> Page: lihatDaftarKelas()
+activate Page
+Page -> SiswaCtrl: kelas()
+activate SiswaCtrl
+SiswaCtrl -> Model: getEnrolledKelas(siswaId)
+Model -> DB: SELECT kelas via enrollments
+DB --> Model: kelasList
+SiswaCtrl --> Page: displayKelasList()
+deactivate SiswaCtrl
+Page --> Siswa: tampilkanKelasYangDiikuti()
+deactivate Page
+
+Siswa -> Page: pilihKelas(kelasId)
+activate Page
+Page -> SiswaCtrl: showKelas(kelasId)
+activate SiswaCtrl
+SiswaCtrl -> Model: getApprovedMateri(kelasId)
+Model -> DB: SELECT WHERE status='approved'
+DB --> Model: materiList
+SiswaCtrl --> Page: displayMateriList()
+deactivate SiswaCtrl
+Page --> Siswa: tampilkanDaftarMateri()
+deactivate Page
+
+Siswa -> Page: aksesMateri(materiId)
+activate Page
+Page -> SiswaCtrl: showMateri(materiId)
+activate SiswaCtrl
+SiswaCtrl -> Model: findOrFail(materiId)
+Model -> DB: SELECT materi
+DB --> Model: materiData
+SiswaCtrl -> Model: getOrCreateProgress(siswaId, materiId)
+Model -> DB: SELECT/INSERT materi_progress
+DB --> Model: progressData
+alt PDF
+    SiswaCtrl --> Page: displayPDFViewer()
+else Video
+    SiswaCtrl --> Page: displayVideoPlayer()
+end
+deactivate SiswaCtrl
+Page --> Siswa: tampilkanMateri()
+deactivate Page
+
+== PROGRESS & STATUS (US3003-US3004) ==
+
+Siswa -> Page: lihatProgressBar()
+activate Page
+Page -> ProgressCtrl: getProgress(kelasId)
+activate ProgressCtrl
+ProgressCtrl -> Model: getClassProgress(siswaId, kelasId)
+Model -> DB: SELECT materi_progress
+DB --> Model: progressData
+ProgressCtrl --> Page: displayProgressBar()
+deactivate ProgressCtrl
+Page --> Siswa: tampilkanProgressVisual()
+note right: Progress bar per kelas
+deactivate Page
+
+Siswa -> Page: pindahHalamanPDF(page)
+activate Page
+Page -> ProgressCtrl: updateProgress(materiId, page)
+activate ProgressCtrl
+note right: AJAX auto-save
+ProgressCtrl -> Model: update(currentPage)
+Model -> DB: UPDATE materi_progress
+note right
+    current_page = page
+    progress_percentage = (page/total)*100
+end note
+DB --> Model: success
+ProgressCtrl --> Page: jsonSuccess()
+deactivate ProgressCtrl
+Page --> Siswa: progressTersimpan()
+deactivate Page
+
+Siswa -> Page: tandaiSelesai(materiId)
+activate Page
+Page -> ProgressCtrl: markCompleted(materiId)
+activate ProgressCtrl
+ProgressCtrl -> Model: setCompleted()
+Model -> DB: UPDATE is_completed=true
+DB --> Model: success
+ProgressCtrl -> Model: createPresensi()
+Model -> DB: INSERT presensis
+DB --> Model: success
+ProgressCtrl --> Page: successMessage()
+deactivate ProgressCtrl
+Page --> Siswa: "Materi selesai!"
+deactivate Page
+
+== STATUS PEMBAYARAN (US3005) ==
+
+Siswa -> Page: lihatStatusPembayaran()
+activate Page
+Page -> SiswaCtrl: profile()
+activate SiswaCtrl
+SiswaCtrl -> Model: getPaymentInfo(siswaId)
+Model -> DB: SELECT users
+DB --> Model: paymentData
+SiswaCtrl --> Page: displayProfile()
+deactivate SiswaCtrl
+Page --> Siswa: tampilkanStatusPembayaran()
+note right
+    Biaya pendaftaran
+    Biaya angsuran
+    Total biaya
+    Metode pembayaran
+end note
+deactivate Page
+
+== NOTIFIKASI (US3006, US0007) ==
+
+Siswa -> Page: cekNotifikasi()
+activate Page
+Page -> SiswaCtrl: notifications()
+activate SiswaCtrl
+SiswaCtrl -> Model: getNotifications(siswaId)
+Model -> DB: SELECT notifications
+DB --> Model: notifList
+SiswaCtrl --> Page: displayNotifications()
+deactivate SiswaCtrl
+Page --> Siswa: tampilkanNotifikasi()
+note right
+    - Materi baru tersedia
+    - Kelas akan berakhir
+    - Pengingat belajar
+end note
+deactivate Page
+
+== AUTENTIKASI (US0001-US0005) ==
+
+Siswa -> Page: login(email, password)
+activate Page
+Page -> SiswaCtrl: authenticate(credentials)
+activate SiswaCtrl
+SiswaCtrl -> Model: validateCredentials()
+Model -> DB: SELECT users
+DB --> Model: userData
+alt Valid
+    SiswaCtrl --> Page: redirectToDashboard()
+else Invalid
+    SiswaCtrl --> Page: errorMessage()
+end
+deactivate SiswaCtrl
+Page --> Siswa: hasil login
+deactivate Page
+
+Siswa -> Page: ubahPassword(oldPass, newPass)
+activate Page
+Page -> SiswaCtrl: changePassword(request)
+activate SiswaCtrl
+SiswaCtrl -> Model: validateOldPassword()
+Model -> DB: SELECT password
+DB --> Model: hash
+SiswaCtrl -> Model: updatePassword(newPass)
+Model -> DB: UPDATE password
+DB --> Model: success
+SiswaCtrl --> Page: successMessage()
+deactivate SiswaCtrl
+Page --> Siswa: "Password berhasil diubah"
+deactivate Page
+
+Siswa -> Page: logout()
+activate Page
+Page -> SiswaCtrl: logout()
+activate SiswaCtrl
+SiswaCtrl -> Model: destroySession()
+Model -> DB: DELETE sessions
+DB --> Model: success
+SiswaCtrl --> Page: redirectToLogin()
+deactivate SiswaCtrl
+Page --> Siswa: halamanLogin
+deactivate Page
+
+@enduml

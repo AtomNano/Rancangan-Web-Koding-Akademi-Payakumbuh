@@ -1,0 +1,301 @@
+@startuml E-Learning Database Model classDiagram
+
+' Styling
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BackgroundColor<<User>> #E1F5FE
+    BackgroundColor<<Class>> #FFF9C4
+    BackgroundColor<<Material>> #F3E5F5
+    BackgroundColor<<Attendance>> #E8F5E9
+    BackgroundColor<<Progress>> #FFE0B2
+    BackgroundColor<<Log>> #FFEBEE
+    BorderColor #424242
+    ArrowColor #424242
+}
+
+' Entities
+entity "users" as users <<User>> {
+    **id** : bigint <<PK>>
+    --
+    name : string
+    email : string <<UK>>
+    password : string
+    role : enum(admin, guru, siswa)
+    --
+    # Student Fields
+    id_siswa : string <<UK>>
+    student_id : string
+    tanggal_pendaftaran : date
+    sekolah : string
+    bidang_ajar : json
+    hari_belajar : json
+    durasi : string
+    --
+    # Admin/Guru Fields
+    kode_admin : string <<UK>>
+    kode_guru : string <<UK>>
+    --
+    # Payment Fields
+    metode_pembayaran : string
+    biaya_pendaftaran : decimal(10,2)
+    biaya_angsuran : decimal(10,2)
+    total_biaya : decimal(10,2)
+    status_promo : string
+    discount_type : string
+    discount_value : decimal(10,2)
+    total_setelah_diskon : decimal(10,2)
+    --
+    # Personal Info
+    no_telepon : string
+    alamat : text
+    tanggal_lahir : date
+    jenis_kelamin : enum(L, P)
+    --
+    status : enum(active, inactive)
+    email_verified_at : timestamp
+    deleted_at : timestamp
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity "kelas" as kelas <<Class>> {
+    **id** : bigint <<PK>>
+    --
+    nama_kelas : string
+    deskripsi : text
+    guru_id : bigint <<FK>>
+    bidang : string
+    status : enum(active, inactive)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity "enrollments" as enrollments <<Class>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    kelas_id : bigint <<FK>>
+    status : enum(active, expiring, inactive)
+    --
+    start_date : date
+    duration_months : integer
+    monthly_quota : integer
+    target_sessions : integer
+    sessions_attended : integer
+    last_session_notified_at : timestamp
+    --
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity "materis" as materis <<Material>> {
+    **id** : bigint <<PK>>
+    --
+    judul : string
+    deskripsi : text
+    file_path : string
+    file_type : enum(pdf, video, document)
+    kelas_id : bigint <<FK>>
+    status : enum(pending, approved, rejected)
+    uploaded_by : bigint <<FK>>
+    --
+    deleted_at : timestamp
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity "pertemuans" as pertemuans <<Class>> {
+    **id** : bigint <<PK>>
+    --
+    kelas_id : bigint <<FK>>
+    judul_pertemuan : string
+    deskripsi : text
+    tanggal_pertemuan : date
+    waktu_mulai : time
+    waktu_selesai : time
+    guru_id : bigint <<FK>>
+    materi_id : bigint <<FK>> (nullable)
+    materi : text (legacy)
+    --
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity "presensis" as presensis <<Attendance>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    pertemuan_id : bigint <<FK>>
+    materi_id : bigint <<FK>> (nullable)
+    status_kehadiran : enum(H, I, S, A)
+    tanggal_akses : timestamp
+    --
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity "materi_progress" as materi_progress <<Progress>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    materi_id : bigint <<FK>>
+    current_page : integer
+    total_pages : integer
+    progress_percentage : decimal(5,2)
+    is_completed : boolean
+    last_read_at : timestamp
+    --
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity "activity_logs" as activity_logs <<Log>> {
+    **id** : bigint <<PK>>
+    --
+    user_id : bigint <<FK>>
+    action : string
+    model_type : string (polymorphic)
+    model_id : bigint (polymorphic)
+    description : text
+    old_values : json
+    new_values : json
+    ip_address : string
+    user_agent : text
+    --
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+' Relationships
+
+' User relationships
+users ||--o{ enrollments : "enrolls in"
+users ||--o{ materis : "uploads"
+users ||--o{ presensis : "has attendance"
+users ||--o{ materi_progress : "tracks progress"
+users ||--o{ activity_logs : "performs actions"
+users ||--o{ kelas : "teaches (guru_id)"
+users ||--o{ pertemuans : "leads (guru_id)"
+
+' Kelas relationships
+kelas ||--o{ enrollments : "has enrollments"
+kelas ||--o{ materis : "contains materials"
+kelas ||--o{ pertemuans : "has meetings"
+
+' Enrollment relationships
+enrollments }o--|| users : "belongs to student"
+enrollments }o--|| kelas : "belongs to class"
+
+' Materi relationships
+materis }o--|| kelas : "belongs to class"
+materis }o--|| users : "uploaded by guru"
+materis ||--o{ materi_progress : "has progress"
+materis ||--o{ presensis : "has attendance"
+
+' Pertemuan relationships
+pertemuans }o--|| kelas : "belongs to class"
+pertemuans }o--|| users : "led by guru"
+pertemuans }o--o| materis : "references material"
+pertemuans ||--o{ presensis : "has attendance"
+
+' Presensi relationships
+presensis }o--|| users : "belongs to student"
+presensis }o--|| pertemuans : "belongs to meeting"
+presensis }o--o| materis : "references material"
+
+' Materi Progress relationships
+materi_progress }o--|| users : "belongs to student"
+materi_progress }o--|| materis : "tracks material"
+
+' Activity Log relationships
+activity_logs }o--|| users : "performed by"
+
+' Notes
+note right of users
+  **User Roles:**
+  - admin: System administrator
+  - guru: Teacher
+  - siswa: Student
+  
+  **Auto-Generated IDs:**
+  - id_siswa: NNN-KK-MMYYYY
+  - kode_admin: ADMIN-NNNN
+  - kode_guru: GURU-NNNN
+end note
+
+note right of enrollments
+  **Enrollment Status:**
+  - active: Active enrollment
+  - expiring: Low quota warning
+  - inactive: Expired/completed
+  
+  **Quota System:**
+  target_sessions = 
+    duration_months × monthly_quota
+end note
+
+note right of materis
+  **Material Status:**
+  - pending: Awaiting approval
+  - approved: Ready for students
+  - rejected: Not approved
+  
+  **File Types:**
+  - pdf: PDF documents
+  - video: YouTube links/videos
+  - document: Other documents
+end note
+
+note right of presensis
+  **Attendance Status:**
+  - H: Hadir (Present)
+  - I: Izin (Excused)
+  - S: Sakit (Sick)
+  - A: Alpa (Absent)
+  
+  Only "H" counts toward
+  sessions_attended quota
+end note
+
+note right of materi_progress
+  **Progress Tracking:**
+  - Tracks PDF page reading
+  - Auto-calculates percentage
+  - Marks complete when
+    current_page >= total_pages
+end note
+
+note right of activity_logs
+  **Activity Actions:**
+  create, update, delete,
+  approve, reject,
+  enroll, unenroll
+  
+  **Polymorphic:**
+  Can reference any model
+  via model_type + model_id
+end note
+
+' Legend
+legend right
+  **Legend:**
+  PK = Primary Key
+  FK = Foreign Key
+  UK = Unique Key
+  
+  **Cardinality:**
+  ||--o{ = One to Many
+  }o--|| = Many to One
+  }o--o| = Many to Optional One
+  
+  **Database Statistics:**
+  - Total Tables: 8
+  - Total Relationships: 16
+  - Foreign Keys: 13
+  - Unique Constraints: 4
+  - Soft Deletes: 2 (users, materis)
+endlegend
+
+@enduml

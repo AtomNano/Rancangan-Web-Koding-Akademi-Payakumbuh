@@ -1,0 +1,97 @@
+@startuml "AD - Siswa"
+
+title Activity Diagram - Siswa\nSistem E-Learning Materi Online
+
+skinparam dpi 150
+scale 0.65
+
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+    BackgroundColor #FFF8DC
+    BorderColor #D4A574
+}
+
+|#FFF8DC| Siswa |
+|#F5F5F5| Sistem |
+
+start
+
+|Siswa|
+:Input email & password;
+
+|Sistem|
+:Validasi kredensial;
+
+if (Valid?) then (Ya)
+    :Tampilkan Dashboard;
+else (Tidak)
+    :Tampilkan error;
+    stop
+endif
+
+|Siswa|
+:Pilih menu;
+
+if (Menu?) then (Lihat Kelas)
+    |Sistem|
+    :Query kelas enrolled;
+    :Tampilkan kelas + progress bar;
+    
+elseif (Akses Materi) then
+    |Siswa|
+    :Pilih kelas;
+    |Sistem|
+    :Tampilkan materi approved;
+    |Siswa|
+    :Pilih materi;
+    |Sistem|
+    if (Tipe?) then (PDF)
+        :Tampilkan PDF Viewer;
+        |Siswa|
+        :Baca PDF;
+        :Navigasi halaman;
+        |Sistem|
+        :Auto-save progress;
+    else (Video)
+        :Tampilkan Video Player;
+        |Siswa|
+        :Tonton video;
+    endif
+    |Siswa|
+    if (Selesai?) then (Ya)
+        :Klik Tandai Selesai;
+        |Sistem|
+        :Update completed=true;
+        :Catat kehadiran;
+    else (Tidak)
+        :Tutup materi;
+        |Sistem|
+        :Progress tersimpan;
+    endif
+    
+elseif (Lihat Progress) then
+    |Sistem|
+    :Hitung persentase;
+    :Tampilkan progress bar;
+    
+elseif (Lihat Profil) then
+    |Sistem|
+    :Tampilkan status pembayaran;
+    
+else (Ubah Password)
+    |Siswa|
+    :Input password baru;
+    |Sistem|
+    :Update password;
+    
+endif
+
+|Siswa|
+:Logout;
+
+|Sistem|
+:Hapus session;
+
+stop
+
+@enduml

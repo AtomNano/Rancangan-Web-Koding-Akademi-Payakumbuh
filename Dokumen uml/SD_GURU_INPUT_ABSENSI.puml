@@ -1,0 +1,53 @@
+@startuml "SD - Guru Input Absensi"
+
+title Sequence Diagram\\nGuru Input Absensi Siswa\\nE-Learning Coding Akademi Payakumbuh
+
+actor Guru
+participant "pertemuanList" as List
+participant "PertemuanController" as Controller
+participant "Presensi" as Presensi
+
+Guru -> List: klikInputAbsensi()
+activate List
+
+List -> Controller: inputAbsensi(pertemuan_id)
+activate Controller
+
+Controller -> Presensi: getExistingAttendance()
+activate Presensi
+Presensi --> Controller: attendanceData
+deactivate Presensi
+
+Controller --> List: displayForm()
+deactivate Controller
+
+List --> Guru: displayForm()
+deactivate List
+
+Guru -> List: inputStatus()
+activate List
+
+List -> Controller: saveAttendance(data)
+activate Controller
+
+alt validation success
+    Controller -> Presensi: updateOrCreate()
+    activate Presensi
+    Presensi --> Controller: success
+    deactivate Presensi
+    
+    Controller --> List: sendSuccessNotif()
+    deactivate Controller
+    
+    List --> Guru: displayNotif()
+    deactivate List
+    
+else validation failed
+    Controller --> List: sendErrorNotif()
+    deactivate Controller
+    
+    List --> Guru: displayNotif()
+    deactivate List
+end
+
+@enduml

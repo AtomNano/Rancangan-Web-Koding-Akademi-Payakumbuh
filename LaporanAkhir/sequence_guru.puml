@@ -1,0 +1,167 @@
+@startuml "SD - Guru Lengkap"
+
+title Sequence Diagram\\nGuru - Semua Fitur\\nE-Learning Coding Akademi Payakumbuh
+
+actor Guru
+participant "Page" as Page
+participant "GuruMateriController" as MateriCtrl
+participant "GuruKelasController" as KelasCtrl
+participant "GuruPertemuanController" as PertemuanCtrl
+participant "Model" as Model
+participant "Storage" as Storage
+database "Database" as DB
+
+== MANAJEMEN MATERI (US2001-US2002, US2005-US2006) ==
+
+Guru -> Page: klikUploadMateri()
+activate Page
+Page -> MateriCtrl: create()
+activate MateriCtrl
+MateriCtrl --> Page: displayForm()
+deactivate MateriCtrl
+Page --> Guru: tampilkanForm()
+deactivate Page
+
+Guru -> Page: submitMateri(judul, deskripsi, file)
+activate Page
+Page -> MateriCtrl: store(request)
+activate MateriCtrl
+MateriCtrl -> Storage: putFile(file)
+activate Storage
+Storage --> MateriCtrl: filePath
+deactivate Storage
+MateriCtrl -> Model: create(data)
+note right: status = 'pending'
+Model -> DB: INSERT materis
+DB --> Model: success
+MateriCtrl --> Page: redirectWithSuccess()
+deactivate MateriCtrl
+Page --> Guru: "Materi berhasil diupload"
+deactivate Page
+
+Guru -> Page: lihatStatusMateri()
+activate Page
+Page -> MateriCtrl: index()
+activate MateriCtrl
+MateriCtrl -> Model: getByUploader(guruId)
+Model -> DB: SELECT WHERE uploaded_by=guruId
+DB --> Model: materiList
+MateriCtrl --> Page: displayWithStatus()
+deactivate MateriCtrl
+Page --> Guru: tampilkanDenganStatus()
+note right: pending/approved/rejected
+deactivate Page
+
+Guru -> Page: editMateri(id, data)
+activate Page
+Page -> MateriCtrl: update(id, request)
+activate MateriCtrl
+MateriCtrl -> Model: findOrFail(id)
+Model -> DB: SELECT materi
+DB --> Model: materi
+note right: Hanya bisa edit\njika status pending/rejected
+MateriCtrl -> Model: update(data)
+Model -> DB: UPDATE materis
+DB --> Model: success
+MateriCtrl --> Page: redirectWithSuccess()
+deactivate MateriCtrl
+Page --> Guru: "Materi berhasil diupdate"
+deactivate Page
+
+Guru -> Page: hapusMateri(id)
+activate Page
+Page -> MateriCtrl: destroy(id)
+activate MateriCtrl
+MateriCtrl -> Model: findOrFail(id)
+Model -> DB: SELECT materi
+DB --> Model: materi
+MateriCtrl -> Storage: delete(filePath)
+Storage --> MateriCtrl: deleted
+MateriCtrl -> Model: delete()
+Model -> DB: DELETE materis
+DB --> Model: success
+MateriCtrl --> Page: redirectWithSuccess()
+deactivate MateriCtrl
+Page --> Guru: "Materi berhasil dihapus"
+deactivate Page
+
+== LIHAT KELAS & SISWA ==
+
+Guru -> Page: lihatKelasSaya()
+activate Page
+Page -> KelasCtrl: index()
+activate KelasCtrl
+KelasCtrl -> Model: getByGuru(guruId)
+Model -> DB: SELECT kelas WHERE guru_id=guruId
+DB --> Model: kelasList
+KelasCtrl --> Page: displayKelas()
+deactivate KelasCtrl
+Page --> Guru: tampilkanKelasDiampu()
+deactivate Page
+
+Guru -> Page: lihatSiswaKelas(kelasId)
+activate Page
+Page -> KelasCtrl: show(kelasId)
+activate KelasCtrl
+KelasCtrl -> Model: getSiswaEnrolled(kelasId)
+Model -> DB: SELECT via enrollments
+DB --> Model: siswaList
+KelasCtrl --> Page: displaySiswa()
+deactivate KelasCtrl
+Page --> Guru: tampilkanDaftarSiswa()
+deactivate Page
+
+== MONITORING SISWA (US2003-US2004, US2007) ==
+
+Guru -> Page: lihatDaftarHadir(pertemuanId)
+activate Page
+Page -> PertemuanCtrl: showAbsensi(pertemuanId)
+activate PertemuanCtrl
+PertemuanCtrl -> Model: getAbsensi(pertemuanId)
+Model -> DB: SELECT presensis
+DB --> Model: absensiList
+PertemuanCtrl --> Page: displayAbsensi()
+deactivate PertemuanCtrl
+Page --> Guru: tampilkanAbsensi()
+deactivate Page
+
+Guru -> Page: monitorProgress(kelasId)
+activate Page
+Page -> KelasCtrl: progress(kelasId)
+activate KelasCtrl
+KelasCtrl -> Model: getProgressBySiswa(kelasId)
+Model -> DB: SELECT materi_progress
+DB --> Model: progressData
+KelasCtrl --> Page: displayProgress()
+deactivate KelasCtrl
+Page --> Guru: tampilkanProgressSiswa()
+note right: Persentase per siswa
+deactivate Page
+
+Guru -> Page: laporanKehadiran(filter)
+activate Page
+Page -> PertemuanCtrl: reportAbsensi(filter)
+activate PertemuanCtrl
+PertemuanCtrl -> Model: getFilteredAbsensi(filter)
+Model -> DB: SELECT dengan filter
+DB --> Model: data
+PertemuanCtrl --> Page: displayReport()
+deactivate PertemuanCtrl
+Page --> Guru: tampilkanLaporan()
+deactivate Page
+
+== INPUT ABSENSI (jika ada hak akses) ==
+
+Guru -> Page: inputAbsensiSiswa(data)
+activate Page
+Page -> PertemuanCtrl: storeAbsensi(request)
+activate PertemuanCtrl
+PertemuanCtrl -> Model: createAbsensi(data)
+Model -> DB: INSERT presensis
+DB --> Model: success
+PertemuanCtrl --> Page: redirect()
+deactivate PertemuanCtrl
+Page --> Guru: "Absensi tersimpan"
+deactivate Page
+
+@enduml

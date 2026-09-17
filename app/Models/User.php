@@ -220,22 +220,44 @@ class User extends Authenticatable
     /**
      * Generate kode Admin otomatis
      * Format: ADMIN-NNNN (Contoh: ADMIN-0001)
+     * Menggunakan MAX agar aman saat ada data yang dihapus (menghindari duplicate key)
      */
     public static function generateKodeAdmin()
     {
-        $count = User::where('role', 'admin')->whereNotNull('kode_admin')->count();
-        $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        $maxKode = User::where('role', 'admin')
+            ->whereNotNull('kode_admin')
+            ->max('kode_admin');
+
+        if ($maxKode) {
+            // Ekstrak angka dari format 'ADMIN-XXXX'
+            $lastNumber = (int) substr($maxKode, strrpos($maxKode, '-') + 1);
+        } else {
+            $lastNumber = 0;
+        }
+
+        $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         return "ADMIN-{$nextNumber}";
     }
 
     /**
      * Generate kode Guru otomatis
      * Format: GURU-NNNN (Contoh: GURU-0001)
+     * Menggunakan MAX agar aman saat ada data yang dihapus (menghindari duplicate key)
      */
     public static function generateKodeGuru()
     {
-        $count = User::where('role', 'guru')->whereNotNull('kode_guru')->count();
-        $nextNumber = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        $maxKode = User::where('role', 'guru')
+            ->whereNotNull('kode_guru')
+            ->max('kode_guru');
+
+        if ($maxKode) {
+            // Ekstrak angka dari format 'GURU-XXXX'
+            $lastNumber = (int) substr($maxKode, strrpos($maxKode, '-') + 1);
+        } else {
+            $lastNumber = 0;
+        }
+
+        $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         return "GURU-{$nextNumber}";
     }
 

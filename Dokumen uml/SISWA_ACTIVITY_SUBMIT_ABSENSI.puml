@@ -1,0 +1,93 @@
+@startuml "Siswa Activity - Submit Absensi"
+
+title Siswa Activity Diagram\\nSubmit Absensi\\nE-Learning Coding Akademi Payakumbuh
+
+|Siswa|
+start
+:Login ke sistem;
+:Akses materi pembelajaran;
+
+|System|
+:Tampilkan materi;
+:Tampilkan form absensi;
+note right
+  Form absensi muncul
+  saat siswa akses materi
+end note
+
+|Siswa|
+:Lihat form absensi;
+
+if (Sudah submit absensi?) then (Ya)
+  :Tampilkan status absensi;
+  note right
+    "Anda sudah submit absensi:
+    Status: [Hadir/Izin/Sakit/Alpha]
+    Tanggal: [tanggal]"
+  end note
+  :Lanjut belajar materi;
+  
+else (Belum)
+  :Pilih status kehadiran;
+  note right
+    **Pilih Status:**
+    ○ Hadir
+    ○ Izin
+    ○ Sakit
+    ○ Alpha
+  end note
+  
+  :Klik "Submit Absensi";
+  
+  |System|
+  :Validasi input;
+  
+  if (Status dipilih?) then (Ya)
+    :Cek apakah sudah pernah submit;
+    
+    if (Sudah pernah submit?) then (Ya)
+      :Update presensi existing;
+      note right
+        UPDATE presensi
+        SET status = [status baru]
+        WHERE user_id = [siswa]
+        AND materi_id = [materi]
+      end note
+    else (Belum)
+      :Insert presensi baru;
+      note right
+        INSERT INTO presensi
+        (user_id, materi_id, status)
+        VALUES ([siswa], [materi], [status])
+      end note
+    endif
+    
+    :Set created_at = timestamp;
+    :Log aktivitas;
+    note right
+      **Activity Log:**
+      • User: Siswa
+      • Action: Submit Attendance
+      • Material: [judul materi]
+      • Status: [status]
+      • Timestamp: [waktu]
+    end note
+    
+    |Siswa|
+    :Tampilkan notifikasi sukses;
+    note right
+      "Absensi berhasil disubmit!
+      Status: [status]"
+    end note
+    :Lanjut belajar materi;
+    
+  else (Tidak)
+    :Tampilkan error\\n"Pilih status kehadiran";
+    |Siswa|
+    stop
+  endif
+endif
+
+stop
+
+@enduml

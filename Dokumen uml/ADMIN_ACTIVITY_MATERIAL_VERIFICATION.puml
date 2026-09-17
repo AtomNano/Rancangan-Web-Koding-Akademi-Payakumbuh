@@ -1,0 +1,175 @@
+@startuml "Admin Activity - Material Verification Overview"
+
+title Admin Activity Diagram\\nVerifikasi Materi - Overview\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Verifikasi Materi";
+
+|System|
+:Load daftar materi pending;
+
+|Admin|
+if (Ada materi pending?) then (Ya)
+  :Pilih materi untuk direview;
+  :Preview/Download file;
+  :Review konten materi;
+  
+  partition "Pilih Keputusan" {
+    :Tentukan keputusan verifikasi;
+  }
+  
+  split
+    -> Approve;
+    :Klik "Approve";
+    :Isi catatan (optional);
+    |System|
+    :Set status = approved;
+    :Kirim notifikasi ke guru;
+    |Admin|
+    :Materi dapat diakses siswa;
+    
+  split again
+    -> Reject;
+    :Klik "Reject";
+    :Isi alasan penolakan;
+    |System|
+    :Set status = rejected;
+    :Kirim notifikasi + alasan;
+    |Admin|
+    :Guru perlu perbaiki;
+    
+  split again
+    -> Remind;
+    :Klik "Kirim Reminder";
+    :Isi pesan reminder;
+    |System|
+    :Kirim notifikasi reminder;
+    |Admin|
+    :Reminder terkirim;
+  end split
+  
+else (Tidak)
+  :Tampilkan pesan\\n"Tidak ada materi pending";
+endif
+
+stop
+
+note right
+  **Material Verification Operations:**
+  • Approve Materi
+  • Reject Materi (dengan alasan)
+  • Send Reminder ke Guru
+  
+  **Status Flow:**
+  pending → approved (siswa bisa akses)
+  pending → rejected (guru harus perbaiki)
+  
+  **Detail diagrams:**
+  • ADMIN_ACTIVITY_APPROVE_MATERIAL.puml
+  • ADMIN_ACTIVITY_REJECT_MATERIAL.puml
+end note
+
+@enduml
+
+
+title Admin Activity Diagram\\nVerifikasi Materi\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Verifikasi Materi";
+
+|System|
+:Load daftar materi pending;
+:Tampilkan list materi;
+
+|Admin|
+if (Ada materi pending?) then (Ya)
+  :Pilih materi untuk direview;
+  :Lihat detail materi;
+  note right
+    Detail materi:
+    • Judul materi
+    • Deskripsi
+    • Kelas
+    • Guru yang upload
+    • Tanggal upload
+    • File (PDF/Video)
+  end note
+  
+  :Preview/Download file materi;
+  :Review konten materi;
+  
+  if (Keputusan verifikasi?) then (Approve)
+    :Klik "Approve";
+    :Isi catatan (opsional);
+    
+    |System|
+    :Update status = "approved";
+    :Simpan catatan admin;
+    :Kirim notifikasi ke guru;
+    note right
+      Notifikasi:
+      "Materi Anda telah disetujui
+      dan dapat diakses siswa"
+    end note
+    :Log aktivitas;
+    
+    |Admin|
+    :Tampilkan pesan sukses;
+    :Materi dapat diakses siswa;
+    
+  elseif (Reject) then
+    :Klik "Reject";
+    :Isi alasan penolakan;
+    note right
+      Alasan wajib diisi
+      untuk feedback ke guru
+    end note
+    
+    |System|
+    :Update status = "rejected";
+    :Simpan alasan penolakan;
+    :Kirim notifikasi ke guru;
+    note right
+      Notifikasi:
+      "Materi Anda ditolak.
+      Alasan: [alasan admin]"
+    end note
+    :Log aktivitas;
+    
+    |Admin|
+    :Tampilkan pesan sukses;
+    
+  else (Remind)
+    :Klik "Kirim Reminder";
+    :Isi pesan reminder;
+    
+    |System|
+    :Kirim notifikasi reminder ke guru;
+    note right
+      Notifikasi:
+      "Reminder: Mohon cek
+      materi yang pending"
+    end note
+    :Log aktivitas;
+    
+    |Admin|
+    :Tampilkan pesan sukses;
+  endif
+  
+  if (Masih ada materi pending lain?) then (Ya)
+    :Kembali ke daftar materi;
+    detach
+  else (Tidak)
+    stop
+  endif
+  
+else (Tidak)
+  :Tampilkan pesan "Tidak ada materi pending";
+  stop
+endif
+
+@enduml

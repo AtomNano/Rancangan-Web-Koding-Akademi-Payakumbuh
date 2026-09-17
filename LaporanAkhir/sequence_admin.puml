@@ -1,0 +1,235 @@
+@startuml "SD - Admin Lengkap"
+
+title Sequence Diagram\\nAdmin - Semua Fitur\\nE-Learning Coding Akademi Payakumbuh
+
+actor Admin
+participant "Page" as Page
+participant "UserController" as UserCtrl
+participant "KelasController" as KelasCtrl
+participant "MateriController" as MateriCtrl
+participant "PertemuanController" as PertemuanCtrl
+participant "BackupController" as BackupCtrl
+participant "Model" as Model
+database "Database" as DB
+
+== MANAJEMEN PENGGUNA (US1001-US1017, US1021) ==
+
+Admin -> Page: klikMenuGuru()
+activate Page
+Page -> UserCtrl: index('guru')
+activate UserCtrl
+UserCtrl -> Model: getGuru()
+Model -> DB: SELECT users WHERE role='guru'
+DB --> Model: guruList
+Model --> UserCtrl: data
+UserCtrl --> Page: displayList()
+deactivate UserCtrl
+Page --> Admin: tampilkanDaftarGuru()
+deactivate Page
+
+Admin -> Page: tambahGuru(data)
+activate Page
+Page -> UserCtrl: store(request)
+activate UserCtrl
+UserCtrl -> Model: create(data)
+Model -> DB: INSERT users
+DB --> Model: success
+UserCtrl --> Page: redirect()
+deactivate UserCtrl
+Page --> Admin: "Guru berhasil ditambah"
+deactivate Page
+
+Admin -> Page: editGuru(id, data)
+activate Page
+Page -> UserCtrl: update(id, request)
+activate UserCtrl
+UserCtrl -> Model: update(data)
+Model -> DB: UPDATE users
+DB --> Model: success
+UserCtrl --> Page: redirect()
+deactivate UserCtrl
+Page --> Admin: "Guru berhasil diupdate"
+deactivate Page
+
+Admin -> Page: hapusGuru(id)
+activate Page
+Page -> UserCtrl: destroy(id)
+activate UserCtrl
+UserCtrl -> Model: delete()
+Model -> DB: DELETE users
+DB --> Model: success
+UserCtrl --> Page: redirect()
+deactivate UserCtrl
+Page --> Admin: "Guru berhasil dihapus"
+deactivate Page
+
+Admin -> Page: toggleStatus(id)
+activate Page
+Page -> UserCtrl: activate(id) / deactivate(id)
+activate UserCtrl
+UserCtrl -> Model: updateStatus()
+Model -> DB: UPDATE status
+DB --> Model: success
+UserCtrl --> Page: redirect()
+deactivate UserCtrl
+Page --> Admin: "Status diubah"
+deactivate Page
+
+note right: Sama untuk CRUD Siswa
+
+== MANAJEMEN KELAS (US1005-US1007, US1018, US1020) ==
+
+Admin -> Page: buatKelas(data)
+activate Page
+Page -> KelasCtrl: store(request)
+activate KelasCtrl
+KelasCtrl -> Model: create(data)
+Model -> DB: INSERT kelas
+DB --> Model: success
+KelasCtrl --> Page: redirect()
+deactivate KelasCtrl
+Page --> Admin: "Kelas berhasil dibuat"
+deactivate Page
+
+Admin -> Page: enrollSiswa(kelasId, siswaId)
+activate Page
+Page -> KelasCtrl: enroll(request)
+activate KelasCtrl
+KelasCtrl -> Model: createEnrollment()
+Model -> DB: INSERT enrollments
+DB --> Model: success
+KelasCtrl --> Page: redirect()
+deactivate KelasCtrl
+Page --> Admin: "Siswa berhasil didaftarkan"
+deactivate Page
+
+Admin -> Page: unenrollSiswa(kelasId, siswaId)
+activate Page
+Page -> KelasCtrl: unenroll(request)
+activate KelasCtrl
+KelasCtrl -> Model: deleteEnrollment()
+Model -> DB: DELETE enrollments
+DB --> Model: success
+KelasCtrl --> Page: redirect()
+deactivate KelasCtrl
+Page --> Admin: "Siswa dikeluarkan"
+deactivate Page
+
+== VERIFIKASI MATERI (US1008-US1009, US1019, US1025) ==
+
+Admin -> Page: klikMenuMateri()
+activate Page
+Page -> MateriCtrl: index()
+activate MateriCtrl
+MateriCtrl -> Model: getPending()
+Model -> DB: SELECT WHERE status='pending'
+DB --> Model: materiList
+MateriCtrl --> Page: displayList()
+deactivate MateriCtrl
+Page --> Admin: tampilkanMateriPending()
+deactivate Page
+
+alt Approve
+    Admin -> Page: approveMateri(id)
+    activate Page
+    Page -> MateriCtrl: approve(id)
+    activate MateriCtrl
+    MateriCtrl -> Model: updateStatus('approved')
+    Model -> DB: UPDATE materis
+    DB --> Model: success
+    MateriCtrl --> Page: success()
+    deactivate MateriCtrl
+    Page --> Admin: "Materi disetujui"
+    deactivate Page
+else Reject
+    Admin -> Page: rejectMateri(id, alasan)
+    activate Page
+    Page -> MateriCtrl: reject(id, alasan)
+    activate MateriCtrl
+    MateriCtrl -> Model: updateStatus('rejected')
+    Model -> DB: UPDATE materis
+    DB --> Model: success
+    MateriCtrl --> Page: success()
+    deactivate MateriCtrl
+    Page --> Admin: "Materi ditolak"
+    deactivate Page
+end
+
+== PERTEMUAN & ABSENSI (US1010-US1013) ==
+
+Admin -> Page: buatPertemuan(data)
+activate Page
+Page -> PertemuanCtrl: store(request)
+activate PertemuanCtrl
+PertemuanCtrl -> Model: create(data)
+Model -> DB: INSERT pertemuan
+DB --> Model: success
+PertemuanCtrl --> Page: redirect()
+deactivate PertemuanCtrl
+Page --> Admin: "Pertemuan dibuat"
+deactivate Page
+
+Admin -> Page: inputAbsensi(data)
+activate Page
+Page -> PertemuanCtrl: storeAbsensi(request)
+activate PertemuanCtrl
+PertemuanCtrl -> Model: createAbsensi()
+Model -> DB: INSERT presensis
+DB --> Model: success
+PertemuanCtrl --> Page: redirect()
+deactivate PertemuanCtrl
+Page --> Admin: "Absensi tersimpan"
+deactivate Page
+
+== LAPORAN & EXPORT (US1022-US1028) ==
+
+Admin -> Page: exportAbsensi(filter)
+activate Page
+Page -> BackupCtrl: exportAttendance(request)
+activate BackupCtrl
+BackupCtrl -> Model: getAttendanceData()
+Model -> DB: SELECT absensi
+DB --> Model: data
+BackupCtrl --> Page: downloadExcel()
+deactivate BackupCtrl
+Page --> Admin: fileExcel
+deactivate Page
+
+Admin -> Page: exportLearningLog(filter)
+activate Page
+Page -> BackupCtrl: exportLearningLog(request)
+activate BackupCtrl
+BackupCtrl -> Model: getProgressData()
+Model -> DB: SELECT progress
+DB --> Model: data
+BackupCtrl --> Page: downloadExcel()
+deactivate BackupCtrl
+Page --> Admin: fileExcel
+deactivate Page
+
+== BACKUP (US1027, US1029) ==
+
+Admin -> Page: backupDatabase()
+activate Page
+Page -> BackupCtrl: backup()
+activate BackupCtrl
+BackupCtrl -> DB: mysqldump
+DB --> BackupCtrl: sqlFile
+BackupCtrl --> Page: downloadSQL()
+deactivate BackupCtrl
+Page --> Admin: backupFile
+deactivate Page
+
+Admin -> Page: downloadMateriZip()
+activate Page
+Page -> BackupCtrl: downloadZip()
+activate BackupCtrl
+BackupCtrl -> Model: getAllMateri()
+Model -> DB: SELECT file_path
+DB --> Model: files
+BackupCtrl --> Page: downloadZip()
+deactivate BackupCtrl
+Page --> Admin: zipFile
+deactivate Page
+
+@enduml

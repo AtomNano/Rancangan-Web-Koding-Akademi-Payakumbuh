@@ -1,0 +1,74 @@
+@startuml "Admin Activity - User Management Overview"
+
+title Admin Activity Diagram\\nKelola Pengguna - Overview\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Kelola Pengguna";
+
+partition "Pilih Operasi" {
+  :Pilih aksi yang akan dilakukan;
+}
+
+split
+  -> Tambah User;
+  :Buka form tambah user;
+  :Isi data user;
+  |System|
+  :Validasi & simpan;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Edit User;
+  :Pilih user;
+  :Edit data;
+  |System|
+  :Update database;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Hapus User;
+  :Pilih user;
+  :Konfirmasi;
+  |System|
+  :Hapus dari DB;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Activate/Deactivate;
+  :Pilih user;
+  :Toggle status;
+  |System|
+  :Update status;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Lihat Daftar;
+  :Tampilkan list;
+  :Filter (optional);
+  :Lihat detail;
+end split
+
+stop
+
+note right
+  **User Management Operations:**
+  • Tambah User (Guru/Siswa)
+  • Edit User
+  • Hapus User
+  • Activate/Deactivate
+  • Lihat Daftar User
+  
+  **Detail diagrams:**
+  • ADMIN_ACTIVITY_ADD_USER.puml
+  • ADMIN_ACTIVITY_EDIT_USER.puml
+  • ADMIN_ACTIVITY_DELETE_USER.puml
+  • ADMIN_ACTIVITY_ACTIVATE_DEACTIVATE_USER.puml
+end note
+
+@enduml

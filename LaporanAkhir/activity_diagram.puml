@@ -1,0 +1,106 @@
+@startuml
+title Activity Diagram - Sistem E-Learning Materi Online\nCoding Academy Payakumbuh
+
+' Style seperti referensi
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+    BackgroundColor #FFEFD5
+    BorderColor #D4A574
+    FontColor #333333
+    FontSize 10
+}
+skinparam swimlane {
+    BorderColor #C0C0C0
+    TitleFontSize 12
+}
+
+|#FFF8DC| Siswa |
+|#F5F5F5| Sistem |
+|#E8F5E9| Admin |
+|#E3F2FD| Guru |
+
+|Siswa|
+start
+
+:Mengakses\nLanding Page;
+
+:Memasukkan\nemail dan password;
+
+|Sistem|
+:Memvalidasi\nkredensial;
+
+if (Valid?) then (Ya)
+    :Menampilkan\nDashboard;
+else (Tidak)
+    :Menampilkan\npesan error;
+    stop
+endif
+
+|Siswa|
+:Melihat daftar\nkelas;
+
+|Sistem|
+:Menampilkan\nkelas enrolled;
+
+|Siswa|
+:Memilih materi;
+
+|Sistem|
+:Menampilkan\nmateri (PDF/Video);
+
+|Siswa|
+:Mempelajari\nmateri;
+
+|Sistem|
+:Menyimpan\nprogress;
+
+|Siswa|
+:Menandai\nselesai;
+
+|Sistem|
+:Mencatat\nkehadiran;
+
+' ===== GURU =====
+|Guru|
+:Mengupload\nmateri baru;
+
+|Sistem|
+:Menyimpan\nstatus = pending;
+
+|Guru|
+:Memonitor\nprogress siswa;
+
+' ===== ADMIN =====
+|Admin|
+:Mengelola data\nGuru dan Siswa;
+
+:Mengelola\nKelas;
+
+:Mereview\nmateri pending;
+
+if (Sesuai?) then (Ya)
+    :Menyetujui\nmateri;
+else (Tidak)
+    :Menolak\nmateri;
+endif
+
+|Sistem|
+:Mengubah\nstatus materi;
+
+|Admin|
+:Input absensi\nsiswa;
+
+:Export data\nke Excel;
+
+:Backup\ndatabase;
+
+' ===== LOGOUT =====
+|Siswa|
+:Logout;
+
+|Sistem|
+:Menghapus\nsession;
+
+stop
+
+@enduml

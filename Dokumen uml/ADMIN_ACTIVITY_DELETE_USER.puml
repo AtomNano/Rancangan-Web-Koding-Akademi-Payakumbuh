@@ -1,0 +1,122 @@
+@startuml "Admin Activity - Hapus User"
+
+title Admin Activity Diagram\\nHapus Pengguna\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Pengguna";
+:Lihat daftar user;
+
+if (Filter user?) then (Ya)
+  :Pilih filter role;
+  note right
+    Filter by:
+    • Semua
+    • Admin
+    • Guru
+    • Siswa
+  end note
+  |System|
+  :Tampilkan user sesuai filter;
+else (Tidak)
+  |System|
+  :Tampilkan semua user;
+endif
+
+|Admin|
+:Cari user yang akan dihapus;
+:Klik tombol "Hapus" pada user;
+
+|System|
+:Tampilkan modal konfirmasi;
+note right
+  **Peringatan:**
+  "Apakah Anda yakin ingin
+  menghapus user ini?
+  
+  Nama: [nama user]
+  Email: [email]
+  Role: [role]
+  
+  Data yang akan terhapus:
+  • Data user
+  • Enrollment kelas (jika siswa)
+  • Progress materi (jika siswa)
+  • Materi yang diupload (jika guru)
+  
+  Tindakan ini tidak dapat dibatalkan!"
+end note
+
+|Admin|
+if (Konfirmasi hapus?) then (Ya)
+  :Klik "Ya, Hapus";
+  
+  |System|
+  :Mulai proses penghapusan;
+  
+  if (Role user?) then (Siswa)
+    :Hapus enrollment kelas siswa;
+    :Hapus progress materi siswa;
+    :Hapus presensi siswa;
+    note right
+      Cascade delete:
+      • enrollments table
+      • materi_progress table
+      • presensi table
+    end note
+    
+  elseif (Guru) then
+    :Cek apakah guru punya materi;
+    if (Punya materi?) then (Ya)
+      :Hapus semua materi guru;
+      note right
+        Hapus file dari storage
+        dan record dari database
+      end note
+    endif
+    
+    :Cek apakah guru mengajar kelas;
+    if (Mengajar kelas?) then (Ya)
+      :Set guru_id = NULL di kelas;
+      note right
+        Kelas tidak dihapus,
+        hanya unassign guru
+      end note
+    endif
+    
+  else (Admin)
+    :Tidak ada data terkait;
+  endif
+  
+  :Hapus user dari database;
+  :Log aktivitas;
+  note right
+    **Activity Log:**
+    • User: Admin
+    • Action: Deleted User
+    • Details: [nama user]
+    • Role: [role]
+    • Timestamp: [waktu]
+  end note
+  
+  |Admin|
+  :Tampilkan notifikasi sukses;
+  note right
+    "User berhasil dihapus!"
+  end note
+  :Redirect ke halaman daftar user;
+  :User tidak muncul di daftar;
+  
+else (Tidak)
+  :Klik "Batal";
+  :Tutup modal konfirmasi;
+  :Kembali ke daftar user;
+  note right
+    User tidak dihapus
+  end note
+endif
+
+stop
+
+@enduml

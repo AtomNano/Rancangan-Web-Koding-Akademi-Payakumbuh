@@ -1,0 +1,121 @@
+@startuml "Admin Activity - Delete Class"
+
+title Admin Activity Diagram\\nHapus Kelas\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Buka menu "Kelola Kelas";
+:Lihat daftar kelas;
+
+|System|
+:Tampilkan semua kelas;
+
+|Admin|
+:Cari kelas yang akan dihapus;
+:Klik tombol "Hapus" pada kelas;
+
+|System|
+:Load data kelas & relasi;
+:Hitung jumlah siswa enrolled;
+:Hitung jumlah materi di kelas;
+:Hitung jumlah pertemuan;
+:Tampilkan modal konfirmasi;
+note right
+  **Peringatan Hapus Kelas:**
+  "Apakah Anda yakin ingin
+  menghapus kelas ini?
+  
+  Kelas: [nama kelas]
+  Guru: [nama guru]
+  
+  Data yang akan terhapus:
+  • [X] siswa enrolled
+  • [X] materi pembelajaran
+  • [X] pertemuan
+  • Semua presensi
+  • Progress siswa di kelas ini
+  
+  Tindakan ini tidak dapat dibatalkan!"
+end note
+
+|Admin|
+if (Konfirmasi hapus?) then (Ya)
+  :Klik "Ya, Hapus Kelas";
+  
+  |System|
+  :Mulai proses penghapusan;
+  
+  :Hapus semua enrollment siswa;
+  note right
+    DELETE FROM enrollments
+    WHERE kelas_id = [id]
+  end note
+  
+  :Hapus semua progress materi siswa;
+  note right
+    DELETE FROM materi_progress
+    WHERE materi_id IN
+    (SELECT id FROM materi
+     WHERE kelas_id = [id])
+  end note
+  
+  :Hapus semua presensi;
+  note right
+    DELETE FROM presensi
+    WHERE pertemuan_id IN
+    (SELECT id FROM pertemuan
+     WHERE kelas_id = [id])
+  end note
+  
+  :Hapus semua pertemuan;
+  note right
+    DELETE FROM pertemuan
+    WHERE kelas_id = [id]
+  end note
+  
+  :Hapus semua materi;
+  note right
+    Hapus file dari storage
+    dan record dari database
+  end note
+  
+  :Hapus kelas dari database;
+  note right
+    DELETE FROM kelas
+    WHERE id = [id]
+  end note
+  
+  :Log aktivitas;
+  note right
+    **Activity Log:**
+    • User: Admin
+    • Action: Deleted Class
+    • Details: [nama kelas]
+    • Students: [jumlah]
+    • Materials: [jumlah]
+    • Meetings: [jumlah]
+    • Timestamp: [waktu]
+  end note
+  
+  |Admin|
+  :Tampilkan notifikasi sukses;
+  note right
+    "Kelas dan semua data terkait
+    berhasil dihapus!"
+  end note
+  :Redirect ke halaman daftar kelas;
+  :Kelas tidak muncul di daftar;
+  
+else (Tidak)
+  :Klik "Batal";
+  :Tutup modal konfirmasi;
+  :Kembali ke daftar kelas;
+  note right
+    Kelas tidak dihapus
+  end note
+endif
+
+stop
+
+@enduml

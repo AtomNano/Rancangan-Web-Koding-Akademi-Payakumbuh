@@ -1,0 +1,74 @@
+@startuml
+title Sistem yang Sedang Berjalan (As-Is)
+skinparam backgroundColor #FFE4E1
+skinparam swimlaneWidth 200
+skinparam ActivityBackgroundColor #FA8072
+skinparam ActivityBorderColor #DC143C
+skinparam ActivityFontColor black
+skinparam ArrowColor #8B0000
+
+|#FFDAB9|User/Siswa|
+|#FFFACD|Dokumen|
+|#98FB98|Admin|
+
+|User/Siswa|
+start
+:Mulai;
+:Hubungi Via WhatsApp/\ndatang ke Kursus;
+:Serahkan Data Pendaftaran;
+
+|Admin|
+:Terima pesan Via WhatsApp/\nlangsung;
+:Catat Order di\nBuku Laporan;
+:Menerima Data Siswa;
+
+|Dokumen|
+:Buku Induk\n/ Excel;
+
+|Admin|
+:Input Manual ke Excel;
+:Tentukan Kelas;
+
+|User/Siswa|
+:Terima Info Kelas\nvia WA;
+:Tunggu Materi\ndibagikan;
+
+|Admin|
+:Terima Bukti Transfer;
+:Cek Mutasi Bank;
+
+|Dokumen|
+:Nota\nPembayaran;
+
+|Admin|
+:Catat Status Lunas;
+
+|#FFA07A|Guru|
+:Siapkan Materi di Laptop;
+:Upload ke Google Drive;
+:Share Link via WA Group;
+
+|User/Siswa|
+:Buka WA Group;
+:Klik Link Materi;
+:Download/Baca Materi;
+
+|Guru|
+:Mulai Kelas;
+:Absensi Manual\n(Panggil Nama/WA);
+
+|Dokumen|
+:Kertas Absen;
+
+|Admin|
+:Kumpulkan Kertas Absen;
+:Rekap ke Excel\n(Bulanan);
+
+|Dokumen|
+:Laporan\nAbsensi;
+
+|Admin|
+:Selesai;
+stop
+
+@enduml

@@ -1,0 +1,213 @@
+@startuml "Admin Activity - Meeting & Attendance Overview"
+
+title Admin Activity Diagram\\nKelola Pertemuan & Absensi - Overview\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Pertemuan";
+:Pilih kelas;
+
+partition "Pilih Operasi" {
+  :Pilih aksi yang akan dilakukan;
+}
+
+split
+  -> Buat Pertemuan;
+  :Isi form pertemuan;
+  :Set tanggal & topik;
+  |System|
+  :Simpan ke DB;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Edit Pertemuan;
+  :Pilih pertemuan;
+  :Edit data;
+  |System|
+  :Update DB;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Hapus Pertemuan;
+  :Pilih pertemuan;
+  :Konfirmasi;
+  |System|
+  :Hapus + presensi;
+  |Admin|
+  :Sukses;
+  
+split again
+  -> Input Absensi;
+  :Pilih pertemuan;
+  :Input status per siswa;
+  |System|
+  :Simpan presensi;
+  :Hitung statistik;
+  |Admin|
+  :Lihat hasil;
+  
+split again
+  -> Lihat Detail Absensi;
+  :Pilih pertemuan;
+  |System|
+  :Load data presensi;
+  |Admin|
+  :Lihat statistik;
+  
+split again
+  -> Lihat Progress Siswa;
+  :Pilih siswa;
+  |System|
+  :Load progress;
+  |Admin|
+  :Lihat riwayat;
+  
+split again
+  -> Lihat Daftar;
+  :Tampilkan list pertemuan;
+  :Lihat detail;
+end split
+
+stop
+
+note right
+  **Meeting & Attendance Operations:**
+  • Buat Pertemuan Baru
+  • Edit Pertemuan
+  • Hapus Pertemuan
+  • Input Absensi Siswa
+  • Lihat Detail Absensi
+  • Lihat Progress Siswa
+  • Lihat Daftar Pertemuan
+  
+  **Detail diagrams:**
+  • ADMIN_ACTIVITY_CREATE_MEETING.puml
+  • ADMIN_ACTIVITY_INPUT_ATTENDANCE.puml
+end note
+
+@enduml
+
+
+title Admin Activity Diagram\\nKelola Pertemuan & Absensi\\nE-Learning Coding Akademi Payakumbuh
+
+|Admin|
+start
+:Login ke sistem;
+:Akses menu "Pertemuan";
+
+:Pilih kelas;
+
+if (Pilih aksi?) then (Buat Pertemuan)
+  :Klik "Buat Pertemuan Baru";
+  :Isi form data pertemuan;
+  note right
+    Data pertemuan:
+    • Tanggal pertemuan
+    • Topik/judul
+    • Deskripsi
+    • Pertemuan ke-
+  end note
+  
+  |System|
+  :Validasi data;
+  if (Data valid?) then (Ya)
+    :Simpan pertemuan ke database;
+    :Log aktivitas;
+    |Admin|
+    :Tampilkan pesan sukses;
+  else (Tidak)
+    :Tampilkan error;
+    stop
+  endif
+
+elseif (Edit Pertemuan) then
+  :Pilih pertemuan yang akan diedit;
+  :Ubah data pertemuan;
+  
+  |System|
+  :Validasi data;
+  if (Data valid?) then (Ya)
+    :Update pertemuan di database;
+    :Log aktivitas;
+    |Admin|
+    :Tampilkan pesan sukses;
+  else (Tidak)
+    :Tampilkan error;
+    stop
+  endif
+
+elseif (Input Absensi) then
+  :Pilih pertemuan;
+  :Tampilkan daftar siswa enrolled;
+  
+  repeat
+    :Pilih siswa;
+    :Pilih status kehadiran;
+    note right
+      Status:
+      • Hadir
+      • Izin
+      • Sakit
+      • Alpha
+    end note
+  repeat while (Masih ada siswa?) is (Ya)
+  ->Tidak;
+  
+  |System|
+  :Simpan semua presensi ke database;
+  :Update statistik kehadiran;
+  :Log aktivitas;
+  |Admin|
+  :Tampilkan pesan sukses;
+
+elseif (Lihat Detail Absensi) then
+  :Pilih pertemuan;
+  |System|
+  :Load data presensi;
+  |Admin|
+  :Tampilkan detail absensi;
+  :Lihat statistik kehadiran;
+  note right
+    Statistik:
+    • Total siswa
+    • Hadir: X siswa
+    • Izin: X siswa
+    • Sakit: X siswa
+    • Alpha: X siswa
+  end note
+
+elseif (Lihat Progress Siswa) then
+  :Pilih siswa;
+  |System|
+  :Load data progress siswa;
+  |Admin|
+  :Tampilkan riwayat absensi;
+  :Tampilkan progress materi;
+  :Lihat persentase kehadiran;
+
+elseif (Hapus Pertemuan) then
+  :Pilih pertemuan yang akan dihapus;
+  :Konfirmasi penghapusan;
+  
+  if (Konfirmasi?) then (Ya)
+    |System|
+    :Hapus pertemuan dari database;
+    :Hapus semua presensi terkait;
+    :Log aktivitas;
+    |Admin|
+    :Tampilkan pesan sukses;
+  else (Tidak)
+    stop
+  endif
+
+else (Lihat Daftar)
+  :Tampilkan daftar pertemuan;
+  :Lihat detail pertemuan;
+endif
+
+stop
+
+@enduml

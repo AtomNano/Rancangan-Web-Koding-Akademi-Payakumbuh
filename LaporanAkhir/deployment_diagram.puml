@@ -1,0 +1,89 @@
+@startuml
+title Deployment Diagram - Sistem Materi Online\nCoding Academy Payakumbuh
+
+' A4 Settings
+skinparam dpi 150
+scale 1.0
+skinparam defaultFontSize 11
+
+skinparam backgroundColor white
+skinparam nodeBackgroundColor #E6F3FF
+skinparam cloudBackgroundColor #F0F0F0
+skinparam databaseBackgroundColor #98FB98
+skinparam folderBackgroundColor #FFE4B5
+
+' Internet Cloud
+cloud "INTERNET" as Internet {
+    actor "Admin" as AdminUser
+    actor "Guru" as GuruUser
+    actor "Siswa" as SiswaUser
+}
+
+' Hosting Node
+node "NIAGAHOSTER SHARED HOSTING" as Hosting {
+    
+    node "Domain: materionline.coding-akademi.id" as Domain {
+        
+        component "SSL Certificate\n(Let's Encrypt)" as SSL
+        
+        node "Apache 2.4\n(Web Server)" as Apache {
+            
+            node "PHP 8.2" as PHP {
+                
+                package "Laravel 11.x" as Laravel {
+                    component "Routes" as Routes
+                    component "Middleware" as Middleware
+                    component "Controllers" as Controllers
+                    component "Models" as Models
+                    component "Views\n(Blade)" as Views
+                }
+            }
+        }
+        
+        database "MySQL 8.0" as MySQL {
+            storage "users" as TblUsers
+            storage "kelas" as TblKelas
+            storage "materi" as TblMateri
+            storage "enrollments" as TblEnroll
+            storage "pertemuan" as TblPertemuan
+            storage "absens" as TblAbsens
+        }
+        
+        folder "File Storage\n30GB" as Storage {
+            file "PDF Files" as PDFFiles
+            file "Video Files" as VideoFiles
+        }
+    }
+}
+
+' Connections
+AdminUser -down-> SSL : HTTPS\n(Port 443)
+GuruUser -down-> SSL : HTTPS\n(Port 443)
+SiswaUser -down-> SSL : HTTPS\n(Port 443)
+
+SSL -down-> Apache
+Routes -down-> Middleware
+Middleware -down-> Controllers
+Controllers -down-> Models
+Controllers -right-> Views
+Models -down-> MySQL
+Controllers -down-> Storage
+
+' Notes
+note right of Hosting
+    **Spesifikasi Hosting:**
+    - Provider: Niagahoster Business
+    - Storage: 30GB SSD
+    - Bandwidth: Unlimited
+    - SSL: Free Let's Encrypt
+    - Uptime: 99.9%
+end note
+
+note bottom of MySQL
+    **Database:**
+    12 Tables
+    InnoDB Engine
+    UTF-8 Charset
+end note
+
+@enduml

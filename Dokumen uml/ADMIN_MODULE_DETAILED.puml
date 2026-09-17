@@ -1,0 +1,212 @@
+@startuml "Admin Module - Detailed Use Case"
+
+title E-Learning Coding Akademi Payakumbuh\\nAdmin Module - Detailed Use Case Diagram\\nBased on Actual Codebase - December 2025
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+actor "ADMIN" as Admin #E74C3C
+
+rectangle "Admin Module" as AdminModule {
+    
+    ' ===== 1. KELOLA PENGGUNA (UserController) =====
+    package "Kelola Pengguna" as UserPkg #FFE6E6 {
+        usecase "Menambah Guru" as AddGuru
+        usecase "Mengubah Guru" as EditGuru
+        usecase "Menghapus Guru" as DeleteGuru
+        usecase "Melihat Guru" as ViewGuru
+        
+        usecase "Menambah Siswa" as AddSiswa
+        usecase "Mengedit Siswa" as EditSiswa
+        usecase "Menghapus Siswa" as DeleteSiswa
+        usecase "Melihat Siswa" as ViewSiswa
+        
+        usecase "Mengubah Status Aktif/\\nTidak Aktif" as ToggleStatus
+    }
+    
+    ' ===== 2. KELOLA KELAS (KelasController) =====
+    package "Kelola Kelas" as KelasPkg #E6F3FF {
+        usecase "Membuat Kelas Baru" as CreateKelas
+        usecase "Mengubah Detail Kelas" as EditKelas
+        usecase "Menghapus Kelas" as DeleteKelas
+        usecase "Melihat Daftar Semua\\nKelas yang Tersedia" as ViewAllKelas
+        
+        usecase "Mendaftarkan Siswa ke\\nKelas (Enroll Student)" as EnrollStudent
+        usecase "Mengeluarkan Siswa dari\\nKelas (Unenroll)" as UnenrollStudent
+        
+        usecase "Melihat Daftar Siswa\\nper Kelas" as ViewKelasStudents
+        usecase "Export Absensi Kelas" as ExportAttendance
+        usecase "Export Learning Log\\nper Siswa" as ExportStudentLog
+    }
+    
+    ' ===== 3. KELOLA PERTEMUAN & ABSENSI (PertemuanController) =====
+    package "Kelola Pertemuan & Absensi" as PertemuanPkg #FFF9E6 {
+        usecase "Membuat Pertemuan Baru" as CreatePertemuan
+        usecase "Mengubah Detail\\nPertemuan" as EditPertemuan
+        usecase "Menghapus Pertemuan" as DeletePertemuan
+        usecase "Melihat Detail Pertemuan" as ViewPertemuan
+        
+        usecase "Input Absensi Siswa" as InputAbsen
+        usecase "Melihat Detail Absensi\\nper Pertemuan" as ViewAbsenDetail
+        usecase "Melihat Progress Siswa\\nper Kelas" as ViewStudentProgress
+    }
+    
+    ' ===== 4. VERIFIKASI MATERI (MateriController) =====
+    package "Verifikasi Materi" as MateriPkg #E6FFE6 {
+        usecase "Melihat Semua Materi" as ViewAllMateri
+        usecase "Memverifikasi Materi\\n(Approve/Reject/Remind)" as VerifyMateri
+        usecase "Mengirim Notifikasi\\nPengingatkan" as RemindGuru
+    }
+    
+    ' ===== 5. MONITORING (DashboardController) =====
+    package "Monitoring" as MonitorPkg #F3E6FF {
+        usecase "Melihat Dashboard\\n(Dashboard, Logs,\\nProgress)" as ViewDashboard
+        usecase "Melihat Laporan\\nPresensi" as ViewAttendanceReport
+        usecase "Melakukan Backup\\nData Pengguna dan\\nMateri" as BackupData
+    }
+    
+    ' ===== 6. BACKUP & EXPORT (BackupController) =====
+    package "Backup & Export" as BackupPkg #FFE6F3 {
+        usecase "Export Data Pengguna\\n(Admin/Guru/Siswa)" as ExportUsers
+        usecase "Export Log Aktivitas" as ExportLogs
+        usecase "Backup Database" as BackupDB
+        usecase "Download Semua Materi\\n(ZIP)" as DownloadMaterials
+    }
+}
+
+' ===== ADMIN CONNECTIONS =====
+' User Management
+Admin --> AddGuru
+Admin --> EditGuru
+Admin --> DeleteGuru
+Admin --> ViewGuru
+Admin --> AddSiswa
+Admin --> EditSiswa
+Admin --> DeleteSiswa
+Admin --> ViewSiswa
+Admin --> ToggleStatus
+
+' Class Management
+Admin --> CreateKelas
+Admin --> EditKelas
+Admin --> DeleteKelas
+Admin --> ViewAllKelas
+Admin --> EnrollStudent
+Admin --> UnenrollStudent
+Admin --> ViewKelasStudents
+Admin --> ExportAttendance
+Admin --> ExportStudentLog
+
+' Meeting & Attendance
+Admin --> CreatePertemuan
+Admin --> EditPertemuan
+Admin --> DeletePertemuan
+Admin --> ViewPertemuan
+Admin --> InputAbsen
+Admin --> ViewAbsenDetail
+Admin --> ViewStudentProgress
+
+' Material Verification
+Admin --> ViewAllMateri
+Admin --> VerifyMateri
+Admin --> RemindGuru
+
+' Monitoring
+Admin --> ViewDashboard
+Admin --> ViewAttendanceReport
+Admin --> BackupData
+
+' Backup & Export
+Admin --> ExportUsers
+Admin --> ExportLogs
+Admin --> BackupDB
+Admin --> DownloadMaterials
+
+' ===== RELATIONSHIPS =====
+VerifyMateri ..> RemindGuru : <<include>>
+EnrollStudent ..> ViewKelasStudents : <<update>>
+InputAbsen ..> ViewAbsenDetail : <<update>>
+
+' ===== NOTES =====
+note right of Admin
+  **ADMIN (Pengurus)**
+  Full control atas sistem E-Learning
+  
+  **Controllers:**
+  • UserController
+  • KelasController
+  • PertemuanController
+  • MateriController
+  • BackupController
+  • DashboardController
+end note
+
+note bottom of UserPkg
+  **UserController**
+  Routes: /admin/users/*
+  • index() - List all users
+  • create() - Form tambah user
+  • store() - Simpan user baru
+  • edit() - Form edit user
+  • update() - Update user
+  • activate() - Aktifkan user
+  • deactivate() - Nonaktifkan user
+  • destroy() - Hapus user
+end note
+
+note bottom of KelasPkg
+  **KelasController**
+  Routes: /admin/kelas/*
+  • index() - List semua kelas
+  • create() - Form buat kelas
+  • store() - Simpan kelas baru
+  • show() - Detail kelas + siswa
+  • edit() - Form edit kelas
+  • update() - Update kelas
+  • destroy() - Hapus kelas
+  • enrollForm() - Form enroll siswa
+  • enroll() - Enroll siswa ke kelas
+  • unenroll() - Keluarkan siswa
+  • exportAttendance() - Export Excel
+  • exportStudentLearningLog() - Export log
+end note
+
+note bottom of PertemuanPkg
+  **PertemuanController**
+  Routes: /admin/kelas/{kelas}/pertemuan/*
+  • selectKelas() - Pilih kelas
+  • index() - List pertemuan
+  • create() - Form buat pertemuan
+  • store() - Simpan pertemuan
+  • show() - Detail pertemuan
+  • edit() - Form edit pertemuan
+  • update() - Update pertemuan
+  • destroy() - Hapus pertemuan
+  • storeAbsen() - Input absensi
+  • absenDetail() - Detail absensi
+  • studentProgress() - Progress siswa
+end note
+
+note bottom of MateriPkg
+  **MateriController**
+  Routes: /admin/materi/*
+  • index() - List semua materi
+  • show() - Detail materi
+  • approve() - Approve materi
+  • reject() - Reject materi
+  • remind() - Kirim notifikasi
+  • download() - Download file
+end note
+
+note bottom of BackupPkg
+  **BackupController**
+  Routes: /admin/backup/*
+  • index() - Halaman backup
+  • exportUsers() - Export Excel users
+  • exportLogs() - Export activity logs
+  • backupDatabase() - Backup DB
+  • downloadAllMaterials() - ZIP materi
+end note
+
+@enduml
